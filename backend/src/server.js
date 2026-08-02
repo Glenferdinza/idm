@@ -608,6 +608,16 @@ app.post('/api/telemetry', async (req, res) => {
         : 'INSERT INTO telemetry_logs (id, student_id, stroke_speed, hesitation_index, stroke_pattern, status) VALUES (?, ?, ?, ?, ?, ?)';
 
       await queryDB(insertQuery, [logId, studentId || 'siswa-demo', strokeSpeed || 0, hesitationIndex || 0, strokePattern || 'Mengerjakan Rumus', status || 'Aktif']);
+
+      // Auto-cleanup: Keep only latest 100 logs to protect database free tier quota
+      try {
+        const cleanupQuery = driver === 'pg'
+          ? 'DELETE FROM telemetry_logs WHERE id NOT IN (SELECT id FROM telemetry_logs ORDER BY created_at DESC LIMIT 100)'
+          : 'DELETE FROM telemetry_logs WHERE id NOT IN (SELECT id FROM (SELECT id FROM telemetry_logs ORDER BY id DESC LIMIT 100) AS temp)';
+        await queryDB(cleanupQuery);
+      } catch (cleanErr) {
+        console.warn('Telemetry log cleanup warning:', cleanErr.message);
+      }
     }
 
     const logEntry = {
@@ -621,6 +631,9 @@ app.post('/api/telemetry', async (req, res) => {
     };
 
     telemetryLogsInMemory.push(logEntry);
+    if (telemetryLogsInMemory.length > 100) {
+      telemetryLogsInMemory = telemetryLogsInMemory.slice(-100);
+    }
     res.status(201).json({ success: true, data: logEntry });
   } catch (err) {
     console.error('Error in POST /api/telemetry:', err);
