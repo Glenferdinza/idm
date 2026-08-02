@@ -640,6 +640,8 @@ export default function Home() {
 
   const [unansweredList, setUnansweredList] = useState([]);
   const [lastSubmittedResult, setLastSubmittedResult] = useState(null);
+  const [isTransmittingAiData, setIsTransmittingAiData] = useState(false);
+  const [aiTransmissionStep, setAiTransmissionStep] = useState(1);
 
   const [examTimerSeconds, setExamTimerSeconds] = useState(3600);
 
@@ -1153,6 +1155,24 @@ export default function Home() {
     localStorage.setItem('memora_allowedTeachers', JSON.stringify(updated));
   };
 
+  const demoTeacherLogin = () => {
+    const user = {
+      name: 'Pengajar Utama (Admin)',
+      role: 'Pengajar',
+      email: 'admin@gmail.com',
+      isDemo: true
+    };
+    setIsDemoMode(true);
+    setCurrentUser(user);
+    setActiveTab('kelola_materi');
+    setViewState('dashboard');
+    showAlert(
+      'Mode Demo Pengajar Aktif',
+      'Data diagnostik AI behavioral telemetri, hasil pemantauan kognitif 10+ siswa, dan bank soal interaktif telah dimuat secara otomatis.',
+      'info'
+    );
+  };
+
   const demoStudentLogin = () => {
     const user = {
       name: 'Siswa Bina Demo (Quick Access)',
@@ -1165,6 +1185,11 @@ export default function Home() {
     setActiveTab('pengerjaan_soal');
     setStudentStep('prep');
     setViewState('dashboard');
+    showAlert(
+      'Mode Demo Siswa Aktif',
+      'Portal ujian siswa dibuka dalam mode simulasi telemetri motorik pen stylus & AI diagnostik real-time.',
+      'info'
+    );
   };
 
   const getCanvasCoords = (e) => {
@@ -1251,57 +1276,64 @@ export default function Home() {
 
   const handleFinalConfirmSubmit = () => {
     setShowSubmitModal(false);
+    setIsTransmittingAiData(true);
+    setAiTransmissionStep(1);
 
-    let correctCount = 0;
-    questionsList.forEach((q, idx) => {
-      if (q.type === 'pg' && selectedAnswers[idx] === q.correctAnswer) {
-        correctCount++;
-      } else if (q.type === 'canvas' && shortAnswers[idx] && shortAnswers[idx].trim() === q.correctAnswer) {
-        correctCount++;
-      }
-    });
+    setTimeout(() => setAiTransmissionStep(2), 700);
+    setTimeout(() => setAiTransmissionStep(3), 1400);
 
-    const accuracy = Math.round((correctCount / questionsList.length) * 100);
-    const status = accuracy >= 80 ? 'Optimal' : accuracy >= 60 ? 'Perlu Perhatian' : 'Kebuntuan Konsep';
-
-    const newResult = {
-      id: `stu-sub-${Date.now()}`,
-      name: currentUser?.name || 'Siswa Bina Demo',
-      hesitation: hesitationIndex,
-      speed: strokeSpeed,
-      status: status,
-      topic: 'Penggolongan Narkotika & Aljabar',
-      intent: strokeIntent,
-      accuracy: accuracy,
-      diagnosis: accuracy >= 80
-        ? 'Siswa menyelesaikan ujian dengan pemahaman kognitif yang sangat tinggi dan tempo pengerjaan yang stabil.'
-        : 'Siswa mengalami beberapa kendala dalam penataan persamaan aljabar dasar.',
-      sparkline: accuracy >= 80
-        ? 'M0 14 L20 14 L24 10 L28 18 L32 2 L36 22 L40 14 L50 14 L70 14 L74 10 L78 18 L82 2 L86 22 L90 14 L100 14'
-        : 'M0 14 L10 14 L12 4 L14 24 L16 14 L30 14 L32 2 L34 26 L36 10 L38 20 L40 14 L60 14 L62 4 L64 24 L66 14 L80 14 L82 2 L84 26 L100 14',
-      strokeColor: accuracy >= 80 ? '#10b981' : '#e11d48'
-    };
-
-    // Post Telemetry Log to Express Backend REST API
-    try {
-      fetch(`${API_URL}/api/telemetry`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          studentId: currentUser?.name || 'Siswa Bina Demo',
-          strokeSpeed: strokeSpeed,
-          hesitationIndex: hesitationIndex,
-          strokePattern: strokeIntent,
-          status: status
-        })
+    setTimeout(() => {
+      let correctCount = 0;
+      questionsList.forEach((q, idx) => {
+        if (q.type === 'pg' && selectedAnswers[idx] === q.correctAnswer) {
+          correctCount++;
+        } else if (q.type === 'canvas' && shortAnswers[idx] && shortAnswers[idx].trim() === q.correctAnswer) {
+          correctCount++;
+        }
       });
-    } catch (e) {}
 
-    // Inject into single unified studentsList (No Grouping)
-    setStudentsList((prev) => [newResult, ...prev]);
+      const accuracy = Math.round((correctCount / questionsList.length) * 100);
+      const status = accuracy >= 80 ? 'Optimal' : accuracy >= 60 ? 'Perlu Perhatian' : 'Kebuntuan Konsep';
 
-    setLastSubmittedResult(newResult);
-    setStudentStep('result');
+      const newResult = {
+        id: `stu-sub-${Date.now()}`,
+        name: currentUser?.name || 'Siswa Bina Demo',
+        hesitation: hesitationIndex,
+        speed: strokeSpeed,
+        status: status,
+        topic: 'Materi Pembelajaran & Aljabar',
+        intent: strokeIntent,
+        accuracy: accuracy,
+        diagnosis: accuracy >= 80
+          ? 'Siswa menyelesaikan ujian dengan pemahaman kognitif yang sangat tinggi dan tempo pengerjaan yang stabil.'
+          : 'Siswa mengalami beberapa kendala dalam penataan persamaan aljabar dasar.',
+        sparkline: accuracy >= 80
+          ? 'M0 14 L20 14 L24 10 L28 18 L32 2 L36 22 L40 14 L50 14 L70 14 L78 18 L82 2 L86 22 L90 14 L100 14'
+          : 'M0 14 L10 14 L12 4 L14 24 L16 14 L30 14 L32 2 L34 26 L36 10 L38 20 L40 14 L60 14 L62 4 L64 24 L66 14 L80 14 L82 2 L84 26 L100 14',
+        strokeColor: accuracy >= 80 ? '#10b981' : '#e11d48'
+      };
+
+      if (API_URL) {
+        try {
+          fetch(`${API_URL}/api/telemetry`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              studentId: currentUser?.name || 'Siswa Bina Demo',
+              strokeSpeed: strokeSpeed,
+              hesitationIndex: hesitationIndex,
+              strokePattern: strokeIntent,
+              status: status
+            })
+          });
+        } catch (e) {}
+      }
+
+      setStudentsList((prev) => [newResult, ...prev]);
+      setLastSubmittedResult(newResult);
+      setIsTransmittingAiData(false);
+      setStudentStep('result');
+    }, 2200);
   };
 
   // Handle creating a new Material Package
@@ -1708,8 +1740,31 @@ export default function Home() {
                   Masuk ke Sistem
                 </button>
 
+                {/* Clean Look: Mode Demo Quick Access Buttons */}
+                <div className="pt-4 border-t border-[#efece4] space-y-2">
+                  <span className="text-[10px] uppercase font-bold text-[#6b635b] tracking-wider block text-center">
+                    Akses Cepat Mode Demo (Simulasi AI Telemetry)
+                  </span>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={demoTeacherLogin}
+                      className="py-2.5 px-3 bg-[#f7f5f0] hover:bg-[#e4efe7] border border-[#c4dcd0] rounded-xl text-xs font-bold text-[#3d5a45] transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+                    >
+                      <span>Demo Pengajar</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={demoStudentLogin}
+                      className="py-2.5 px-3 bg-[#f7f5f0] hover:bg-[#e4efe7] border border-[#c4dcd0] rounded-xl text-xs font-bold text-[#3d5a45] transition flex items-center justify-center gap-1.5 shadow-2xs cursor-pointer"
+                    >
+                      <span>Demo Siswa</span>
+                    </button>
+                  </div>
+                </div>
+
                 {/* Switch to Register link under Masuk ke Sistem button */}
-                <div className="text-center pt-2">
+                <div className="text-center pt-1">
                   <p className="text-xs text-[#6b635b]">
                     Belum punya akun?{' '}
                     <button
@@ -3471,6 +3526,43 @@ export default function Home() {
               >
                 Ya, Hapus
               </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* CUSTOM MODAL: AI Behavioral Telemetry Transmission Progress */}
+      {isTransmittingAiData && (
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-md w-full p-8 shadow-2xl text-center space-y-6 animate-fade-in-up">
+            <div className="w-16 h-16 rounded-full bg-[#1b3323] text-emerald-400 flex items-center justify-center mx-auto shadow-md border border-[#3d5a45]">
+              <svg className="animate-spin w-8 h-8 text-emerald-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <circle cx="12" cy="12" r="10" strokeOpacity="0.2" />
+                <path d="M12 2 a10 10 0 0 1 10 10" />
+              </svg>
+            </div>
+
+            <div className="space-y-2">
+              <span className="text-[10px] font-bold text-[#3d5a45] uppercase tracking-widest block">
+                Engine Telemetri Behavioral MEMORA AI
+              </span>
+              <h3 className="font-bold text-[#2c2825] text-lg heading-font">
+                Mengirim & Memproses Telemetri AI...
+              </h3>
+              <p className="text-xs text-[#6b635b] leading-relaxed">
+                {aiTransmissionStep === 1 && '1/3 Mengekstrak koordinat stroke pen canvas & kalkulasi akselerasi motorik...'}
+                {aiTransmissionStep === 2 && '2/3 Menghitung Indeks Kebuntuan Konsep & analisis kecemasan kognitif...'}
+                {aiTransmissionStep === 3 && '3/3 Mengirimkan paket diagnostik AI ke server & menyusun rekomendasi...'}
+              </p>
+            </div>
+
+            <div className="w-full bg-[#efece4] h-2 rounded-full overflow-hidden border border-[#c4dcd0]">
+              <div
+                className="bg-[#3d5a45] h-full transition-all duration-700 ease-out"
+                style={{
+                  width: aiTransmissionStep === 1 ? '35%' : aiTransmissionStep === 2 ? '70%' : '100%'
+                }}
+              />
             </div>
           </div>
         </div>
