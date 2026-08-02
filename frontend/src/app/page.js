@@ -2076,7 +2076,7 @@ export default function Home() {
                               onClick={() => handlePublishMaterialToStudents(m)}
                               className="px-5 py-2 btn-primary text-xs font-bold flex items-center gap-2 shadow-xs"
                             >
-                              <span>🚀 Kirim Ke Server / Papan Siswa (Publish Live)</span>
+                              <span>Kirim Ke Server / Papan Siswa (Publish Live)</span>
                             </button>
                           </div>
                         </div>
@@ -2331,7 +2331,7 @@ export default function Home() {
                           }}
                           className="text-rose-600 hover:text-rose-800 text-xs font-bold"
                         >
-                          🗑️ Hapus Soal Ini
+                          Hapus Soal Ini
                         </button>
                       ) : <div />}
 
@@ -2339,7 +2339,7 @@ export default function Home() {
                         onClick={handlePublishBuilderPackage}
                         className="btn-primary px-8 py-3 text-xs font-bold shadow-md flex items-center gap-2"
                       >
-                        <span>💾 Simpan & Terbitkan Paket Materi Ke Server</span>
+                        <span>Simpan & Terbitkan Paket Materi Ke Server</span>
                       </button>
                     </div>
                   </div>
@@ -2475,10 +2475,9 @@ export default function Home() {
                                           setShowCredentialModal(true);
                                           setActiveTeacherMenuIndex(null);
                                         }}
-                                        className="w-full text-left px-4 py-2 hover:bg-[#f7f5f0] text-[#2c2825] font-semibold flex items-center gap-2 transition"
+                                        className="w-full text-left px-4 py-2 hover:bg-[#f7f5f0] text-[#2c2825] font-semibold transition"
                                       >
-                                        <span>👁️</span>
-                                        <span>Lihat Kredensial</span>
+                                        Lihat Kredensial
                                       </button>
 
                                       {!isAdmin ? (
@@ -2487,15 +2486,13 @@ export default function Home() {
                                             setActiveTeacherMenuIndex(null);
                                             handleRemoveTeacherAccess(t.email);
                                           }}
-                                          className="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-semibold flex items-center gap-2 border-t border-slate-100 transition"
+                                          className="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-semibold border-t border-slate-100 transition"
                                         >
-                                          <span>🗑️</span>
-                                          <span>Hapus Akses</span>
+                                          Hapus Akses
                                         </button>
                                       ) : (
-                                        <div className="px-4 py-1.5 text-[10px] text-slate-400 font-medium border-t border-slate-100 flex items-center gap-1.5">
-                                          <span>🔒</span>
-                                          <span>Akun Utama Dilindungi</span>
+                                        <div className="px-4 py-1.5 text-[10px] text-slate-400 font-medium border-t border-slate-100">
+                                          Akun Utama Dilindungi
                                         </div>
                                       )}
                                     </div>
@@ -3185,7 +3182,7 @@ export default function Home() {
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-sm w-full p-6 shadow-xl text-center space-y-4 animate-fade-in-up">
             <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto text-xl font-bold">
-              {customAlertModal.type === 'success' ? '✓' : customAlertModal.type === 'warning' ? '⚠️' : 'ℹ️'}
+              {customAlertModal.type === 'success' ? 'V' : customAlertModal.type === 'warning' ? '!' : 'i'}
             </div>
 
             <div className="space-y-1">
