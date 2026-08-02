@@ -3165,7 +3165,7 @@ export default function Home() {
 
                           <div className="grid grid-cols-5 gap-2">
                             {questionsList.map((q, idx) => {
-                              const isAnswered = pgAnswers[idx] || shortAnswers[idx];
+                              const isAnswered = selectedAnswers[idx] || shortAnswers[idx];
                               const isDoubt = doubtfulQuestions[idx];
                               const isCurrent = idx === currentQIdx;
 
