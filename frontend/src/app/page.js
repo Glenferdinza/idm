@@ -608,6 +608,7 @@ export default function Home() {
   // Material & Question Builder Tab State
   const [builderTitle, setBuilderTitle] = useState('');
   const [builderTotalTime, setBuilderTotalTime] = useState('60:00');
+  const [currentBuilderQIdx, setCurrentBuilderQIdx] = useState(0);
   const [builderQuestions, setBuilderQuestions] = useState([
     {
       id: 'q-b-1',
