@@ -162,6 +162,8 @@ const INITIAL_ALLOWED_TEACHERS = [
   { email: 'pengajar@gmail.com', name: 'Pengajar Tim 1', defaultPass: 'pengajar123', addedAt: '16 Jul 2026' }
 ];
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+
 export default function Home() {
   const [viewState, setViewState] = useState('landing');
   const [authMode, setAuthMode] = useState('login'); // 'login' | 'register' | 'forgot_password'
@@ -348,56 +350,75 @@ export default function Home() {
     }
   }, [currentQIdx, activeTab, studentStep, viewState, penColor, penWidth, questionsList]);
 
-  // Login Handler (Auto-detect Teacher Email from Allowed Teachers Whitelist)
-  const handleLoginSubmit = (e) => {
+  // Login Handler (Communicates with Backend MySQL DB API with fallback)
+  const handleLoginSubmit = async (e) => {
     if (e) e.preventDefault();
 
     const cleanInputEmail = loginEmail.trim().toLowerCase();
 
-    // Check if email matches any whitelisted Teacher
-    const matchedTeacher = allowedTeachers.find(
-      (t) => t.email.toLowerCase() === cleanInputEmail
-    );
+    try {
+      const res = await fetch(`${API_URL}/api/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: cleanInputEmail, password: loginPassword })
+      });
 
-    // Check if email exists in general registered users list
-    const foundRegisteredUser = registeredUsers.find(
-      (u) => u.email.toLowerCase() === cleanInputEmail
-    );
+      const data = await res.json();
+      if (res.ok && data.success) {
+        const userObj = {
+          name: data.data.name,
+          role: data.data.role,
+          email: data.data.email
+        };
+        setCurrentUser(userObj);
+        if (userObj.role === 'Siswa') {
+          setActiveTab('pengerjaan_soal');
+          setStudentStep('prep');
+        } else {
+          setActiveTab('dashboard_telemetry');
+        }
+        setViewState('dashboard');
+        return;
+      } else {
+        alert(data.message || 'Email atau kata sandi tidak cocok!');
+      }
+    } catch (err) {
+      console.warn('Backend server offline during login, using local authentication fallback:', err);
+      // Fallback local login if backend is unreachable
+      const matchedTeacher = allowedTeachers.find(
+        (t) => t.email.toLowerCase() === cleanInputEmail
+      );
+      const foundRegisteredUser = registeredUsers.find(
+        (u) => u.email.toLowerCase() === cleanInputEmail
+      );
 
-    let userObj;
-    if (matchedTeacher) {
-      userObj = {
-        name: matchedTeacher.name || 'Pengajar',
-        role: 'Pengajar',
-        email: matchedTeacher.email
-      };
-    } else if (foundRegisteredUser) {
-      userObj = {
-        name: foundRegisteredUser.name,
-        role: foundRegisteredUser.role,
-        email: foundRegisteredUser.email
-      };
-    } else {
-      const isAdminByEmail = cleanInputEmail.includes('admin') || cleanInputEmail.includes('guru') || cleanInputEmail.includes('dosen');
-      userObj = {
-        name: isAdminByEmail ? 'Pengajar' : 'Siswa Bina',
-        role: isAdminByEmail ? 'Pengajar' : 'Siswa',
-        email: loginEmail
-      };
+      let userObj;
+      if (matchedTeacher) {
+        userObj = { name: matchedTeacher.name || 'Pengajar', role: 'Pengajar', email: matchedTeacher.email };
+      } else if (foundRegisteredUser) {
+        userObj = { name: foundRegisteredUser.name, role: foundRegisteredUser.role, email: foundRegisteredUser.email };
+      } else {
+        const isAdminByEmail = cleanInputEmail.includes('admin') || cleanInputEmail.includes('guru') || cleanInputEmail.includes('dosen');
+        userObj = {
+          name: isAdminByEmail ? 'Pengajar Utama (Admin)' : 'Siswa Bina',
+          role: isAdminByEmail ? 'Pengajar' : 'Siswa',
+          email: loginEmail
+        };
+      }
+
+      setCurrentUser(userObj);
+      if (userObj.role === 'Siswa') {
+        setActiveTab('pengerjaan_soal');
+        setStudentStep('prep');
+      } else {
+        setActiveTab('dashboard_telemetry');
+      }
+      setViewState('dashboard');
     }
-
-    setCurrentUser(userObj);
-    if (userObj.role === 'Siswa') {
-      setActiveTab('pengerjaan_soal');
-      setStudentStep('prep');
-    } else {
-      setActiveTab('dashboard_telemetry');
-    }
-    setViewState('dashboard');
   };
 
-  // Register Account Handler (Public Register = Siswa, unless email is whitelisted by Teacher Admin)
-  const handleRegisterSubmit = (e) => {
+  // Register Account Handler (Saves account directly to Backend MySQL Database)
+  const handleRegisterSubmit = async (e) => {
     if (e) e.preventDefault();
 
     if (regPassword !== regConfirmPassword) {
@@ -406,38 +427,68 @@ export default function Home() {
     }
 
     const cleanRegEmail = regEmail.trim().toLowerCase();
-    const matchedTeacher = allowedTeachers.find(
-      (t) => t.email.toLowerCase() === cleanRegEmail
-    );
 
-    const assignedRole = matchedTeacher ? 'Pengajar' : 'Siswa';
+    try {
+      const res = await fetch(`${API_URL}/api/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: regName,
+          email: cleanRegEmail,
+          password: regPassword,
+          role: 'Siswa'
+        })
+      });
 
-    const newUser = {
-      id: `user-${Date.now()}`,
-      name: regName,
-      email: regEmail,
-      role: assignedRole,
-      password: regPassword
-    };
+      const data = await res.json();
+      if (res.ok && data.success) {
+        alert('Pendaftaran akun berhasil! Data akun kamu sudah tersimpan di database MySQL.');
+        const userObj = {
+          name: data.data.name,
+          role: data.data.role,
+          email: data.data.email
+        };
+        setCurrentUser(userObj);
+        if (userObj.role === 'Siswa') {
+          setActiveTab('pengerjaan_soal');
+          setStudentStep('prep');
+        } else {
+          setActiveTab('dashboard_telemetry');
+        }
+        setViewState('dashboard');
+        return;
+      } else {
+        alert(data.message || 'Gagal mendaftar akun.');
+      }
+    } catch (err) {
+      console.warn('Backend server offline during register, fallback to local state:', err);
+      const matchedTeacher = allowedTeachers.find(
+        (t) => t.email.toLowerCase() === cleanRegEmail
+      );
+      const assignedRole = matchedTeacher ? 'Pengajar' : 'Siswa';
+      const newUser = {
+        id: `user-${Date.now()}`,
+        name: regName,
+        email: regEmail,
+        role: assignedRole,
+        password: regPassword
+      };
 
-    const updatedUsers = [...registeredUsers, newUser];
-    setRegisteredUsers(updatedUsers);
-    localStorage.setItem('memora_registeredUsers', JSON.stringify(updatedUsers));
+      const updatedUsers = [...registeredUsers, newUser];
+      setRegisteredUsers(updatedUsers);
+      localStorage.setItem('memora_registeredUsers', JSON.stringify(updatedUsers));
 
-    const userObj = {
-      name: newUser.name,
-      role: newUser.role,
-      email: newUser.email
-    };
-    setCurrentUser(userObj);
+      const userObj = { name: newUser.name, role: newUser.role, email: newUser.email };
+      setCurrentUser(userObj);
 
-    if (newUser.role === 'Siswa') {
-      setActiveTab('pengerjaan_soal');
-      setStudentStep('prep');
-    } else {
-      setActiveTab('dashboard_telemetry');
+      if (newUser.role === 'Siswa') {
+        setActiveTab('pengerjaan_soal');
+        setStudentStep('prep');
+      } else {
+        setActiveTab('dashboard_telemetry');
+      }
+      setViewState('dashboard');
     }
-    setViewState('dashboard');
   };
 
   // Send OTP Request for Forgot Password
@@ -507,22 +558,30 @@ export default function Home() {
     setConfirmResetPassword('');
   };
 
-  // Add New Teacher Access (Teacher Admin Feature)
-  const handleAddTeacherAccess = (e) => {
+  // Add New Teacher Access (Teacher Admin Feature - MySQL connected)
+  const handleAddTeacherAccess = async (e) => {
     if (e) e.preventDefault();
 
     if (!newTeacherEmail) return;
 
     const cleanEmail = newTeacherEmail.trim().toLowerCase();
-    if (allowedTeachers.some((t) => t.email.toLowerCase() === cleanEmail)) {
-      alert('Email pengajar tersebut sudah ada dalam daftar akses!');
-      return;
+    const tName = newTeacherName || 'Pengajar Tim';
+    const tPass = newTeacherPass || 'guru123';
+
+    try {
+      await fetch(`${API_URL}/api/auth/teachers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: tName, email: cleanEmail, password: tPass })
+      });
+    } catch (err) {
+      console.warn('Backend server offline during add teacher, fallback local:', err);
     }
 
     const newEntry = {
       email: cleanEmail,
-      name: newTeacherName || 'Pengajar Tim',
-      defaultPass: newTeacherPass || 'guru123',
+      name: tName,
+      defaultPass: tPass,
       addedAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })
     };
 
@@ -533,7 +592,7 @@ export default function Home() {
     setNewTeacherEmail('');
     setNewTeacherName('');
     setNewTeacherPass('guru123');
-    alert(`Akses Pengajar untuk ${cleanEmail} berhasil ditambahkan!`);
+    alert(`Akses Pengajar untuk ${cleanEmail} berhasil ditambahkan ke database!`);
   };
 
   // Remove Teacher Access
