@@ -597,6 +597,7 @@ export default function Home() {
   const [newTeacherPass, setNewTeacherPass] = useState('guru123');
 
   const [isDemoMode, setIsDemoMode] = useState(false);
+  const [expandedMaterials, setExpandedMaterials] = useState({});
   const [unansweredList, setUnansweredList] = useState([]);
   const [lastSubmittedResult, setLastSubmittedResult] = useState(null);
 
@@ -2025,69 +2026,113 @@ export default function Home() {
                   <div className="space-y-4">
                     {materials.map((m) => (
                       <div key={m.id} className="bg-white border border-[#c4dcd0] rounded-xl shadow-xs overflow-hidden">
-                        <div className="bg-[#1b3323] text-white p-4 flex justify-between items-center">
+                        <div
+                          onClick={() => setExpandedMaterials((prev) => ({ ...prev, [m.id]: !prev[m.id] }))}
+                          className="bg-[#1b3323] text-white p-4 flex justify-between items-center cursor-pointer hover:bg-[#203d2b] transition select-none"
+                        >
                           <span className="font-bold text-xs heading-font">{m.title}</span>
-                          <span className="text-xs text-[#d1caad]">{m.soalCount} Soal Tersedia</span>
+                          <div className="flex items-center gap-3 text-xs">
+                            <span className="text-[#d1caad] font-semibold">{m.soalCount} Soal Tersedia</span>
+                            <svg
+                              className={`w-4 h-4 text-[#d1caad] transform transition-transform duration-200 ${expandedMaterials[m.id] ? 'rotate-180' : 'rotate-0'}`}
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2.5"
+                              viewBox="0 0 24 24"
+                            >
+                              <polyline points="6 9 12 15 18 9" />
+                            </svg>
+                          </div>
                         </div>
 
                         <div className="p-5 space-y-4">
                           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-xs">
                             <div>
-                              <span className="text-[#6b635b] block mb-0.5">Jumlah Soal</span>
-                              <span className="font-bold text-[#2c2825]">{m.soalCount} soal</span>
+                              <span className="text-[#6b635b] block mb-0.5 font-medium">Jumlah Soal</span>
+                              <span className="font-bold text-[#2c2825]">{m.soalCount} Soal</span>
                             </div>
                             <div>
-                              <span className="text-[#6b635b] block mb-0.5">Quotes</span>
-                              <span className="font-bold text-amber-700">{m.quotesCount} quote</span>
+                              <span className="text-[#6b635b] block mb-0.5 font-medium">Tipe Soal</span>
+                              <span className="font-bold text-[#3d5a45]">PG & Canvas Coretan</span>
                             </div>
                             <div>
-                              <span className="text-[#6b635b] block mb-0.5">Zona</span>
+                              <span className="text-[#6b635b] block mb-0.5 font-medium">Zona Interaktif</span>
                               <span className="font-bold text-[#2c2825]">{m.zonesCount}</span>
                             </div>
                             <div>
-                              <span className="text-[#6b635b] block mb-0.5">Total Waktu</span>
+                              <span className="text-[#6b635b] block mb-0.5 font-medium">Total Waktu</span>
                               <span className="font-bold text-[#2c2825]">{m.totalTime}</span>
                             </div>
                             <div>
-                              <span className="text-[#6b635b] block mb-0.5">Dibuat</span>
+                              <span className="text-[#6b635b] block mb-0.5 font-medium">Dibuat</span>
                               <span className="font-medium text-[#5c554e]">{m.createdAt}</span>
                             </div>
                           </div>
 
-                          {/* List of Questions inside Material */}
-                          <div className="pt-3 border-t border-[#efece4] space-y-2">
-                            <span className="text-[11px] font-bold text-[#3d5a45] uppercase tracking-wider block">
-                              Daftar Pertanyaan Ujian:
-                            </span>
-                            <div className="space-y-2">
-                              {m.questions.map((q, qIdx) => (
-                                <div key={q.id || qIdx} className="bg-[#f7f5f0] p-3 rounded-lg border border-[#c4dcd0] text-xs flex items-center justify-between">
-                                  <div className="flex items-center gap-3">
-                                    <span className="w-6 h-6 rounded bg-[#3d5a45] text-white font-bold text-[10px] flex items-center justify-center">
-                                      {qIdx + 1}
-                                    </span>
-                                    <div>
-                                      <span className="font-bold text-[#2c2825] block">{q.questionText}</span>
-                                      <span className="text-[10px] text-[#6b635b]">Topik: {q.topic} | Tipe: {q.type === 'pg' ? 'Pilihan Ganda' : 'Canvas Coretan'}</span>
+                          {/* Collapsible Dropdown for Questions List (Default CLOSED / TERTUTUP) */}
+                          {expandedMaterials[m.id] && (
+                            <div className="pt-4 border-t border-[#efece4] space-y-3 animate-fade-in-up">
+                              <div className="flex items-center justify-between">
+                                <span className="text-[11px] font-bold text-[#3d5a45] uppercase tracking-wider block">
+                                  Daftar Pertanyaan Ujian ({m.questions?.length || 0} Soal):
+                                </span>
+                                <span className="text-[10px] text-[#6b635b]">Dapat ditinjau & dikelola oleh pengajar</span>
+                              </div>
+
+                              <div className="space-y-2">
+                                {m.questions.map((q, qIdx) => (
+                                  <div key={q.id || qIdx} className="bg-[#f7f5f0] p-3 rounded-lg border border-[#c4dcd0] text-xs flex items-center justify-between hover:bg-white transition">
+                                    <div className="flex items-center gap-3">
+                                      <span className="w-6 h-6 rounded bg-[#3d5a45] text-white font-bold text-[10px] flex items-center justify-center">
+                                        {qIdx + 1}
+                                      </span>
+                                      <div>
+                                        <span className="font-bold text-[#2c2825] block">{q.questionText}</span>
+                                        <span className="text-[10px] text-[#6b635b]">
+                                          Topik: {q.topic} | Tipe: {q.type === 'pg' ? 'Pilihan Ganda' : 'Canvas Coretan'}
+                                        </span>
+                                      </div>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                      <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-300">
+                                        Kunci: {q.correctAnswer}
+                                      </span>
+                                      <button
+                                        onClick={() => handleDeleteQuestion(q.id)}
+                                        className="text-rose-600 hover:text-rose-800 text-[10px] font-bold px-2 py-0.5 rounded border border-rose-200 hover:bg-rose-50 transition"
+                                        title="Hapus Soal"
+                                      >
+                                        Hapus
+                                      </button>
                                     </div>
                                   </div>
-                                  <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded border border-emerald-300">
-                                    Kunci: {q.correctAnswer}
-                                  </span>
-                                </div>
-                              ))}
+                                ))}
+                              </div>
                             </div>
-                          </div>
+                          )}
 
-                          <div className="flex items-center gap-3 pt-2">
+                          <div className="flex items-center justify-between pt-2 border-t border-[#efece4]">
+                            <button
+                              onClick={() => setExpandedMaterials((prev) => ({ ...prev, [m.id]: !prev[m.id] }))}
+                              className="py-1.5 px-4 bg-[#f7f5f0] hover:bg-[#e4efe7] border border-[#c4dcd0] rounded-lg text-xs font-bold text-[#3d5a45] flex items-center gap-2 transition"
+                            >
+                              <span>{expandedMaterials[m.id] ? 'Tutup Daftar Soal' : `Lihat Daftar (${m.questions?.length || 0}) Soal Ujian`}</span>
+                              <svg
+                                className={`w-3.5 h-3.5 transform transition-transform duration-200 ${expandedMaterials[m.id] ? 'rotate-180' : 'rotate-0'}`}
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                viewBox="0 0 24 24"
+                              >
+                                <polyline points="6 9 12 15 18 9" />
+                              </svg>
+                            </button>
+
                             <button
                               onClick={() => setShowAddQuestionModal(true)}
                               className="px-5 py-2 btn-primary text-xs"
                             >
                               + Tambah Soal
-                            </button>
-                            <button className="px-5 py-2 bg-white text-rose-600 border border-rose-300 hover:bg-rose-50 font-bold text-xs rounded-lg transition">
-                              Hapus Paket Materi
                             </button>
                           </div>
                         </div>
