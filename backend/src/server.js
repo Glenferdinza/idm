@@ -63,9 +63,23 @@ let telemetryLogsInMemory = [];
 // Initialize Database on Startup
 initDB();
 
-// ----------------------------------------------------
-// Health Check Endpoint
-// ----------------------------------------------------
+// Root & Health Check Endpoints
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    message: '🚀 Memori DNA REST API Backend Server is Running!',
+    dbConnected: getIsConnected(),
+    endpoints: {
+      health: '/api/health',
+      bankSoal: '/api/bank-soal',
+      authRegister: 'POST /api/auth/register',
+      authLogin: 'POST /api/auth/login',
+      users: '/api/users',
+      telemetry: '/api/telemetry'
+    }
+  });
+});
+
 app.get('/api/health', (req, res) => {
   res.json({
     status: 'ok',
