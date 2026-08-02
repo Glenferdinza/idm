@@ -1,153 +1,235 @@
+const { Pool } = require('pg');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-const dbConfig = {
-  host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT || '3306', 10),
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'memori_dna_db',
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0
-};
+const dbDriver = process.env.DB_DRIVER || (process.env.DATABASE_URL || process.env.POSTGRES_URL ? 'pg' : (process.env.DB_HOST ? 'mysql' : 'pg'));
+const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 
-let pool = null;
+let pgPool = null;
+let mysqlPool = null;
 let isConnected = false;
 
+function getDriver() {
+  return dbDriver;
+}
+
 async function getPool() {
-  if (!pool) {
-    pool = mysql.createPool(dbConfig);
+  if (dbDriver === 'pg') {
+    if (!pgPool) {
+      if (databaseUrl) {
+        pgPool = new Pool({
+          connectionString: databaseUrl,
+          ssl: databaseUrl.includes('localhost') ? false : { rejectUnauthorized: false }
+        });
+      } else {
+        pgPool = new Pool({
+          host: process.env.DB_HOST || 'localhost',
+          port: parseInt(process.env.DB_PORT || '5432', 10),
+          user: process.env.DB_USER || 'postgres',
+          password: process.env.DB_PASSWORD || 'postgres',
+          database: process.env.DB_NAME || 'postgres',
+          ssl: process.env.DB_SSL === 'true' ? { rejectUnauthorized: false } : false
+        });
+      }
+    }
+    return pgPool;
+  } else {
+    if (!mysqlPool) {
+      mysqlPool = mysql.createPool({
+        host: process.env.DB_HOST || 'localhost',
+        port: parseInt(process.env.DB_PORT || '3306', 10),
+        user: process.env.DB_USER || 'root',
+        password: process.env.DB_PASSWORD || '',
+        database: process.env.DB_NAME || 'memori_dna_db',
+        waitForConnections: true,
+        connectionLimit: 10
+      });
+    }
+    return mysqlPool;
   }
-  return pool;
+}
+
+// Unified Query Execution Helper
+async function queryDB(text, params = []) {
+  const pool = await getPool();
+  if (dbDriver === 'pg') {
+    const res = await pool.query(text, params);
+    return { rows: res.rows, rowCount: res.rowCount };
+  } else {
+    const [rows] = await pool.query(text, params);
+    return { rows, rowCount: rows.length };
+  }
 }
 
 async function initDB() {
   try {
-    // 1. Create connection without database to ensure database exists
-    const tempConn = await mysql.createConnection({
-      host: dbConfig.host,
-      port: dbConfig.port,
-      user: dbConfig.user,
-      password: dbConfig.password
-    });
+    const pool = await getPool();
 
-    await tempConn.query(`CREATE DATABASE IF NOT EXISTS \`${dbConfig.database}\` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`);
-    await tempConn.end();
+    if (dbDriver === 'pg') {
+      // PostgreSQL Table Initialization
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id VARCHAR(64) PRIMARY KEY,
+          name VARCHAR(100) NOT NULL,
+          email VARCHAR(120) NOT NULL UNIQUE,
+          password_hash VARCHAR(255) NOT NULL,
+          role VARCHAR(20) NOT NULL DEFAULT 'Siswa',
+          added_at VARCHAR(50) DEFAULT 'Pendaftaran Direct',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
 
-    // 2. Obtain connection pool with target database
-    const p = await getPool();
-    const conn = await p.getConnection();
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);`);
+      await pool.query(`CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);`);
 
-    // Create users table
-    await conn.query(`
-      CREATE TABLE IF NOT EXISTS users (
-        id VARCHAR(64) PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(120) NOT NULL UNIQUE,
-        password_hash VARCHAR(255) NOT NULL,
-        role ENUM('Pengajar', 'Siswa') NOT NULL DEFAULT 'Siswa',
-        added_at VARCHAR(50) DEFAULT 'Pendaftaran Direct',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        INDEX idx_users_email (email),
-        INDEX idx_users_role (role)
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    `);
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS questions (
+          id VARCHAR(64) PRIMARY KEY,
+          number INT NOT NULL,
+          topic VARCHAR(100) NOT NULL,
+          question_text TEXT NOT NULL,
+          type VARCHAR(20) NOT NULL DEFAULT 'pg',
+          options_json TEXT NULL,
+          correct_answer VARCHAR(255) NOT NULL,
+          difficulty VARCHAR(50) DEFAULT 'Sedang',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
 
-    // Create questions table
-    await conn.query(`
-      CREATE TABLE IF NOT EXISTS questions (
-        id VARCHAR(64) PRIMARY KEY,
-        number INT NOT NULL,
-        topic VARCHAR(100) NOT NULL,
-        question_text TEXT NOT NULL,
-        type VARCHAR(20) NOT NULL DEFAULT 'pg',
-        options_json LONGTEXT NULL,
-        correct_answer VARCHAR(255) NOT NULL,
-        difficulty VARCHAR(50) DEFAULT 'Sedang',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    `);
+      await pool.query(`
+        CREATE TABLE IF NOT EXISTS telemetry_logs (
+          id VARCHAR(64) PRIMARY KEY,
+          student_id VARCHAR(100) NOT NULL,
+          stroke_speed DOUBLE PRECISION DEFAULT 0,
+          hesitation_index DOUBLE PRECISION DEFAULT 0,
+          stroke_pattern VARCHAR(100) DEFAULT 'Mengerjakan Rumus',
+          status VARCHAR(50) DEFAULT 'Aktif',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+      `);
 
-    // Create telemetry_logs table
-    await conn.query(`
-      CREATE TABLE IF NOT EXISTS telemetry_logs (
-        id VARCHAR(64) PRIMARY KEY,
-        student_id VARCHAR(100) NOT NULL,
-        stroke_speed DOUBLE DEFAULT 0,
-        hesitation_index DOUBLE DEFAULT 0,
-        stroke_pattern VARCHAR(100) DEFAULT 'Mengerjakan Rumus',
-        status VARCHAR(50) DEFAULT 'Aktif',
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-    `);
+      // Seed Default Admin in PostgreSQL
+      const adminRes = await pool.query('SELECT * FROM users WHERE LOWER(email) = $1', ['admin@gmail.com']);
+      if (adminRes.rows.length === 0) {
+        const defaultAdminHash = await bcrypt.hash('admin123', 10);
+        await pool.query(
+          'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES ($1, $2, $3, $4, $5, $6)',
+          ['user-admin-1', 'Pengajar Utama (Admin)', 'admin@gmail.com', defaultAdminHash, 'Pengajar', 'Akun Utama']
+        );
 
-    // Seed default Admin account if not exists
-    const [existingAdmin] = await conn.query('SELECT * FROM users WHERE email = ?', ['admin@gmail.com']);
-    if (existingAdmin.length === 0) {
-      const defaultAdminPassHash = await bcrypt.hash('admin123', 10);
-      await conn.query(
-        'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES (?, ?, ?, ?, ?, ?)',
-        ['user-admin-1', 'Pengajar Utama (Admin)', 'admin@gmail.com', defaultAdminPassHash, 'Pengajar', 'Akun Utama']
-      );
+        const defaultTeacherHash = await bcrypt.hash('pengajar123', 10);
+        await pool.query(
+          'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES ($1, $2, $3, $4, $5, $6)',
+          ['user-teacher-1', 'Pengajar Tim 1', 'pengajar@gmail.com', defaultTeacherHash, 'Pengajar', '16 Jul 2026']
+        );
+        console.log('✅ Default Admin & Teacher seeded in PostgreSQL database.');
+      }
 
-      // Also seed secondary default teacher
-      const defaultTeacherPassHash = await bcrypt.hash('pengajar123', 10);
-      await conn.query(
-        'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES (?, ?, ?, ?, ?, ?)',
-        ['user-teacher-1', 'Pengajar Tim 1', 'pengajar@gmail.com', defaultTeacherPassHash, 'Pengajar', '16 Jul 2026']
-      );
-      console.log('✅ Default Admin & Teacher accounts seeded in MySQL/MariaDB database.');
-    }
+      // Seed Default Questions in PostgreSQL
+      const qRes = await pool.query('SELECT COUNT(*) as count FROM questions');
+      if (parseInt(qRes.rows[0].count, 10) === 0) {
+        const defaultQuestions = [
+          {
+            id: 'q-1',
+            number: 1,
+            topic: 'Bilangan Bulat',
+            question_text: 'Hasil dari 41 + 28 adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '69' },
+              { id: 'B', text: '59' },
+              { id: 'C', text: '13' },
+              { id: 'D', text: '79' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-2',
+            number: 2,
+            topic: 'Persamaan Linear Satu Variabel',
+            question_text: 'Tentukan nilai x jika 3x + 12 = 45. Gunakan area canvas untuk menguraikan langkah perhitungan.',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: 'x = 11',
+            difficulty: 'Sedang'
+          }
+        ];
 
-    // Seed default questions if empty
-    const [qCount] = await conn.query('SELECT COUNT(*) as count FROM questions');
-    if (qCount[0].count === 0) {
-      const defaultQuestions = [
-        {
-          id: 'q-1',
-          number: 1,
-          topic: 'Bilangan Bulat',
-          question_text: 'Hasil dari 41 + 28 adalah ...',
-          type: 'pg',
-          options_json: JSON.stringify([
-            { id: 'A', text: '69' },
-            { id: 'B', text: '59' },
-            { id: 'C', text: '13' },
-            { id: 'D', text: '79' }
-          ]),
-          correct_answer: 'A',
-          difficulty: 'Mudah'
-        },
-        {
-          id: 'q-2',
-          number: 2,
-          topic: 'Persamaan Linear Satu Variabel',
-          question_text: 'Tentukan nilai x jika 3x + 12 = 45. Gunakan area canvas untuk menguraikan langkah perhitungan.',
-          type: 'canvas',
-          options_json: JSON.stringify([]),
-          correct_answer: 'x = 11',
-          difficulty: 'Sedang'
+        for (const q of defaultQuestions) {
+          await pool.query(
+            'INSERT INTO questions (id, number, topic, question_text, type, options_json, correct_answer, difficulty) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)',
+            [q.id, q.number, q.topic, q.question_text, q.type, q.options_json, q.correct_answer, q.difficulty]
+          );
         }
-      ];
+        console.log('✅ Default Question Bank seeded in PostgreSQL database.');
+      }
 
-      for (const q of defaultQuestions) {
+      isConnected = true;
+      console.log('🚀 Connected successfully to PostgreSQL (Supabase / Neon) Database!');
+    } else {
+      // MySQL Table Initialization
+      const conn = await pool.getConnection();
+
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS users (
+          id VARCHAR(64) PRIMARY KEY,
+          name VARCHAR(100) NOT NULL,
+          email VARCHAR(120) NOT NULL UNIQUE,
+          password_hash VARCHAR(255) NOT NULL,
+          role ENUM('Pengajar', 'Siswa') NOT NULL DEFAULT 'Siswa',
+          added_at VARCHAR(50) DEFAULT 'Pendaftaran Direct',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+          updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+          INDEX idx_users_email (email),
+          INDEX idx_users_role (role)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS questions (
+          id VARCHAR(64) PRIMARY KEY,
+          number INT NOT NULL,
+          topic VARCHAR(100) NOT NULL,
+          question_text TEXT NOT NULL,
+          type VARCHAR(20) NOT NULL DEFAULT 'pg',
+          options_json LONGTEXT NULL,
+          correct_answer VARCHAR(255) NOT NULL,
+          difficulty VARCHAR(50) DEFAULT 'Sedang',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+
+      await conn.query(`
+        CREATE TABLE IF NOT EXISTS telemetry_logs (
+          id VARCHAR(64) PRIMARY KEY,
+          student_id VARCHAR(100) NOT NULL,
+          stroke_speed DOUBLE DEFAULT 0,
+          hesitation_index DOUBLE DEFAULT 0,
+          stroke_pattern VARCHAR(100) DEFAULT 'Mengerjakan Rumus',
+          status VARCHAR(50) DEFAULT 'Aktif',
+          created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+      `);
+
+      const [existingAdmin] = await conn.query('SELECT * FROM users WHERE email = ?', ['admin@gmail.com']);
+      if (existingAdmin.length === 0) {
+        const defaultAdminPassHash = await bcrypt.hash('admin123', 10);
         await conn.query(
-          'INSERT INTO questions (id, number, topic, question_text, type, options_json, correct_answer, difficulty) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-          [q.id, q.number, q.topic, q.question_text, q.type, q.options_json, q.correct_answer, q.difficulty]
+          'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES (?, ?, ?, ?, ?, ?)',
+          ['user-admin-1', 'Pengajar Utama (Admin)', 'admin@gmail.com', defaultAdminPassHash, 'Pengajar', 'Akun Utama']
         );
       }
-      console.log('✅ Default Question Bank seeded in MySQL/MariaDB database.');
-    }
 
-    conn.release();
-    isConnected = true;
-    console.log(`🚀 Connected successfully to MySQL/MariaDB database [${dbConfig.database}] at ${dbConfig.host}:${dbConfig.port}`);
+      conn.release();
+      isConnected = true;
+      console.log('🚀 Connected successfully to MySQL Database!');
+    }
   } catch (err) {
     isConnected = false;
-    console.warn(`⚠️ MySQL/MariaDB Database Connection Warning (${err.code || err.message}). App will fallback to in-memory mode if DB is unreachable.`);
+    console.warn(`⚠️ Cloud Database Connection Warning (${err.message}). App will fallback to in-memory mode if DB is unreachable.`);
   }
 }
 
@@ -157,6 +239,8 @@ function getIsConnected() {
 
 module.exports = {
   getPool,
+  queryDB,
   initDB,
-  getIsConnected
+  getIsConnected,
+  getDriver
 };

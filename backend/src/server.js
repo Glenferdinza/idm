@@ -3,7 +3,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-const { getPool, initDB, getIsConnected } = require('./config/db');
+const { queryDB, initDB, getIsConnected, getDriver } = require('./config/db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -69,6 +69,7 @@ app.get('/', (req, res) => {
     status: 'ok',
     message: 'Memori DNA REST API Backend Server is Running!',
     dbConnected: getIsConnected(),
+    dbDriver: getDriver(),
     endpoints: {
       health: '/api/health',
       bankSoal: '/api/bank-soal',
@@ -85,12 +86,13 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     service: 'Memori DNA Backend',
     dbConnected: getIsConnected(),
+    dbDriver: getDriver(),
     timestamp: new Date().toISOString()
   });
 });
 
 // ----------------------------------------------------
-// Auth & User Endpoints (MySQL / MariaDB Connected)
+// Auth & User Endpoints (PostgreSQL / Supabase / MySQL)
 // ----------------------------------------------------
 
 // Register Endpoint (User/Siswa Register)
@@ -106,23 +108,30 @@ app.post('/api/auth/register', async (req, res) => {
     const userId = `user-${Date.now()}`;
 
     if (getIsConnected()) {
-      const pool = await getPool();
-      const [existing] = await pool.query('SELECT * FROM users WHERE LOWER(email) = ?', [cleanEmail]);
+      const driver = getDriver();
+      const existingQuery = driver === 'pg'
+        ? 'SELECT * FROM users WHERE LOWER(email) = $1'
+        : 'SELECT * FROM users WHERE LOWER(email) = ?';
+      const { rows: existing } = await queryDB(existingQuery, [cleanEmail]);
+
       if (existing.length > 0) {
         return res.status(400).json({ success: false, message: 'Email sudah terdaftar dalam database!' });
       }
 
-      // Determine role: If email was seeded/whitelisted as Pengajar, keep Pengajar, else default to requested role or Siswa
       let assignedRole = role || 'Siswa';
-      const [teacherMatch] = await pool.query('SELECT * FROM users WHERE LOWER(email) = ? AND role = "Pengajar"', [cleanEmail]);
+      const teacherQuery = driver === 'pg'
+        ? 'SELECT * FROM users WHERE LOWER(email) = $1 AND role = $2'
+        : 'SELECT * FROM users WHERE LOWER(email) = ? AND role = ?';
+      const { rows: teacherMatch } = await queryDB(teacherQuery, [cleanEmail, 'Pengajar']);
       if (teacherMatch.length > 0) {
         assignedRole = 'Pengajar';
       }
 
-      await pool.query(
-        'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES (?, ?, ?, ?, ?, ?)',
-        [userId, name.trim(), cleanEmail, passwordHash, assignedRole, 'Pendaftaran Direct']
-      );
+      const insertQuery = driver === 'pg'
+        ? 'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES ($1, $2, $3, $4, $5, $6)'
+        : 'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES (?, ?, ?, ?, ?, ?)';
+
+      await queryDB(insertQuery, [userId, name.trim(), cleanEmail, passwordHash, assignedRole, 'Pendaftaran Direct']);
 
       return res.status(201).json({
         success: true,
@@ -175,8 +184,11 @@ app.post('/api/auth/login', async (req, res) => {
     const cleanEmail = email.trim().toLowerCase();
 
     if (getIsConnected()) {
-      const pool = await getPool();
-      const [rows] = await pool.query('SELECT * FROM users WHERE LOWER(email) = ?', [cleanEmail]);
+      const driver = getDriver();
+      const loginQuery = driver === 'pg'
+        ? 'SELECT * FROM users WHERE LOWER(email) = $1'
+        : 'SELECT * FROM users WHERE LOWER(email) = ?';
+      const { rows } = await queryDB(loginQuery, [cleanEmail]);
 
       if (rows.length === 0) {
         return res.status(401).json({ success: false, message: 'Email atau kata sandi tidak cocok!' });
@@ -184,8 +196,6 @@ app.post('/api/auth/login', async (req, res) => {
 
       const user = rows[0];
       const match = await bcrypt.compare(password, user.password_hash);
-
-      // Fallback check for default admin plain passwords during dev test if hash is legacy
       const isPlainAdminMatch = (cleanEmail === 'admin@gmail.com' && password === 'admin123') || (cleanEmail === 'pengajar@gmail.com' && password === 'pengajar123');
 
       if (!match && !isPlainAdminMatch) {
@@ -206,7 +216,6 @@ app.post('/api/auth/login', async (req, res) => {
       // Fallback In-Memory Login
       const user = usersInMemory.find(u => u.email.toLowerCase() === cleanEmail);
       if (!user) {
-        // Fallback default admin check
         const isAdmin = cleanEmail.includes('admin') || cleanEmail === 'admin@gmail.com';
         return res.json({
           success: true,
@@ -236,8 +245,7 @@ app.post('/api/auth/login', async (req, res) => {
 app.get('/api/users', async (req, res) => {
   try {
     if (getIsConnected()) {
-      const pool = await getPool();
-      const [rows] = await pool.query('SELECT id, name, email, role, added_at, created_at FROM users ORDER BY created_at DESC');
+      const { rows } = await queryDB('SELECT id, name, email, role, added_at, created_at FROM users ORDER BY created_at DESC');
       return res.json({ success: true, data: rows });
     } else {
       return res.json({ success: true, data: usersInMemory });
@@ -263,18 +271,25 @@ app.post('/api/auth/teachers', async (req, res) => {
     const userId = `user-teacher-${Date.now()}`;
 
     if (getIsConnected()) {
-      const pool = await getPool();
-      const [existing] = await pool.query('SELECT * FROM users WHERE LOWER(email) = ?', [cleanEmail]);
+      const driver = getDriver();
+      const selectQuery = driver === 'pg'
+        ? 'SELECT * FROM users WHERE LOWER(email) = $1'
+        : 'SELECT * FROM users WHERE LOWER(email) = ?';
+      const { rows: existing } = await queryDB(selectQuery, [cleanEmail]);
+
       if (existing.length > 0) {
-        // Upgrade existing user to Pengajar role if already registered
-        await pool.query('UPDATE users SET role = "Pengajar" WHERE LOWER(email) = ?', [cleanEmail]);
+        const updateQuery = driver === 'pg'
+          ? 'UPDATE users SET role = $1 WHERE LOWER(email) = $2'
+          : 'UPDATE users SET role = ? WHERE LOWER(email) = ?';
+        await queryDB(updateQuery, ['Pengajar', cleanEmail]);
         return res.json({ success: true, message: 'Role user berhasil diperbarui menjadi Pengajar.' });
       }
 
-      await pool.query(
-        'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES (?, ?, ?, ?, ?, ?)',
-        [userId, teacherName, cleanEmail, passwordHash, 'Pengajar', new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })]
-      );
+      const insertQuery = driver === 'pg'
+        ? 'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES ($1, $2, $3, $4, $5, $6)'
+        : 'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES (?, ?, ?, ?, ?, ?)';
+
+      await queryDB(insertQuery, [userId, teacherName, cleanEmail, passwordHash, 'Pengajar', new Date().toLocaleDateString('id-ID', { day: '2-digit', month: 'short', year: 'numeric' })]);
 
       return res.status(201).json({
         success: true,
@@ -305,8 +320,7 @@ app.post('/api/auth/teachers', async (req, res) => {
 app.get('/api/bank-soal', async (req, res) => {
   try {
     if (getIsConnected()) {
-      const pool = await getPool();
-      const [rows] = await pool.query('SELECT * FROM questions ORDER BY number ASC');
+      const { rows } = await queryDB('SELECT * FROM questions ORDER BY number ASC');
       const questions = rows.map(r => ({
         id: r.id,
         number: r.number,
@@ -338,14 +352,15 @@ app.post('/api/bank-soal', async (req, res) => {
     const optionsJson = JSON.stringify(options || []);
 
     if (getIsConnected()) {
-      const pool = await getPool();
-      const [countResult] = await pool.query('SELECT COUNT(*) as count FROM questions');
-      const nextNum = (countResult[0]?.count || 0) + 1;
+      const driver = getDriver();
+      const { rows: countResult } = await queryDB('SELECT COUNT(*) as count FROM questions');
+      const nextNum = (parseInt(countResult[0]?.count || '0', 10)) + 1;
 
-      await pool.query(
-        'INSERT INTO questions (id, number, topic, question_text, type, options_json, correct_answer, difficulty) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-        [qId, nextNum, topic, questionText, type, optionsJson, correctAnswer || '', difficulty || 'Sedang']
-      );
+      const insertQuery = driver === 'pg'
+        ? 'INSERT INTO questions (id, number, topic, question_text, type, options_json, correct_answer, difficulty) VALUES ($1, $2, $3, $4, $5, $6, $7, $8)'
+        : 'INSERT INTO questions (id, number, topic, question_text, type, options_json, correct_answer, difficulty) VALUES (?, ?, ?, ?, ?, ?, ?, ?)';
+
+      await queryDB(insertQuery, [qId, nextNum, topic, questionText, type, optionsJson, correctAnswer || '', difficulty || 'Sedang']);
 
       const newQuestion = {
         id: qId,
@@ -388,11 +403,12 @@ app.post('/api/telemetry', async (req, res) => {
     const logId = `log-${Date.now()}`;
 
     if (getIsConnected()) {
-      const pool = await getPool();
-      await pool.query(
-        'INSERT INTO telemetry_logs (id, student_id, stroke_speed, hesitation_index, stroke_pattern, status) VALUES (?, ?, ?, ?, ?, ?)',
-        [logId, studentId || 'siswa-demo', strokeSpeed || 0, hesitationIndex || 0, strokePattern || 'Mengerjakan Rumus', status || 'Aktif']
-      );
+      const driver = getDriver();
+      const insertQuery = driver === 'pg'
+        ? 'INSERT INTO telemetry_logs (id, student_id, stroke_speed, hesitation_index, stroke_pattern, status) VALUES ($1, $2, $3, $4, $5, $6)'
+        : 'INSERT INTO telemetry_logs (id, student_id, stroke_speed, hesitation_index, stroke_pattern, status) VALUES (?, ?, ?, ?, ?, ?)';
+
+      await queryDB(insertQuery, [logId, studentId || 'siswa-demo', strokeSpeed || 0, hesitationIndex || 0, strokePattern || 'Mengerjakan Rumus', status || 'Aktif']);
     }
 
     const logEntry = {
