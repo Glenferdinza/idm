@@ -2937,7 +2937,14 @@ export default function Home() {
                 <div className="space-y-6">
                   {studentStep === 'prep' && (
                     <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 max-w-xl mx-auto text-center space-y-6 shadow-xs">
-                      <span className="text-3xl block">📝</span>
+                      <div className="w-12 h-12 rounded-xl bg-[#3d5a45] text-white flex items-center justify-center mx-auto shadow-xs">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                          <polyline points="14 2 14 8 20 8" />
+                          <line x1="16" y1="13" x2="8" y2="13" />
+                          <line x1="16" y1="17" x2="8" y2="17" />
+                        </svg>
+                      </div>
                       <h2 className="text-xl font-bold heading-font text-[#2c2825]">Persiapan Ujian Evaluasi Siswa</h2>
                       <p className="text-xs text-[#6b635b]">
                         Isikan nama Anda di bawah ini dan klik mulai untuk memasuki portal ujian interactive canvas.
@@ -3189,7 +3196,12 @@ export default function Home() {
 
                   {studentStep === 'result' && (
                     <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 max-w-2xl mx-auto text-center space-y-6 shadow-xs">
-                      <span className="text-4xl block">🎉</span>
+                      <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-xs border border-emerald-200">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                          <polyline points="22 4 12 14.01 9 11.01" />
+                        </svg>
+                      </div>
                       <h2 className="text-2xl font-bold heading-font text-[#2c2825]">Ujian Evaluasi Berhasil Diselesaikan!</h2>
 
                       <div className="grid grid-cols-3 gap-4 pt-2">
