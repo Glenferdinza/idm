@@ -25,7 +25,10 @@ async function getPool() {
       if (databaseUrl) {
         pgPool = new Pool({
           connectionString: databaseUrl,
-          ssl: databaseUrl.includes('localhost') ? false : { rejectUnauthorized: false }
+          ssl: databaseUrl.includes('localhost') ? false : { rejectUnauthorized: false },
+          connectionTimeoutMillis: 5000,
+          idleTimeoutMillis: 10000,
+          max: 5
         });
       } else {
         pgPool = new Pool({
