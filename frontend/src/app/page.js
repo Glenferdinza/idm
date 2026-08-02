@@ -2027,7 +2027,15 @@ export default function Home() {
             {/* Top Dashboard Navigation Header */}
             <header className="sticky top-0 z-40 px-6 lg:px-10 h-22 bg-white border-b border-[#c4dcd0] flex items-center justify-between flex-shrink-0 shadow-xs transition-all duration-300 ease-in-out">
               <div className="flex items-center gap-6 sm:gap-8">
-                {/* MEMORA Brandmark */}
+                {/* Institution SVG Logos (Kemendikbud First) */}
+                <div className="flex items-center gap-4 sm:gap-6 pr-4 sm:pr-6 border-r border-[#c4dcd0]">
+                  <img src="/assets/logo_kemendikbud.svg" alt="Kemendikbud" className="h-8 sm:h-9 w-auto object-contain" />
+                  <img src="/assets/logo_diktisaintek.svg" alt="Diktisaintek" className="h-8 sm:h-9 w-auto object-contain" />
+                  <img src="/assets/logo_unm.svg" alt="UNM" className="h-8 sm:h-9 w-auto object-contain" />
+                  <img src="/assets/logo_dies_natalis.svg" alt="Dies Natalis" className="h-8 sm:h-9 w-auto object-contain" />
+                </div>
+
+                {/* MEMORA Brandmark (Last) */}
                 <div className="flex items-center gap-3 cursor-pointer" onClick={() => setShowLogoutModal(true)}>
                   <div className="w-10 h-10 rounded-xl bg-[#3d5a45] text-white flex items-center justify-center font-bold shadow-xs">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -2042,14 +2050,6 @@ export default function Home() {
                       AI Behavioral Telemetry
                     </span>
                   </div>
-                </div>
-
-                {/* Institution SVG Logos in Navbar (Transparent Placement) */}
-                <div className="flex items-center gap-4 sm:gap-6 pl-4 sm:pl-6 border-l border-[#c4dcd0]">
-                  <img src="/assets/logo_kemendikbud.svg" alt="Kemendikbud" className="h-8 sm:h-9 w-auto object-contain" />
-                  <img src="/assets/logo_diktisaintek.svg" alt="Diktisaintek" className="h-8 sm:h-9 w-auto object-contain" />
-                  <img src="/assets/logo_unm.svg" alt="UNM" className="h-8 sm:h-9 w-auto object-contain" />
-                  <img src="/assets/logo_dies_natalis.svg" alt="Dies Natalis" className="h-8 sm:h-9 w-auto object-contain" />
                 </div>
               </div>
 
