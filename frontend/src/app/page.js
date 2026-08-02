@@ -1282,7 +1282,7 @@ export default function Home() {
     setTimeout(() => setAiTransmissionStep(2), 700);
     setTimeout(() => setAiTransmissionStep(3), 1400);
 
-    setTimeout(() => {
+    setTimeout(async () => {
       let correctCount = 0;
       questionsList.forEach((q, idx) => {
         if (q.type === 'pg' && selectedAnswers[idx] === q.correctAnswer) {
@@ -1295,6 +1295,34 @@ export default function Home() {
       const accuracy = Math.round((correctCount / questionsList.length) * 100);
       const status = accuracy >= 80 ? 'Optimal' : accuracy >= 60 ? 'Perlu Perhatian' : 'Kebuntuan Konsep';
 
+      let aiDiagText = accuracy >= 80
+        ? 'Siswa menyelesaikan ujian dengan pemahaman kognitif yang sangat tinggi dan tempo pengerjaan yang stabil.'
+        : 'Siswa mengalami beberapa kendala dalam penataan persamaan aljabar dasar.';
+
+      // Call Real AI Hugging Face Qwen 7B Inference API
+      try {
+        const aiRes = await fetch('/api/ai/analyze-telemetry', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            studentName: currentUser?.name || 'Siswa',
+            accuracy: accuracy,
+            hesitationIndex: hesitationIndex,
+            strokeSpeed: strokeSpeed,
+            strokeIntent: strokeIntent,
+            topic: 'Matematika & Aljabar'
+          })
+        });
+        if (aiRes.ok) {
+          const aiJson = await aiRes.json();
+          if (aiJson?.data?.diagnosis) {
+            aiDiagText = aiJson.data.diagnosis;
+          }
+        }
+      } catch (err) {
+        console.warn('Real AI endpoint fetch fallback:', err);
+      }
+
       const newResult = {
         id: `stu-sub-${Date.now()}`,
         name: currentUser?.name || 'Siswa Bina Demo',
@@ -1304,9 +1332,7 @@ export default function Home() {
         topic: 'Materi Pembelajaran & Aljabar',
         intent: strokeIntent,
         accuracy: accuracy,
-        diagnosis: accuracy >= 80
-          ? 'Siswa menyelesaikan ujian dengan pemahaman kognitif yang sangat tinggi dan tempo pengerjaan yang stabil.'
-          : 'Siswa mengalami beberapa kendala dalam penataan persamaan aljabar dasar.',
+        diagnosis: aiDiagText,
         sparkline: accuracy >= 80
           ? 'M0 14 L20 14 L24 10 L28 18 L32 2 L36 22 L40 14 L50 14 L70 14 L78 18 L82 2 L86 22 L90 14 L100 14'
           : 'M0 14 L10 14 L12 4 L14 24 L16 14 L30 14 L32 2 L34 26 L36 10 L38 20 L40 14 L60 14 L62 4 L64 24 L66 14 L80 14 L82 2 L84 26 L100 14',
