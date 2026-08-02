@@ -595,6 +595,9 @@ export default function Home() {
   const [newTeacherEmail, setNewTeacherEmail] = useState('');
   const [newTeacherName, setNewTeacherName] = useState('');
   const [newTeacherPass, setNewTeacherPass] = useState('guru123');
+  const [activeTeacherMenuIndex, setActiveTeacherMenuIndex] = useState(null);
+  const [showCredentialModal, setShowCredentialModal] = useState(false);
+  const [selectedCredentialTeacher, setSelectedCredentialTeacher] = useState(null);
 
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [expandedMaterials, setExpandedMaterials] = useState({});
@@ -1993,23 +1996,81 @@ export default function Home() {
                           Daftar Email Pengajar Berizin:
                         </span>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {allowedTeachers.map((t, idx) => (
-                            <div key={idx} className="p-3 bg-[#efece4]/50 border border-[#c4dcd0] rounded-lg flex items-center justify-between text-xs">
-                              <div>
-                                <span className="font-bold text-[#2c2825] block">{t.name}</span>
-                                <span className="font-mono text-[11px] text-[#3d5a45]">{t.email}</span>
-                                <span className="text-[10px] text-[#6b635b] block">Pass: {t.defaultPass} | Diizinkan: {t.addedAt}</span>
+                          {allowedTeachers.map((t, idx) => {
+                            const isAdmin = t.email.toLowerCase() === 'admin@gmail.com';
+                            const isMenuOpen = activeTeacherMenuIndex === idx;
+
+                            return (
+                              <div key={idx} className="p-3.5 bg-[#f7f5f0] border border-[#c4dcd0] rounded-xl flex items-center justify-between text-xs relative hover:border-[#3d5a45] transition shadow-2xs">
+                                <div className="space-y-0.5">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold text-[#2c2825]">{t.name}</span>
+                                    {isAdmin && (
+                                      <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded border border-emerald-300">
+                                        Akun Utama
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="font-mono text-[11px] text-[#3d5a45] block">{t.email}</span>
+                                  <span className="text-[10px] text-[#6b635b] block">
+                                    Status: {isAdmin ? 'Super Admin (Terproteksi)' : `Pengajar Tim (Diizinkan: ${t.addedAt})`}
+                                  </span>
+                                </div>
+
+                                {/* Three Dots Action Button */}
+                                <div className="relative">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setActiveTeacherMenuIndex(isMenuOpen ? null : idx);
+                                    }}
+                                    className="w-8 h-8 rounded-lg hover:bg-[#e4efe7] flex items-center justify-center text-[#3d5a45] font-bold text-base transition"
+                                    title="Opsi Akun Pengajar"
+                                  >
+                                    ⋮
+                                  </button>
+
+                                  {/* Dropdown Menu Popup */}
+                                  {isMenuOpen && (
+                                    <div
+                                      onMouseLeave={() => setActiveTeacherMenuIndex(null)}
+                                      className="absolute right-0 top-9 w-48 bg-white border border-[#c4dcd0] rounded-xl shadow-lg z-20 py-1.5 text-xs animate-fade-in-up"
+                                    >
+                                      <button
+                                        onClick={() => {
+                                          setSelectedCredentialTeacher(t);
+                                          setShowCredentialModal(true);
+                                          setActiveTeacherMenuIndex(null);
+                                        }}
+                                        className="w-full text-left px-4 py-2 hover:bg-[#f7f5f0] text-[#2c2825] font-semibold flex items-center gap-2 transition"
+                                      >
+                                        <span>👁️</span>
+                                        <span>Lihat Kredensial</span>
+                                      </button>
+
+                                      {!isAdmin ? (
+                                        <button
+                                          onClick={() => {
+                                            setActiveTeacherMenuIndex(null);
+                                            handleRemoveTeacherAccess(t.email);
+                                          }}
+                                          className="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-semibold flex items-center gap-2 border-t border-slate-100 transition"
+                                        >
+                                          <span>🗑️</span>
+                                          <span>Hapus Akses</span>
+                                        </button>
+                                      ) : (
+                                        <div className="px-4 py-1.5 text-[10px] text-slate-400 font-medium border-t border-slate-100 flex items-center gap-1.5">
+                                          <span>🔒</span>
+                                          <span>Akun Utama Dilindungi</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                              {t.email.toLowerCase() !== 'admin@gmail.com' && (
-                                <button
-                                  onClick={() => handleRemoveTeacherAccess(t.email)}
-                                  className="text-rose-600 hover:text-rose-800 font-bold text-[10px] bg-white border border-rose-200 hover:bg-rose-50 px-2 py-1 rounded transition"
-                                >
-                                  Hapus
-                                </button>
-                              )}
-                            </div>
-                          ))}
+                            );
+                          })}
                         </div>
                       </div>
                     </div>
@@ -2085,7 +2146,7 @@ export default function Home() {
                         </div>
 
                         <div className="p-5 space-y-4">
-                          <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-xs">
+                          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
                             <div>
                               <span className="text-[#6b635b] block mb-0.5 font-medium">Jumlah Soal</span>
                               <span className="font-bold text-[#2c2825]">{m.soalCount} Soal</span>
@@ -2095,15 +2156,11 @@ export default function Home() {
                               <span className="font-bold text-[#3d5a45]">PG & Canvas Coretan</span>
                             </div>
                             <div>
-                              <span className="text-[#6b635b] block mb-0.5 font-medium">Zona Interaktif</span>
-                              <span className="font-bold text-[#2c2825]">{m.zonesCount}</span>
-                            </div>
-                            <div>
-                              <span className="text-[#6b635b] block mb-0.5 font-medium">Total Waktu</span>
+                              <span className="text-[#6b635b] block mb-0.5 font-medium">Total Waktu Ujian</span>
                               <span className="font-bold text-[#2c2825]">{m.totalTime}</span>
                             </div>
                             <div>
-                              <span className="text-[#6b635b] block mb-0.5 font-medium">Dibuat</span>
+                              <span className="text-[#6b635b] block mb-0.5 font-medium">Tanggal Dibuat</span>
                               <span className="font-medium text-[#5c554e]">{m.createdAt}</span>
                             </div>
                           </div>
@@ -2613,29 +2670,16 @@ export default function Home() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="font-bold text-[#423c37] block mb-1">Zona Interaktif</label>
-                  <input
-                    type="text"
-                    value={newMaterialPackageZones}
-                    onChange={(e) => setNewMaterialPackageZones(e.target.value)}
-                    placeholder="Contoh: 3 Zona Interaktif"
-                    className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label className="font-bold text-[#423c37] block mb-1">Total Waktu Ujian</label>
-                  <input
-                    type="text"
-                    value={newMaterialPackageTime}
-                    onChange={(e) => setNewMaterialPackageTime(e.target.value)}
-                    placeholder="Contoh: 60:00"
-                    className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
-                    required
-                  />
-                </div>
+              <div>
+                <label className="font-bold text-[#423c37] block mb-1">Total Waktu Ujian (Menit : Detik)</label>
+                <input
+                  type="text"
+                  value={newMaterialPackageTime}
+                  onChange={(e) => setNewMaterialPackageTime(e.target.value)}
+                  placeholder="Contoh: 60:00"
+                  className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                  required
+                />
               </div>
 
               <div className="flex justify-end gap-3 pt-3 border-t border-[#efece4]">
@@ -2791,6 +2835,52 @@ export default function Home() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* CUSTOM MODAL: View Teacher Credentials */}
+      {showCredentialModal && selectedCredentialTeacher && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-md w-full p-6 shadow-xl space-y-5 animate-fade-in-up">
+            <div className="flex justify-between items-center border-b pb-3 border-[#efece4]">
+              <div>
+                <h3 className="font-bold text-[#3d5a45] heading-font text-base">Detail Kredensial Pengajar</h3>
+                <span className="text-xs text-[#6b635b]">Informasi login akun pengajar berizin</span>
+              </div>
+              <button onClick={() => setShowCredentialModal(false)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-lg">✕</button>
+            </div>
+
+            <div className="space-y-3 text-xs text-left">
+              <div className="bg-[#f7f5f0] p-3 rounded-xl border border-[#c4dcd0] space-y-1">
+                <span className="text-[#6b635b] font-medium text-[10px] block uppercase">Nama Lengkap Pengajar</span>
+                <span className="font-bold text-[#2c2825] text-sm block">{selectedCredentialTeacher.name}</span>
+              </div>
+
+              <div className="bg-[#f7f5f0] p-3 rounded-xl border border-[#c4dcd0] space-y-1">
+                <span className="text-[#6b635b] font-medium text-[10px] block uppercase">Alamat Email Login</span>
+                <span className="font-mono font-bold text-[#3d5a45] text-xs block">{selectedCredentialTeacher.email}</span>
+              </div>
+
+              <div className="bg-[#f7f5f0] p-3 rounded-xl border border-[#c4dcd0] space-y-1">
+                <span className="text-[#6b635b] font-medium text-[10px] block uppercase">Kata Sandi (Password)</span>
+                <span className="font-mono font-bold text-emerald-800 text-xs block">{selectedCredentialTeacher.defaultPass || 'admin123'}</span>
+              </div>
+
+              <div className="bg-[#f0f4f1] p-3 rounded-xl border border-[#c7d8cb] text-[11px] text-[#3d5a45]">
+                <span className="font-bold block mb-0.5">Status Akses:</span>
+                {selectedCredentialTeacher.email.toLowerCase() === 'admin@gmail.com' ? 'Super Admin (Akun Utama Terproteksi System)' : `Pengajar Tim Berizin (Diizinkan pada ${selectedCredentialTeacher.addedAt})`}
+              </div>
+            </div>
+
+            <div className="flex justify-end pt-2 border-t border-[#efece4]">
+              <button
+                onClick={() => setShowCredentialModal(false)}
+                className="btn-primary px-5 py-2 text-xs font-bold"
+              >
+                Tutup Kredensial
+              </button>
+            </div>
           </div>
         </div>
       )}
