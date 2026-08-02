@@ -2932,7 +2932,7 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Tab 3: Pengerjaan Soal Siswa */}
+              {/* Tab 3: Pengerjaan Soal Siswa - MEMORA Production Clean UI v1.2 */}
               {activeTab === 'pengerjaan_soal' && (
                 <div className="space-y-6">
                   {studentStep === 'prep' && (
