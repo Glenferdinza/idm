@@ -2,6 +2,69 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 
+const DEMO_QUESTIONS = [
+  {
+    id: 'demo-q-1',
+    number: 1,
+    topic: 'Definisi & Penggolongan (Quick Demo 1/5)',
+    questionText: 'Berdasarkan regulasi dan klasifikasi medis, narkotika Golongan I difungsikan khusus untuk kepentingan ilmu pengetahuan dan ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Sangat berpotensi tinggi menimbulkan ketergantungan dan tidak digunakan dalam terapi' },
+      { id: 'B', text: 'Berpotensi ringan menimbulkan ketergantungan serta banyak digunakan dalam pengobatan' },
+      { id: 'C', text: 'Hanya digunakan untuk suplemen kesehatan dan vitamin saraf' },
+      { id: 'D', text: 'Dapat dibeli secara bebas tanpa pengawasan resep dokter' }
+    ],
+    correctAnswer: 'A'
+  },
+  {
+    id: 'demo-q-2',
+    number: 2,
+    topic: 'Analisis Aljabar & Canvas Coretan (Quick Demo 2/5)',
+    questionText: 'Tentukan nilai x dari persamaan aljabar 3x + 12 = 45. Gunakan area canvas telemetry di bawah untuk mencoret dan ketikkan jawaban singkat di bawah.',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '11'
+  },
+  {
+    id: 'demo-q-3',
+    number: 3,
+    topic: 'Efek Samping Kognitif (Quick Demo 3/5)',
+    questionText: 'Manakah dari berikut ini yang merupakan dampak penurunan kecepatan pemrosesan informasi akibat penggunaan zat adiktif?',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Penurunan koordinasi motorik dan meningkatnya hesitation index' },
+      { id: 'B', text: 'Peningkatan daya ingat jangka pendek secara drastis' },
+      { id: 'C', text: 'Stabilitas pola pen stroke tanpa jeda berpikir' },
+      { id: 'D', text: 'Respon refleks motorik yang lebih cepat' }
+    ],
+    correctAnswer: 'A'
+  },
+  {
+    id: 'demo-q-4',
+    number: 4,
+    topic: 'Persamaan Linear Satu Variabel (Quick Demo 4/5)',
+    questionText: 'Selesaikan nilai y dari persamaan 5y - 15 = 35. Tuliskan jawaban singkat pada kolom di bawah.',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '10'
+  },
+  {
+    id: 'demo-q-5',
+    number: 5,
+    topic: 'Penyalahgunaan dan Penanganan (Quick Demo 5/5)',
+    questionText: 'Upaya rehabilitasi medis bagi pengguna narkotika bertujuan untuk pemulihan fisik dan ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Psikis serta fungsi sosial dalam masyarakat' },
+      { id: 'B', text: 'Pemberian hukuman administratif' },
+      { id: 'C', text: 'Penghapusan catatan akademis' },
+      { id: 'D', text: 'Pengisolasian seumur hidup' }
+    ],
+    correctAnswer: 'A'
+  }
+];
+
 const DEFAULT_MATERIALS = [
   {
     id: 'mat-1',
@@ -533,13 +596,14 @@ export default function Home() {
   const [newTeacherName, setNewTeacherName] = useState('');
   const [newTeacherPass, setNewTeacherPass] = useState('guru123');
 
+  const [isDemoMode, setIsDemoMode] = useState(false);
   const [unansweredList, setUnansweredList] = useState([]);
   const [lastSubmittedResult, setLastSubmittedResult] = useState(null);
 
   const [examTimerSeconds, setExamTimerSeconds] = useState(3600);
 
   const [isDrawing, setIsDrawing] = useState(false);
-  const [penColor, setPenColor] = useState('#2c2825');
+  const [penColor, setPenColor] = useState('#1f2b23');
   const [penWidth, setPenWidth] = useState(3);
   const [hesitationIndex, setHesitationIndex] = useState(14);
   const [strokeSpeed, setStrokeSpeed] = useState(152);
@@ -593,7 +657,9 @@ export default function Home() {
     if (savedViewState) setViewState(savedViewState);
     if (savedUser) {
       try {
-        setCurrentUser(JSON.parse(savedUser));
+        const u = JSON.parse(savedUser);
+        setCurrentUser(u);
+        if (u.isDemo) setIsDemoMode(true);
       } catch (e) {}
     }
     if (savedTab) setActiveTab(savedTab);
@@ -627,7 +693,8 @@ export default function Home() {
   }, [activeTab]);
 
   const isSidebarExpanded = sidebarLocked || sidebarHovered;
-  const questionsList = materials[0]?.questions || [];
+  const isDemo = Boolean(currentUser?.isDemo || isDemoMode);
+  const questionsList = isDemo ? DEMO_QUESTIONS : (materials[0]?.questions || []);
   const isSiswaRole = currentUser?.role === 'Siswa';
 
   // Live Timer Effect
@@ -914,10 +981,12 @@ export default function Home() {
 
   const demoStudentLogin = () => {
     const user = {
-      name: 'Siswa Bina Demo',
+      name: 'Siswa Bina Demo (Quick Access)',
       role: 'Siswa',
-      email: 'siswa.demo@gmail.com'
+      email: 'siswa.demo@gmail.com',
+      isDemo: true
     };
+    setIsDemoMode(true);
     setCurrentUser(user);
     setActiveTab('pengerjaan_soal');
     setStudentStep('prep');
@@ -1153,15 +1222,15 @@ export default function Home() {
   ).length;
 
   return (
-    <div className="min-h-screen bg-[#f7f5f0] text-[#2c2825] flex flex-col font-sans selection:bg-[#3d5a45] selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#f2f7f4] text-[#2c2825] flex flex-col font-sans selection:bg-[#3d5a45] selection:text-white overflow-x-hidden">
       {viewState === 'landing' && (
-        <div className="min-h-screen flex flex-col bg-[#f7f5f0] relative">
+        <div className="min-h-screen flex flex-col bg-[#f2f7f4] relative">
           {/* Smooth Fixed Floating Navbar with Animated Scroll State */}
           <header
             className={`fixed top-0 left-0 right-0 z-50 px-6 lg:px-12 transition-all duration-300 ease-in-out flex items-center justify-between border-b ${
               isScrolled
-                ? 'h-18 bg-white/95 backdrop-blur-md border-[#ded8cb] shadow-md'
-                : 'h-22 bg-white border-[#ded8cb] shadow-xs'
+                ? 'h-18 bg-white/95 backdrop-blur-md border-[#c4dcd0] shadow-md'
+                : 'h-22 bg-white border-[#c4dcd0] shadow-xs'
             }`}
           >
             <div className="flex items-center gap-6 sm:gap-10">
@@ -1182,7 +1251,7 @@ export default function Home() {
               </div>
 
               {/* Institution SVG Logos in Navbar (Clean Transparent Placement) */}
-              <div className="flex items-center gap-4 sm:gap-6 pl-6 sm:pl-8 border-l border-[#ded8cb]">
+              <div className="flex items-center gap-4 sm:gap-6 pl-6 sm:pl-8 border-l border-[#c4dcd0]">
                 <img src="/assets/logo_kemendikbud.svg" alt="Kemendikbud" className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300" />
                 <img src="/assets/logo_diktisaintek.svg" alt="Diktisaintek" className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300" />
                 <img src="/assets/logo_unm.svg" alt="UNM" className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300" />
@@ -1212,7 +1281,7 @@ export default function Home() {
           {/* Main Landing Area with Clean Meaningful Feature Highlights */}
           <main className="flex-1 flex flex-col pt-22 sm:pt-24">
             {/* Hero Section */}
-            <section className="relative min-h-[calc(100vh-96px)] flex flex-col justify-between py-6 lg:py-10 bg-[#f7f5f0]">
+            <section className="relative min-h-[calc(100vh-96px)] flex flex-col justify-between py-6 lg:py-10 bg-[#f2f7f4]">
               <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center my-auto">
                 <div className="lg:col-span-7 space-y-5 text-left animate-fade-in-up">
                   <span className="inline-block px-3.5 py-1 bg-[#f0f4f1] text-[#3d5a45] text-[11px] sm:text-xs font-bold rounded-md border border-[#c7d8cb] uppercase tracking-wider">
@@ -1246,7 +1315,7 @@ export default function Home() {
                   </div>
 
                   {/* Meaningful Core Feature Highlights Bar */}
-                  <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-5 border-t border-[#ded8cb]">
+                  <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-5 border-t border-[#c4dcd0]">
                     <div>
                       <div className="text-sm sm:text-base font-extrabold heading-font text-[#3d5a45]">Behavioral AI</div>
                       <div className="text-[10px] sm:text-xs text-[#6b635b] font-medium">Telemetry Hesitation Index</div>
@@ -1278,7 +1347,7 @@ export default function Home() {
                   onClick={() => {
                     document.getElementById('mitra-section')?.scrollIntoView({ behavior: 'smooth' });
                   }}
-                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#ded8cb] shadow-xs text-[11px] font-bold text-[#3d5a45] hover:bg-[#3d5a45] hover:text-white transition-all duration-300 cursor-pointer group"
+                  className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#c4dcd0] shadow-xs text-[11px] font-bold text-[#3d5a45] hover:bg-[#3d5a45] hover:text-white transition-all duration-300 cursor-pointer group"
                 >
                   <span>Jelajahi Mitra & Penyelenggara</span>
                   <svg className="w-3.5 h-3.5 transform group-hover:translate-y-0.5 transition-transform animate-bounce" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
@@ -1289,9 +1358,9 @@ export default function Home() {
             </section>
 
             {/* Institution SVG Logos Section - Lowered with Decorative Header Separator */}
-            <section id="mitra-section" className="py-16 sm:py-20 bg-gradient-to-b from-[#f7f5f0] via-[#efece4]/50 to-[#f7f5f0] border-t border-[#ded8cb]">
+            <section id="mitra-section" className="py-16 sm:py-20 bg-gradient-to-b from-[#f7f5f0] via-[#efece4]/50 to-[#f7f5f0] border-t border-[#c4dcd0]">
               <div className="max-w-5xl mx-auto px-6">
-                <div className="bg-white/95 backdrop-blur-md border border-[#ded8cb] rounded-2xl p-8 sm:p-10 shadow-xs text-center space-y-6 animate-fade-in-up">
+                <div className="bg-white/95 backdrop-blur-md border border-[#c4dcd0] rounded-2xl p-8 sm:p-10 shadow-xs text-center space-y-6 animate-fade-in-up">
                   <div className="space-y-1">
                     <span className="text-[10px] font-extrabold text-[#3d5a45] tracking-widest uppercase block">
                       Kemitraan Strategis & Kolaborasi Pendidikan
@@ -1313,7 +1382,7 @@ export default function Home() {
           </main>
 
           {/* Footer */}
-          <footer className="bg-[#1f1c19] text-[#d1caad] py-12 px-6 lg:px-12 border-t border-[#2c2825]">
+          <footer className="bg-[#1b3323] text-[#d1caad] py-12 px-6 lg:px-12 border-t border-[#2c2825]">
             <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-xs">
               <div className="space-y-3">
                 <span className="font-bold text-white text-base heading-font block">MEMORA</span>
@@ -1354,7 +1423,7 @@ export default function Home() {
         <div className="min-h-screen bg-gradient-to-br from-[#efece4] via-[#f7f5f0] to-[#f0f4f1] flex flex-col justify-center items-center p-6 relative">
           <button
             onClick={() => setViewState('landing')}
-            className="absolute top-6 left-6 text-xs font-semibold text-[#5c554e] hover:text-[#3d5a45] flex items-center gap-2 bg-white/80 backdrop-blur-md border border-[#ded8cb] px-4 py-2 rounded-lg shadow-xs transition"
+            className="absolute top-6 left-6 text-xs font-semibold text-[#5c554e] hover:text-[#3d5a45] flex items-center gap-2 bg-white/80 backdrop-blur-md border border-[#c4dcd0] px-4 py-2 rounded-lg shadow-xs transition"
           >
             ← Kembali ke Halaman Utama
           </button>
@@ -1363,7 +1432,7 @@ export default function Home() {
           <div className="glass-panel rounded-2xl p-8 max-w-md w-full space-y-6">
             <div className="text-center space-y-3">
               {/* Institution SVG Logos */}
-              <div className="flex justify-center items-center gap-3 mb-1 p-2.5 bg-white/70 backdrop-blur-xs rounded-xl border border-[#ded8cb]">
+              <div className="flex justify-center items-center gap-3 mb-1 p-2.5 bg-white/70 backdrop-blur-xs rounded-xl border border-[#c4dcd0]">
                 <img src="/assets/logo_kemendikbud.svg" alt="Kemendikbud" className="header-logo-img" />
                 <img src="/assets/logo_diktisaintek.svg" alt="Diktisaintek" className="header-logo-img" />
                 <img src="/assets/logo_unm.svg" alt="UNM" className="header-logo-img" />
@@ -1396,7 +1465,7 @@ export default function Home() {
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="example@gmail.com"
-                    className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
+                    className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
                     required
                   />
                 </div>
@@ -1420,7 +1489,7 @@ export default function Home() {
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="Masukkan kata sandi"
-                    className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
+                    className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
                     required
                   />
                 </div>
@@ -1458,7 +1527,7 @@ export default function Home() {
                     value={regName}
                     onChange={(e) => setRegName(e.target.value)}
                     placeholder="Contoh: Ahmad Fauzi / Rizky Ramadhan"
-                    className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
+                    className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
                     required
                   />
                 </div>
@@ -1470,7 +1539,7 @@ export default function Home() {
                     value={regEmail}
                     onChange={(e) => setRegEmail(e.target.value)}
                     placeholder="example@gmail.com"
-                    className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
+                    className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
                     required
                   />
                 </div>
@@ -1482,7 +1551,7 @@ export default function Home() {
                     value={regPassword}
                     onChange={(e) => setRegPassword(e.target.value)}
                     placeholder="Buat kata sandi akun Anda"
-                    className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
+                    className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
                     required
                   />
                 </div>
@@ -1494,7 +1563,7 @@ export default function Home() {
                     value={regConfirmPassword}
                     onChange={(e) => setRegConfirmPassword(e.target.value)}
                     placeholder="Ulangi kata sandi Anda"
-                    className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
+                    className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
                     required
                   />
                 </div>
@@ -1534,7 +1603,7 @@ export default function Home() {
                         value={resetEmail}
                         onChange={(e) => setResetEmail(e.target.value)}
                         placeholder="example@gmail.com"
-                        className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
+                        className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
                         required
                       />
                     </div>
@@ -1559,7 +1628,7 @@ export default function Home() {
                         value={resetOtp}
                         onChange={(e) => setResetOtp(e.target.value)}
                         placeholder="Masukkan 6 digit kode OTP"
-                        className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] font-mono tracking-widest text-center outline-none focus:border-[#3d5a45] transition"
+                        className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] font-mono tracking-widest text-center outline-none focus:border-[#3d5a45] transition"
                         required
                       />
                     </div>
@@ -1571,7 +1640,7 @@ export default function Home() {
                         value={newResetPassword}
                         onChange={(e) => setNewResetPassword(e.target.value)}
                         placeholder="Minimal 6 karakter"
-                        className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
+                        className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
                         required
                       />
                     </div>
@@ -1583,7 +1652,7 @@ export default function Home() {
                         value={confirmResetPassword}
                         onChange={(e) => setConfirmResetPassword(e.target.value)}
                         placeholder="Ulangi kata sandi baru"
-                        className="w-full bg-white border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
+                        className="w-full bg-white border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] transition"
                         required
                       />
                     </div>
@@ -1617,15 +1686,15 @@ export default function Home() {
 
       {/* Main Dashboard View (Full Height Sidebar with Integrated Toggle Arrow & Top Header) */}
       {viewState === 'dashboard' && (
-        <div className="flex h-screen overflow-hidden bg-[#f7f5f0] w-full">
+        <div className="flex h-screen overflow-hidden bg-[#f2f7f4] w-full">
           {/* Full Height Sidebar Starting at top-0 left-0 */}
           <aside
             onMouseEnter={() => setSidebarHovered(true)}
             onMouseLeave={() => setSidebarHovered(false)}
-            className={`sidebar-nav-container ${isSidebarExpanded ? 'w-60' : 'w-16'} h-full flex-shrink-0 bg-white border-r border-[#ded8cb] z-50 flex flex-col transition-all duration-300 ease-in-out`}
+            className={`sidebar-nav-container ${isSidebarExpanded ? 'w-60' : 'w-16'} h-full flex-shrink-0 bg-white border-r border-[#c4dcd0] z-50 flex flex-col transition-all duration-300 ease-in-out`}
           >
             {/* Integrated Toggle Header inside Sidebar Top */}
-            <div className="h-22 px-3 border-b border-[#ded8cb] flex items-center justify-between flex-shrink-0">
+            <div className="h-22 px-3 border-b border-[#c4dcd0] flex items-center justify-between flex-shrink-0">
               {isSidebarExpanded ? (
                 <>
                   <span className="text-[11px] font-extrabold text-[#3d5a45] uppercase tracking-wider pl-2">
@@ -1723,7 +1792,7 @@ export default function Home() {
           {/* Right Area (Header Navbar + Scrollable Workspace) */}
           <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
             {/* Top Dashboard Navigation Header */}
-            <header className="sticky top-0 z-40 px-6 lg:px-10 h-22 bg-white border-b border-[#ded8cb] flex items-center justify-between flex-shrink-0 shadow-xs transition-all duration-300 ease-in-out">
+            <header className="sticky top-0 z-40 px-6 lg:px-10 h-22 bg-white border-b border-[#c4dcd0] flex items-center justify-between flex-shrink-0 shadow-xs transition-all duration-300 ease-in-out">
               <div className="flex items-center gap-6 sm:gap-8">
                 {/* MEMORA Brandmark */}
                 <div className="flex items-center gap-3 cursor-pointer" onClick={() => setShowLogoutModal(true)}>
@@ -1743,7 +1812,7 @@ export default function Home() {
                 </div>
 
                 {/* Institution SVG Logos in Navbar (Transparent Placement) */}
-                <div className="flex items-center gap-4 sm:gap-6 pl-4 sm:pl-6 border-l border-[#ded8cb]">
+                <div className="flex items-center gap-4 sm:gap-6 pl-4 sm:pl-6 border-l border-[#c4dcd0]">
                   <img src="/assets/logo_kemendikbud.svg" alt="Kemendikbud" className="h-8 sm:h-9 w-auto object-contain" />
                   <img src="/assets/logo_diktisaintek.svg" alt="Diktisaintek" className="h-8 sm:h-9 w-auto object-contain" />
                   <img src="/assets/logo_unm.svg" alt="UNM" className="h-8 sm:h-9 w-auto object-contain" />
@@ -1759,7 +1828,7 @@ export default function Home() {
                   Halaman Utama
                 </button>
 
-                <div className="flex items-center gap-3 border-l border-[#ded8cb] pl-4">
+                <div className="flex items-center gap-3 border-l border-[#c4dcd0] pl-4">
                   <div className="w-9 h-9 rounded-full bg-[#3d5a45] text-white font-bold text-xs flex items-center justify-center shadow-xs">
                     {currentUser?.name ? currentUser.name.charAt(0) : 'P'}
                   </div>
@@ -1809,8 +1878,8 @@ export default function Home() {
                   </div>
 
                   {/* ADMIN PANEL CARD: Teacher Access Management (Kelola Akses Pengajar) */}
-                  <div className="bg-white border border-[#ded8cb] rounded-xl shadow-xs overflow-hidden">
-                    <div className="bg-[#1f1c19] text-white px-5 py-3 font-bold text-xs uppercase tracking-wider flex justify-between items-center">
+                  <div className="bg-white border border-[#c4dcd0] rounded-xl shadow-xs overflow-hidden">
+                    <div className="bg-[#1b3323] text-white px-5 py-3 font-bold text-xs uppercase tracking-wider flex justify-between items-center">
                       <div className="flex items-center gap-2">
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                           <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -1831,7 +1900,7 @@ export default function Home() {
                       </p>
 
                       {/* Add New Teacher Form */}
-                      <form onSubmit={handleAddTeacherAccess} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end bg-[#f7f5f0] p-4 rounded-xl border border-[#ded8cb]">
+                      <form onSubmit={handleAddTeacherAccess} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end bg-[#f2f7f4] p-4 rounded-xl border border-[#c4dcd0]">
                         <div>
                           <label className="text-[11px] font-bold text-[#423c37] block mb-1">Nama Lengkap Pengajar</label>
                           <input
@@ -1839,7 +1908,7 @@ export default function Home() {
                             value={newTeacherName}
                             onChange={(e) => setNewTeacherName(e.target.value)}
                             placeholder="Contoh: Dra. Siti Rahma"
-                            className="w-full bg-white border border-[#ded8cb] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
+                            className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
                             required
                           />
                         </div>
@@ -1851,7 +1920,7 @@ export default function Home() {
                             value={newTeacherEmail}
                             onChange={(e) => setNewTeacherEmail(e.target.value)}
                             placeholder="example@gmail.com"
-                            className="w-full bg-white border border-[#ded8cb] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
+                            className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
                             required
                           />
                         </div>
@@ -1863,7 +1932,7 @@ export default function Home() {
                             value={newTeacherPass}
                             onChange={(e) => setNewTeacherPass(e.target.value)}
                             placeholder="guru123"
-                            className="w-full bg-white border border-[#ded8cb] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
+                            className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
                             required
                           />
                         </div>
@@ -1885,7 +1954,7 @@ export default function Home() {
                         </span>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                           {allowedTeachers.map((t, idx) => (
-                            <div key={idx} className="p-3 bg-[#efece4]/50 border border-[#ded8cb] rounded-lg flex items-center justify-between text-xs">
+                            <div key={idx} className="p-3 bg-[#efece4]/50 border border-[#c4dcd0] rounded-lg flex items-center justify-between text-xs">
                               <div>
                                 <span className="font-bold text-[#2c2825] block">{t.name}</span>
                                 <span className="font-mono text-[11px] text-[#3d5a45]">{t.email}</span>
@@ -1906,7 +1975,7 @@ export default function Home() {
                     </div>
                   </div>
 
-                  <div className="bg-white border border-[#ded8cb] rounded-xl shadow-xs overflow-hidden">
+                  <div className="bg-white border border-[#c4dcd0] rounded-xl shadow-xs overflow-hidden">
                     <div className="bg-[#3d5a45] text-white px-5 py-3 font-bold text-xs uppercase tracking-wider">
                       Pengiriman Cepat Materi Soal ke Siswa
                     </div>
@@ -1918,7 +1987,7 @@ export default function Home() {
                         <select
                           value={selectedMaterial}
                           onChange={(e) => setSelectedMaterial(e.target.value)}
-                          className="w-full bg-white border border-[#ded8cb] rounded-lg p-2.5 text-xs text-[#2c2825]"
+                          className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2.5 text-xs text-[#2c2825]"
                         >
                           <option value="">-- Pilih Materi Soal --</option>
                           {materials.map((m) => (
@@ -1934,7 +2003,7 @@ export default function Home() {
                         <select
                           value={targetBoard}
                           onChange={(e) => setTargetBoard(e.target.value)}
-                          className="w-full bg-white border border-[#ded8cb] rounded-lg p-2.5 text-xs text-[#2c2825]"
+                          className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2.5 text-xs text-[#2c2825]"
                         >
                           <option value="Semua Papan">Kirim ke: Semua Papan</option>
                           <option value="Zona 1">Kirim ke: Zona 1</option>
@@ -1955,8 +2024,8 @@ export default function Home() {
 
                   <div className="space-y-4">
                     {materials.map((m) => (
-                      <div key={m.id} className="bg-white border border-[#ded8cb] rounded-xl shadow-xs overflow-hidden">
-                        <div className="bg-[#1f1c19] text-white p-4 flex justify-between items-center">
+                      <div key={m.id} className="bg-white border border-[#c4dcd0] rounded-xl shadow-xs overflow-hidden">
+                        <div className="bg-[#1b3323] text-white p-4 flex justify-between items-center">
                           <span className="font-bold text-xs heading-font">{m.title}</span>
                           <span className="text-xs text-[#d1caad]">{m.soalCount} Soal Tersedia</span>
                         </div>
@@ -1992,7 +2061,7 @@ export default function Home() {
                             </span>
                             <div className="space-y-2">
                               {m.questions.map((q, qIdx) => (
-                                <div key={q.id || qIdx} className="bg-[#f7f5f0] p-3 rounded-lg border border-[#ded8cb] text-xs flex items-center justify-between">
+                                <div key={q.id || qIdx} className="bg-[#f2f7f4] p-3 rounded-lg border border-[#c4dcd0] text-xs flex items-center justify-between">
                                   <div className="flex items-center gap-3">
                                     <span className="w-6 h-6 rounded bg-[#3d5a45] text-white font-bold text-[10px] flex items-center justify-center">
                                       {qIdx + 1}
@@ -2043,13 +2112,13 @@ export default function Home() {
                   </div>
 
                   {/* Unified Flat Grid of All Students (No Kelompok Headers / No Separate Group Containers) */}
-                  <div className="bg-white border border-[#ded8cb] rounded-xl p-6 shadow-xs space-y-4">
+                  <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 shadow-xs space-y-4">
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
                       {studentsList.map((stu) => (
                         <div
                           key={stu.id}
                           onClick={() => setSelectedStudentDetail(stu)}
-                          className="p-4 border border-[#ded8cb] rounded-xl bg-[#efece4]/50 hover:bg-white hover:border-[#3d5a45] cursor-pointer transition shadow-xs space-y-3"
+                          className="p-4 border border-[#c4dcd0] rounded-xl bg-[#efece4]/50 hover:bg-white hover:border-[#3d5a45] cursor-pointer transition shadow-xs space-y-3"
                         >
                           <div className="flex justify-between items-center">
                             <span className="font-bold text-sm text-[#2c2825]">{stu.name}</span>
@@ -2059,11 +2128,11 @@ export default function Home() {
                           </div>
 
                           <div className="grid grid-cols-2 gap-2 text-xs">
-                            <div className="bg-white p-2 rounded border border-[#ded8cb]">
+                            <div className="bg-white p-2 rounded border border-[#c4dcd0]">
                               <span className="text-[#6b635b] block text-[10px]">Hesitation</span>
                               <span className="font-mono font-bold text-[#2c2825]">{stu.hesitation}%</span>
                             </div>
-                            <div className="bg-white p-2 rounded border border-[#ded8cb]">
+                            <div className="bg-white p-2 rounded border border-[#c4dcd0]">
                               <span className="text-[#6b635b] block text-[10px]">Kecepatan</span>
                               <span className="font-mono font-bold text-[#2c2825]">{stu.speed} px/s</span>
                             </div>
@@ -2071,24 +2140,31 @@ export default function Home() {
 
                           {/* Real-time ECG Telemetry Waveform */}
                           <div className="space-y-1">
-                            <div className="flex justify-between items-center text-[10px] text-[#6b635b]">
-                              <span className="font-medium">Monitoring Sinyal Canvas:</span>
-                              <span className="font-mono font-bold text-[#3d5a45]">ECG Pulse</span>
+                            <div className="flex justify-between items-center text-[10px] text-[#4e6355]">
+                              <span className="font-medium flex items-center gap-1.5">
+                                <span className="relative flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                                </span>
+                                Monitoring Telemetri Canvas:
+                              </span>
+                              <span className="font-mono font-bold text-[#3d5a45] uppercase">Live ECG</span>
                             </div>
-                            <div className="w-full h-8 bg-white rounded-lg p-1.5 border border-[#ded8cb] flex items-center shadow-xs overflow-hidden">
+                            <div className="w-full h-8 bg-white rounded-lg p-1.5 border border-[#c4dcd0] flex items-center shadow-xs overflow-hidden">
                               <svg className="w-full h-full" viewBox="0 0 100 28" fill="none">
                                 <path
                                   d={stu.sparkline}
                                   stroke={stu.strokeColor}
-                                  strokeWidth="2"
+                                  strokeWidth="2.5"
                                   strokeLinecap="round"
                                   strokeLinejoin="round"
+                                  className="animate-ecg-pulse"
                                 />
                               </svg>
                             </div>
                           </div>
 
-                          <div className="text-[11px] text-[#3d5a45] font-bold text-right pt-2 border-t border-[#ded8cb]">
+                          <div className="text-[11px] text-[#3d5a45] font-bold text-right pt-2 border-t border-[#c4dcd0]">
                             Lihat Detail Analisis →
                           </div>
                         </div>
@@ -2102,7 +2178,7 @@ export default function Home() {
               {activeTab === 'pengerjaan_soal' && (
                 <div className="space-y-6">
                   {studentStep === 'prep' ? (
-                    <div className="bg-white border border-[#ded8cb] rounded-xl p-8 shadow-xs space-y-6 max-w-2xl">
+                    <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 shadow-xs space-y-6 max-w-2xl">
                       <div className="border-b pb-4 border-[#efece4]">
                         <span className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider block mb-1">Portal Ujian Siswa</span>
                         <h2 className="text-xl font-bold heading-font text-[#2c2825]">Preparasi dan Petunjuk Ujian</h2>
@@ -2118,22 +2194,22 @@ export default function Home() {
                           value={currentUser?.name || ''}
                           onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value, role: 'Siswa' })}
                           placeholder="Masukkan nama lengkap Anda (Contoh: Ahmad Fauzi)"
-                          className="w-full bg-[#f7f5f0] border border-[#ded8cb] rounded-lg p-3 text-xs font-semibold text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
+                          className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-3 text-xs font-semibold text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
                         />
                       </div>
 
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                        <div className="bg-[#efece4]/60 p-4 rounded-lg border border-[#ded8cb] space-y-1">
+                        <div className="bg-[#efece4]/60 p-4 rounded-lg border border-[#c4dcd0] space-y-1">
                           <span className="text-[#6b635b] font-semibold uppercase">Materi Ujian</span>
                           <span className="font-bold text-[#2c2825] block">{materials[0]?.title}</span>
                         </div>
-                        <div className="bg-[#efece4]/60 p-4 rounded-lg border border-[#ded8cb] space-y-1">
+                        <div className="bg-[#efece4]/60 p-4 rounded-lg border border-[#c4dcd0] space-y-1">
                           <span className="text-[#6b635b] font-semibold uppercase">Jumlah Soal Aktif</span>
                           <span className="font-bold text-[#2c2825] block">{questionsList.length} Soal</span>
                         </div>
                       </div>
 
-                      <div className="bg-[#efece4]/60 p-4 rounded-lg border border-[#ded8cb] space-y-1 text-xs text-[#5c554e]">
+                      <div className="bg-[#efece4]/60 p-4 rounded-lg border border-[#c4dcd0] space-y-1 text-xs text-[#5c554e]">
                         <span className="font-bold text-[#2c2825] block uppercase">Petunjuk Pengerjaan:</span>
                         <p>1. Pilihan Ganda: Pilih salah satu jawaban yang sesuai.</p>
                         <p>2. Canvas Coretan & Jawaban Singkat: Gunakan canvas untuk menguraikan rumus dan ketikkan jawaban singkat di kolom yang tersedia.</p>
@@ -2153,7 +2229,7 @@ export default function Home() {
                   ) : studentStep === 'exam' ? (
                     <div className="space-y-4">
                       {/* Top Exam Header Bar (Timer & Progress Bar) */}
-                      <div className="bg-white border border-[#ded8cb] rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xs">
+                      <div className="bg-white border border-[#c4dcd0] rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xs">
                         <div className="flex items-center gap-3">
                           <span className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider">
                             Pengerjaan Ujian Aktif: {currentUser?.name || 'Siswa'}
@@ -2165,7 +2241,7 @@ export default function Home() {
                         </div>
 
                         <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-2 bg-[#efece4] px-3 py-1.5 rounded-lg border border-[#ded8cb]">
+                          <div className="flex items-center gap-2 bg-[#efece4] px-3 py-1.5 rounded-lg border border-[#c4dcd0]">
                             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                               <circle cx="12" cy="12" r="10" />
                               <polyline points="12 6 12 12 16 14" />
@@ -2178,7 +2254,7 @@ export default function Home() {
                       </div>
 
                       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div className="lg:col-span-2 bg-white border border-[#ded8cb] rounded-xl p-6 space-y-6 shadow-xs">
+                        <div className="lg:col-span-2 bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-6 shadow-xs">
                           <div className="flex items-center justify-between border-b pb-4 border-[#efece4]">
                             <div className="flex items-center gap-3">
                               <div className="w-7 h-7 rounded-md bg-[#3d5a45] text-white font-bold text-xs flex items-center justify-center">
@@ -2189,7 +2265,7 @@ export default function Home() {
                                 <span className="text-xs font-bold text-[#2c2825]">{activeQuestion?.topic}</span>
                               </div>
                             </div>
-                            <span className="text-[11px] bg-[#efece4] text-[#5c554e] px-3 py-1 rounded font-semibold border border-[#ded8cb]">
+                            <span className="text-[11px] bg-[#efece4] text-[#5c554e] px-3 py-1 rounded font-semibold border border-[#c4dcd0]">
                               Tipe: {activeQuestion?.type === 'pg' ? 'Pilihan Ganda' : 'Canvas Coretan'}
                             </span>
                           </div>
@@ -2207,7 +2283,7 @@ export default function Home() {
                                   className={`p-3.5 border rounded-lg flex items-center gap-4 cursor-pointer transition ${
                                     selectedAnswers[currentQIdx] === opt.id
                                       ? 'border-[#3d5a45] bg-[#f0f4f1] font-bold'
-                                      : 'border-[#ded8cb] hover:border-slate-300'
+                                      : 'border-[#c4dcd0] hover:border-slate-300'
                                   }`}
                                 >
                                   <div className="w-7 h-7 rounded bg-[#efece4] text-[#2c2825] text-xs font-bold flex items-center justify-center">
@@ -2219,14 +2295,14 @@ export default function Home() {
                             </div>
                           ) : (
                             <div className="space-y-4">
-                              <div className="flex items-center justify-between bg-[#efece4]/60 p-2.5 rounded border border-[#ded8cb] text-xs">
+                              <div className="flex items-center justify-between bg-[#efece4]/60 p-2.5 rounded border border-[#c4dcd0] text-xs">
                                 <div className="flex items-center gap-3">
                                   <span className="font-semibold text-[#423c37]">Warna Pen:</span>
                                   <input
                                     type="color"
                                     value={penColor}
                                     onChange={(e) => setPenColor(e.target.value)}
-                                    className="w-6 h-6 rounded cursor-pointer border border-[#ded8cb]"
+                                    className="w-6 h-6 rounded cursor-pointer border border-[#c4dcd0]"
                                   />
                                 </div>
                                 <div className="flex items-center gap-3">
@@ -2242,7 +2318,7 @@ export default function Home() {
                                 </div>
                                 <button
                                   onClick={clearCanvas}
-                                  className="text-xs bg-white text-[#2c2825] border border-[#ded8cb] px-3 py-1 rounded font-medium hover:bg-[#efece4] transition"
+                                  className="text-xs bg-white text-[#2c2825] border border-[#c4dcd0] px-3 py-1 rounded font-medium hover:bg-[#efece4] transition"
                                 >
                                   Hapus Canvas
                                 </button>
@@ -2266,7 +2342,7 @@ export default function Home() {
                               />
 
                               {/* Short Answer Input Box */}
-                              <div className="space-y-2 pt-3 border-t border-[#ded8cb]">
+                              <div className="space-y-2 pt-3 border-t border-[#c4dcd0]">
                                 <label className="text-xs font-bold text-[#2c2825] block">
                                   Jawaban Singkat:
                                 </label>
@@ -2275,7 +2351,7 @@ export default function Home() {
                                   value={shortAnswers[currentQIdx] || ''}
                                   onChange={(e) => setShortAnswers({ ...shortAnswers, [currentQIdx]: e.target.value })}
                                   placeholder="Ketikkan jawaban singkat di sini..."
-                                  className="w-full bg-[#f7f5f0] border border-[#ded8cb] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
+                                  className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
                                 />
                               </div>
                             </div>
@@ -2297,7 +2373,7 @@ export default function Home() {
                               className={`px-4 py-2 rounded text-xs font-bold transition flex items-center gap-2 border ${
                                 doubtfulQuestions[currentQIdx]
                                   ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-xs'
-                                  : 'bg-[#efece4] text-[#5c554e] border-[#ded8cb] hover:bg-[#ded8cb]'
+                                  : 'bg-[#efece4] text-[#5c554e] border-[#c4dcd0] hover:bg-[#ded8cb]'
                               }`}
                             >
                               <span className={`w-2.5 h-2.5 rounded-full ${doubtfulQuestions[currentQIdx] ? 'bg-amber-500' : 'bg-slate-400'}`}></span>
@@ -2330,9 +2406,16 @@ export default function Home() {
                         <div className="space-y-6">
                           {/* Live Telemetry Card (Hidden for Siswa, running silently in background) */}
                           {!isSiswaRole && (
-                            <div className="bg-white border border-[#ded8cb] rounded-xl p-6 space-y-4 shadow-xs">
-                              <h4 className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider border-b pb-3 border-[#efece4]">
-                                Live Telemetry Pengerjaan (Preview Pengajar)
+                            <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-4 shadow-xs">
+                              <h4 className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider border-b pb-3 border-[#efece4] flex items-center justify-between">
+                                <span>Live Telemetry Pengerjaan</span>
+                                <span className="flex items-center gap-1.5 text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                  <span className="relative flex h-2 w-2">
+                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                                  </span>
+                                  LIVE MOTORIC
+                                </span>
                               </h4>
 
                               <div className="space-y-3 text-xs">
@@ -2341,21 +2424,40 @@ export default function Home() {
                                   <span className="font-mono font-bold text-[#2c2825]">{strokeSpeed} px/s</span>
                                 </div>
 
-                                <div className="flex justify-between items-center pt-2">
+                                <div className="flex justify-between items-center pt-2 border-t border-slate-100">
                                   <span className="text-[#6b635b] font-medium">Hesitation Index:</span>
                                   <span className="font-mono font-bold text-[#2c2825]">{hesitationIndex}%</span>
                                 </div>
 
-                                <div className="flex justify-between items-center pt-2">
+                                <div className="flex justify-between items-center pt-2 border-t border-slate-100">
                                   <span className="text-[#6b635b] font-medium">Status Intent:</span>
                                   <span className="font-bold text-[#3d5a45]">{strokeIntent}</span>
+                                </div>
+
+                                <div className="pt-3 border-t border-[#c4dcd0] space-y-1.5">
+                                  <div className="flex justify-between items-center text-[10px] text-[#4e6355]">
+                                    <span className="font-semibold">Sinyal Gelombang Motorik Pen:</span>
+                                    <span className="font-mono font-bold text-[#3d5a45]">ECG Stream</span>
+                                  </div>
+                                  <div className="w-full h-9 bg-[#f2f7f4] rounded-lg p-1.5 border border-[#c4dcd0] flex items-center overflow-hidden shadow-inner">
+                                    <svg className="w-full h-full" viewBox="0 0 100 28" fill="none">
+                                      <path
+                                        d="M0 14 L15 14 L18 6 L22 22 L26 2 L30 26 L34 10 L38 18 L42 14 L60 14 L63 6 L67 22 L71 2 L75 26 L79 10 L83 18 L87 14 L100 14"
+                                        stroke="#3d5a45"
+                                        strokeWidth="2.5"
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        className="animate-ecg-pulse"
+                                      />
+                                    </svg>
+                                  </div>
                                 </div>
                               </div>
                             </div>
                           )}
 
                           {/* Question Navigation Grid Box */}
-                          <div className="bg-white border border-[#ded8cb] rounded-xl p-6 space-y-4 shadow-xs">
+                          <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-4 shadow-xs">
                             <h4 className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider border-b pb-3 border-[#efece4]">
                               Navigasi Nomor Soal
                             </h4>
@@ -2366,7 +2468,7 @@ export default function Home() {
                                 const isAnswered = Boolean(selectedAnswers[idx] || (shortAnswers[idx] && shortAnswers[idx].trim() !== ''));
                                 const isDoubtful = Boolean(doubtfulQuestions[idx]);
 
-                                let colorClass = "bg-[#efece4] text-[#6b635b] border-[#ded8cb]";
+                                let colorClass = "bg-[#efece4] text-[#6b635b] border-[#c4dcd0]";
                                 if (isDoubtful) {
                                   colorClass = "bg-amber-100 text-amber-900 border-amber-300 font-bold";
                                 } else if (isAnswered) {
@@ -2398,7 +2500,7 @@ export default function Home() {
                                 <span>Ragu-Ragu (Soft Kuning)</span>
                               </div>
                               <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded bg-[#efece4] border border-[#ded8cb]"></div>
+                                <div className="w-3 h-3 rounded bg-[#efece4] border border-[#c4dcd0]"></div>
                                 <span>Belum Terjawab (Soft Abu-Abu)</span>
                               </div>
                             </div>
@@ -2408,7 +2510,7 @@ export default function Home() {
                     </div>
                   ) : (
                     /* Exam Completion & Result Summary View */
-                    <div className="bg-white border border-[#ded8cb] rounded-2xl p-8 space-y-6 shadow-xs max-w-2xl mx-auto text-center animate-fade-in-up">
+                    <div className="bg-white border border-[#c4dcd0] rounded-2xl p-8 space-y-6 shadow-xs max-w-2xl mx-auto text-center animate-fade-in-up">
                       <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto border border-emerald-300">
                         <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
                           <polyline points="20 6 9 17 4 12" />
@@ -2432,14 +2534,14 @@ export default function Home() {
                           </span>
                         </div>
 
-                        <div className="bg-[#efece4] p-4 rounded-xl border border-[#ded8cb]">
+                        <div className="bg-[#efece4] p-4 rounded-xl border border-[#c4dcd0]">
                           <span className="text-[11px] text-[#6b635b] font-bold block uppercase">Hesitation Index</span>
                           <span className="text-2xl font-extrabold font-mono text-[#2c2825]">
                             {lastSubmittedResult?.hesitation}%
                           </span>
                         </div>
 
-                        <div className="bg-[#efece4] p-4 rounded-xl border border-[#ded8cb]">
+                        <div className="bg-[#efece4] p-4 rounded-xl border border-[#c4dcd0]">
                           <span className="text-[11px] text-[#6b635b] font-bold block uppercase">Stroke Speed</span>
                           <span className="text-2xl font-extrabold font-mono text-[#2c2825]">
                             {lastSubmittedResult?.speed} <span className="text-xs font-normal">px/s</span>
@@ -2486,7 +2588,7 @@ export default function Home() {
                     <p className="text-xs text-[#6b635b] mt-1">Histori Perkembangan Akurasi dan Efisiensi Belajar Siswa</p>
                   </div>
 
-                  <div className="bg-white border border-[#ded8cb] rounded-xl p-6 space-y-4 shadow-xs">
+                  <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-4 shadow-xs">
                     <h3 className="text-xs font-bold text-[#3d5a45] uppercase border-b pb-3 border-[#efece4]">
                       Perkembangan Akurasi dan Efisiensi Belajar (Hari 1 hingga Hari 7)
                     </h3>
@@ -2527,7 +2629,7 @@ export default function Home() {
       {/* CUSTOM MODAL: Teacher Add Question & Bank Soal Builder */}
       {showAddQuestionModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-[#ded8cb] rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-5 animate-fade-in-up">
+          <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-5 animate-fade-in-up">
             <div className="flex justify-between items-center border-b pb-3 border-[#efece4]">
               <div>
                 <h3 className="font-bold text-[#3d5a45] heading-font text-base">Buat Soal & Bank Ujian Baru</h3>
@@ -2544,7 +2646,7 @@ export default function Home() {
                   value={newQTopic}
                   onChange={(e) => setNewQTopic(e.target.value)}
                   placeholder="Contoh: Aljabar Dasar / Efek Kognitif"
-                  className="w-full bg-[#f7f5f0] border border-[#ded8cb] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                  className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
                   required
                 />
               </div>
@@ -2554,7 +2656,7 @@ export default function Home() {
                 <select
                   value={newQType}
                   onChange={(e) => setNewQType(e.target.value)}
-                  className="w-full bg-[#f7f5f0] border border-[#ded8cb] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                  className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
                 >
                   <option value="pg">Pilihan Ganda (PG)</option>
                   <option value="canvas">Canvas Coretan & Jawaban Singkat</option>
@@ -2568,7 +2670,7 @@ export default function Home() {
                   value={newQText}
                   onChange={(e) => setNewQText(e.target.value)}
                   placeholder="Tuliskan isi pertanyaan soal di sini..."
-                  className="w-full bg-[#f7f5f0] border border-[#ded8cb] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                  className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
                   required
                 />
               </div>
@@ -2582,7 +2684,7 @@ export default function Home() {
                       value={newOptA}
                       onChange={(e) => setNewOptA(e.target.value)}
                       placeholder="Opsi A"
-                      className="bg-[#f7f5f0] border border-[#ded8cb] p-2 rounded text-xs"
+                      className="bg-[#f2f7f4] border border-[#c4dcd0] p-2 rounded text-xs"
                       required
                     />
                     <input
@@ -2590,7 +2692,7 @@ export default function Home() {
                       value={newOptB}
                       onChange={(e) => setNewOptB(e.target.value)}
                       placeholder="Opsi B"
-                      className="bg-[#f7f5f0] border border-[#ded8cb] p-2 rounded text-xs"
+                      className="bg-[#f2f7f4] border border-[#c4dcd0] p-2 rounded text-xs"
                       required
                     />
                     <input
@@ -2598,7 +2700,7 @@ export default function Home() {
                       value={newOptC}
                       onChange={(e) => setNewOptC(e.target.value)}
                       placeholder="Opsi C"
-                      className="bg-[#f7f5f0] border border-[#ded8cb] p-2 rounded text-xs"
+                      className="bg-[#f2f7f4] border border-[#c4dcd0] p-2 rounded text-xs"
                       required
                     />
                     <input
@@ -2606,7 +2708,7 @@ export default function Home() {
                       value={newOptD}
                       onChange={(e) => setNewOptD(e.target.value)}
                       placeholder="Opsi D"
-                      className="bg-[#f7f5f0] border border-[#ded8cb] p-2 rounded text-xs"
+                      className="bg-[#f2f7f4] border border-[#c4dcd0] p-2 rounded text-xs"
                       required
                     />
                   </div>
@@ -2616,7 +2718,7 @@ export default function Home() {
                     <select
                       value={newCorrectAns}
                       onChange={(e) => setNewCorrectAns(e.target.value)}
-                      className="w-full bg-[#f7f5f0] border border-[#ded8cb] rounded-lg p-2 text-xs"
+                      className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2 text-xs"
                     >
                       <option value="A">Opsi A</option>
                       <option value="B">Opsi B</option>
@@ -2633,7 +2735,7 @@ export default function Home() {
                     value={newCorrectAns}
                     onChange={(e) => setNewCorrectAns(e.target.value)}
                     placeholder="Contoh: 11 / x = 5"
-                    className="w-full bg-[#f7f5f0] border border-[#ded8cb] rounded-lg p-2.5 text-xs"
+                    className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2.5 text-xs"
                     required
                   />
                 </div>
@@ -2662,7 +2764,7 @@ export default function Home() {
       {/* CUSTOM MODAL 1: Unanswered Questions Simple Warning */}
       {showUnansweredModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-[#ded8cb] rounded-2xl max-w-sm w-full p-6 shadow-xl space-y-5 animate-fade-in-up text-center">
+          <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-sm w-full p-6 shadow-xl space-y-5 animate-fade-in-up text-center">
             <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-800 flex items-center justify-center font-bold text-lg border border-amber-300 mx-auto">
               !
             </div>
@@ -2687,7 +2789,7 @@ export default function Home() {
       {/* CUSTOM MODAL 2: Final Exam Submission Confirmation */}
       {showSubmitModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-[#ded8cb] rounded-2xl max-w-md w-full p-6 shadow-xl space-y-5 animate-fade-in-up">
+          <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-md w-full p-6 shadow-xl space-y-5 animate-fade-in-up">
             <div className="flex items-center gap-3 border-b pb-4 border-[#efece4]">
               <div className="w-10 h-10 rounded-full bg-[#f0f4f1] text-[#3d5a45] flex items-center justify-center font-bold border border-[#c7d8cb]">
                 ?
@@ -2702,7 +2804,7 @@ export default function Home() {
               Apakah Anda yakin ingin menyelesaikan dan mengirimkan seluruh jawaban ujian ini? Hasil pengerjaan dan telemetry kognitif Anda akan disimpan dan diteruskan ke portal pemantauan.
             </p>
 
-            <div className="bg-[#efece4]/70 border border-[#ded8cb] p-4 rounded-xl space-y-2 text-xs">
+            <div className="bg-[#efece4]/70 border border-[#c4dcd0] p-4 rounded-xl space-y-2 text-xs">
               <div className="flex justify-between items-center text-[#2c2825]">
                 <span>Nama Siswa Pengerja:</span>
                 <span className="font-bold text-[#3d5a45]">{currentUser?.name || 'Siswa Bina Demo'}</span>
@@ -2740,7 +2842,7 @@ export default function Home() {
       {/* CUSTOM MODAL 3: Logout / Exit Confirmation */}
       {showLogoutModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-[#ded8cb] rounded-2xl max-w-md w-full p-6 shadow-xl space-y-5 animate-fade-in-up">
+          <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-md w-full p-6 shadow-xl space-y-5 animate-fade-in-up">
             <div className="flex items-center gap-3 border-b pb-4 border-[#efece4]">
               <div className="w-10 h-10 rounded-full bg-rose-100 text-rose-800 flex items-center justify-center font-bold border border-rose-300">
                 !
@@ -2784,7 +2886,7 @@ export default function Home() {
       {/* Student Detail Modal */}
       {selectedStudentDetail && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-[#ded8cb] rounded-xl max-w-lg w-full p-6 shadow-xl space-y-5">
+          <div className="bg-white border border-[#c4dcd0] rounded-xl max-w-lg w-full p-6 shadow-xl space-y-5">
             <div className="flex justify-between items-center border-b pb-3 border-[#efece4]">
               <div>
                 <h3 className="font-bold text-[#3d5a45] heading-font text-base">{selectedStudentDetail.name}</h3>
@@ -2794,15 +2896,15 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-3 gap-3 text-center text-xs">
-              <div className="bg-[#efece4] p-3 rounded-lg border border-[#ded8cb]">
+              <div className="bg-[#efece4] p-3 rounded-lg border border-[#c4dcd0]">
                 <span className="text-[#6b635b] font-semibold block">Hesitation</span>
                 <span className="font-mono font-bold text-[#2c2825] text-sm">{selectedStudentDetail.hesitation}%</span>
               </div>
-              <div className="bg-[#efece4] p-3 rounded-lg border border-[#ded8cb]">
+              <div className="bg-[#efece4] p-3 rounded-lg border border-[#c4dcd0]">
                 <span className="text-[#6b635b] font-semibold block">Kecepatan Pen</span>
                 <span className="font-mono font-bold text-[#2c2825] text-sm">{selectedStudentDetail.speed} px/s</span>
               </div>
-              <div className="bg-[#efece4] p-3 rounded-lg border border-[#ded8cb]">
+              <div className="bg-[#efece4] p-3 rounded-lg border border-[#c4dcd0]">
                 <span className="text-[#6b635b] font-semibold block">Akurasi Rumus</span>
                 <span className="font-mono font-bold text-emerald-700 text-sm">{selectedStudentDetail.accuracy}%</span>
               </div>

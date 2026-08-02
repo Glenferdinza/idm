@@ -3,13 +3,13 @@
 
 :root {
   --primary-accent: #3d5a45;
-  --primary-dark: #2e4736;
-  --text-main: #2c2825;
-  --text-muted: #6b635b;
-  --bg-app: #f7f5f0;
+  --primary-dark: #203d2b;
+  --text-main: #1f2b23;
+  --text-muted: #4e6355;
+  --bg-app: #f2f7f4;
   --bg-surface: #ffffff;
-  --bg-soft-cream: #efece4;
-  --border-app: #ded8cb;
+  --bg-soft-cream: #e4efe7;
+  --border-app: #c4dcd0;
 }
 
 * {
@@ -41,32 +41,32 @@ h1, h2, h3, h4, h5, h6, .heading-font {
 }
 
 ::-webkit-scrollbar-track {
-  background: #efece4;
+  background: #e4efe7;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d1caad;
+  background: #a3c9b3;
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b5ac8c;
+  background: #3d5a45;
 }
 
 /* Solid Navbar */
 .solid-nav {
   background-color: #ffffff;
-  border-bottom: 1px solid #ded8cb;
-  box-shadow: 0 1px 3px rgba(44, 40, 37, 0.03);
+  border-bottom: 1px solid #c4dcd0;
+  box-shadow: 0 1px 3px rgba(32, 61, 43, 0.04);
 }
 
-/* Glassmorphism Classes for Modals & Login Card */
+/* Glassmorphism Classes for Modals & Cards */
 .glass-panel {
-  background: rgba(255, 255, 255, 0.92);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(222, 216, 203, 0.8);
-  box-shadow: 0 20px 40px -15px rgba(44, 40, 37, 0.06);
+  border: 1px solid rgba(196, 220, 208, 0.8);
+  box-shadow: 0 20px 40px -15px rgba(32, 61, 43, 0.08);
 }
 
 /* Standardized SVG Logo Classes */
@@ -104,18 +104,18 @@ h1, h2, h3, h4, h5, h6, .heading-font {
 /* Canvas Scratchpad */
 .canvas-scratchpad {
   background-color: #ffffff;
-  border: 1px solid #ded8cb;
+  border: 1px solid #c4dcd0;
   border-radius: 8px;
   touch-action: none;
   cursor: crosshair;
-  background-image: radial-gradient(#d5cebe 1px, transparent 1px);
+  background-image: radial-gradient(#b8d5c4 1px, transparent 1px);
   background-size: 18px 18px;
 }
 
 /* Full Height Sidebar Utilities */
 .sidebar-nav-container {
   background-color: #ffffff;
-  border-right: 1px solid #ded8cb;
+  border-right: 1px solid #c4dcd0;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -134,7 +134,7 @@ h1, h2, h3, h4, h5, h6, .heading-font {
   padding: 10px 14px;
   margin: 0 8px;
   border-radius: 8px;
-  color: #5c554e;
+  color: #4e6355;
   font-size: 13px;
   font-weight: 600;
   cursor: pointer;
@@ -143,14 +143,14 @@ h1, h2, h3, h4, h5, h6, .heading-font {
 }
 
 .sidebar-item:hover {
-  background-color: #efece4;
+  background-color: #e4efe7;
   color: #3d5a45;
 }
 
 .sidebar-item.active {
-  background-color: #f0f4f1;
-  color: #3d5a45;
-  border-color: #c7d8cb;
+  background-color: #d8ebd9;
+  color: #203d2b;
+  border-color: #a3c9b3;
 }
 
 /* Clean Buttons */
@@ -163,7 +163,7 @@ h1, h2, h3, h4, h5, h6, .heading-font {
 }
 
 .btn-primary:hover {
-  background-color: #2e4736;
+  background-color: #203d2b;
 }
 
 .btn-outline {
@@ -176,7 +176,7 @@ h1, h2, h3, h4, h5, h6, .heading-font {
 }
 
 .btn-outline:hover {
-  background-color: #f0f4f1;
+  background-color: #e4efe7;
 }
 
 /* Scroll Animation Utilities */
@@ -195,7 +195,31 @@ h1, h2, h3, h4, h5, h6, .heading-font {
   animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* Live Moving Telemetry ECG Pulse Wave Animation */
+@keyframes ecgPulseMove {
+  0% {
+    stroke-dashoffset: 300;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
 
+.animate-ecg-pulse {
+  stroke-dasharray: 120 15;
+  stroke-dashoffset: 300;
+  animation: ecgPulseMove 3.5s linear infinite;
+}
 
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.75;
+  }
+  50% {
+    opacity: 1;
+  }
+}
 
-
+.animate-pulse-glow {
+  animation: pulseGlow 1.5s ease-in-out infinite;
+}
