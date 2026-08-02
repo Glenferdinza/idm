@@ -1157,18 +1157,28 @@ export default function Home() {
 
   const demoTeacherLogin = () => {
     const user = {
-      name: 'Pengajar Utama (Admin)',
+      name: 'Pengajar Utama (Demo)',
       role: 'Pengajar',
-      email: 'admin@gmail.com',
+      email: 'pengajar.demo@gmail.com',
       isDemo: true
     };
     setIsDemoMode(true);
     setCurrentUser(user);
-    setActiveTab('kelola_materi');
+    setMaterials([
+      {
+        id: 'demo-package',
+        title: 'Paket Evaluasi 5 Soal Demo (Behavioral AI Telemetry)',
+        soalCount: 5,
+        totalTime: '15:00',
+        createdAt: '3 Aug 2026',
+        questions: DEMO_FIVE_QUESTIONS
+      }
+    ]);
+    setActiveTab('hasil_pemantauan');
     setViewState('dashboard');
     showAlert(
       'Mode Demo Pengajar Aktif',
-      'Data diagnostik AI behavioral telemetri, hasil pemantauan kognitif 10+ siswa, dan bank soal interaktif telah dimuat secara otomatis.',
+      'Mode Demo Pengajar dimuat secara independen (tanpa sync database). Menampilkan pemantauan telemetri & AI analytics dari 5 soal demo.',
       'info'
     );
   };
@@ -2249,19 +2259,6 @@ export default function Home() {
                           {materials.map((m) => (
                             <option key={m.id} value={m.id}>{m.title} ({m.soalCount} Soal)</option>
                           ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-[11px] font-bold text-[#423c37] block mb-1">Target Papan Permainan</label>
-                        <select
-                          value={quickTargetBoard}
-                          onChange={(e) => setQuickTargetBoard(e.target.value)}
-                          className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-xl p-2.5 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
-                        >
-                          <option value="Semua Papan">Kirim ke: Semua Papan Siswa</option>
-                          <option value="Zona 1">Kirim ke: Zona 1</option>
-                          <option value="Zona 2">Kirim ke: Zona 2</option>
                         </select>
                       </div>
 
