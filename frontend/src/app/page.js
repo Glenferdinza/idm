@@ -1066,14 +1066,16 @@ export default function Home() {
         questions: builderQuestions.map((q, idx) => ({ ...q, number: idx + 1 }))
       };
 
-      try {
-        await fetch(`${API_URL}/api/bank-soal`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(newMatPackage)
-        });
-      } catch (err) {
-        console.log('Backend sync offline, saving locally');
+      if (!isDemoMode && API_URL) {
+        try {
+          await fetch(`${API_URL}/api/bank-soal`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(newMatPackage)
+          });
+        } catch (err) {
+          console.log('Backend sync offline, saving locally');
+        }
       }
 
       setMaterials((prev) => [newMatPackage, ...prev]);
@@ -1094,7 +1096,7 @@ export default function Home() {
     setMaterials((prev) => [targetMat, ...prev.filter((m) => m.id !== targetMat.id)]);
     showAlert(
       'Transmisi Berhasil Live',
-      `Paket materi "${targetMat.title}" (${targetMat.questions.length} Soal) telah berhasil dikirim ke ${quickTargetBoard}! Portal siswa otomatis meng-override soal secara real-time.`,
+      `Paket materi "${targetMat.title}" (${targetMat.questions.length} Soal) telah berhasil dikirim! Portal pengerjaan siswa otomatis meng-override soal secara real-time.`,
       'success'
     );
   };
