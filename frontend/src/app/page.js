@@ -2461,7 +2461,8 @@ export default function Home() {
                               const val = e.target.value;
                               setBuilderQuestions(prev => {
                                 const copy = [...prev];
-                                copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], topic: val };
+                                const currentQ = copy[currentBuilderQIdx] || { id: `q-b-${Date.now()}`, topic: '', questionText: '', type: 'pg', options: [], correctAnswer: 'A' };
+                                copy[currentBuilderQIdx] = { ...currentQ, topic: val };
                                 return copy;
                               });
                             }}
@@ -2478,7 +2479,8 @@ export default function Home() {
                               const val = e.target.value;
                               setBuilderQuestions(prev => {
                                 const copy = [...prev];
-                                copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], type: val };
+                                const currentQ = copy[currentBuilderQIdx] || { id: `q-b-${Date.now()}`, topic: '', questionText: '', type: 'pg', options: [], correctAnswer: 'A' };
+                                copy[currentBuilderQIdx] = { ...currentQ, type: val };
                                 return copy;
                               });
                             }}
@@ -2499,7 +2501,8 @@ export default function Home() {
                             const val = e.target.value;
                             setBuilderQuestions(prev => {
                               const copy = [...prev];
-                              copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], questionText: val };
+                              const currentQ = copy[currentBuilderQIdx] || { id: `q-b-${Date.now()}`, topic: '', questionText: '', type: 'pg', options: [], correctAnswer: 'A' };
+                              copy[currentBuilderQIdx] = { ...currentQ, questionText: val };
                               return copy;
                             });
                           }}
@@ -2525,9 +2528,10 @@ export default function Home() {
                                     const val = e.target.value;
                                     setBuilderQuestions(prev => {
                                       const copy = [...prev];
-                                      const opts = [...(copy[currentBuilderQIdx].options || [])];
+                                      const currentQ = copy[currentBuilderQIdx] || { id: `q-b-${Date.now()}`, topic: '', questionText: '', type: 'pg', options: [], correctAnswer: 'A' };
+                                      const opts = [...(currentQ.options || [{ id: 'A', text: '' }, { id: 'B', text: '' }, { id: 'C', text: '' }, { id: 'D', text: '' }])];
                                       opts[optIdx] = { id: letter, text: val };
-                                      copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], options: opts };
+                                      copy[currentBuilderQIdx] = { ...currentQ, options: opts };
                                       return copy;
                                     });
                                   }}
@@ -2546,7 +2550,8 @@ export default function Home() {
                                 const val = e.target.value;
                                 setBuilderQuestions(prev => {
                                   const copy = [...prev];
-                                  copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], correctAnswer: val };
+                                  const currentQ = copy[currentBuilderQIdx] || { id: `q-b-${Date.now()}`, topic: '', questionText: '', type: 'pg', options: [], correctAnswer: 'A' };
+                                  copy[currentBuilderQIdx] = { ...currentQ, correctAnswer: val };
                                   return copy;
                                 });
                               }}
@@ -2569,7 +2574,8 @@ export default function Home() {
                               const val = e.target.value;
                               setBuilderQuestions(prev => {
                                 const copy = [...prev];
-                                copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], correctAnswer: val };
+                                const currentQ = copy[currentBuilderQIdx] || { id: `q-b-${Date.now()}`, topic: '', questionText: '', type: 'pg', options: [], correctAnswer: 'A' };
+                                copy[currentBuilderQIdx] = { ...currentQ, correctAnswer: val };
                                 return copy;
                               });
                             }}
