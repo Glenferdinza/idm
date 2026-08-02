@@ -1,0 +1,14 @@
+{
+  "name": "memori-dna-backend",
+  "version": "1.0.0",
+  "description": "Express.js REST API Backend for Memori DNA Educational AI Platform",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.19.2"
+  }
+}

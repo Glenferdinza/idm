@@ -1,0 +1,27 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Next.js build output
+frontend/.next/
+frontend/out/
+
+# Production build
+build/
+dist/
+
+# Environment files
+.env
+.env*.local
+
+# Debug logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Python / IDE / OS
+__pycache__/
+*.pyc
+.DS_Store
+.vscode/
+.idea/

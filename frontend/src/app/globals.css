@@ -1,0 +1,201 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap');
+@import "tailwindcss";
+
+:root {
+  --primary-accent: #3d5a45;
+  --primary-dark: #2e4736;
+  --text-main: #2c2825;
+  --text-muted: #6b635b;
+  --bg-app: #f7f5f0;
+  --bg-surface: #ffffff;
+  --bg-soft-cream: #efece4;
+  --border-app: #ded8cb;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  background-color: var(--bg-app);
+  color: var(--text-main);
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6, .heading-font {
+  font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #efece4;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #d1caad;
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #b5ac8c;
+}
+
+/* Solid Navbar */
+.solid-nav {
+  background-color: #ffffff;
+  border-bottom: 1px solid #ded8cb;
+  box-shadow: 0 1px 3px rgba(44, 40, 37, 0.03);
+}
+
+/* Glassmorphism Classes for Modals & Login Card */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(222, 216, 203, 0.8);
+  box-shadow: 0 20px 40px -15px rgba(44, 40, 37, 0.06);
+}
+
+/* Standardized SVG Logo Classes */
+.header-logo-img {
+  height: 30px;
+  width: auto;
+  object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+.header-logo-img:hover {
+  opacity: 0.85;
+}
+
+.hero-logo-img {
+  height: 38px;
+  width: auto;
+  object-fit: contain;
+  transition: opacity 0.2s ease;
+}
+
+.hero-logo-img:hover {
+  opacity: 0.85;
+}
+
+.footer-logo-img {
+  height: 28px;
+  width: auto;
+  object-fit: contain;
+  background: #ffffff;
+  padding: 3px 6px;
+  border-radius: 6px;
+}
+
+/* Canvas Scratchpad */
+.canvas-scratchpad {
+  background-color: #ffffff;
+  border: 1px solid #ded8cb;
+  border-radius: 8px;
+  touch-action: none;
+  cursor: crosshair;
+  background-image: radial-gradient(#d5cebe 1px, transparent 1px);
+  background-size: 18px 18px;
+}
+
+/* Full Height Sidebar Utilities */
+.sidebar-nav-container {
+  background-color: #ffffff;
+  border-right: 1px solid #ded8cb;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding-top: 14px;
+  gap: 4px;
+  z-index: 50;
+  transition: width 0.2s ease;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  margin: 0 8px;
+  border-radius: 8px;
+  color: #5c554e;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  border: 1px solid transparent;
+}
+
+.sidebar-item:hover {
+  background-color: #efece4;
+  color: #3d5a45;
+}
+
+.sidebar-item.active {
+  background-color: #f0f4f1;
+  color: #3d5a45;
+  border-color: #c7d8cb;
+}
+
+/* Clean Buttons */
+.btn-primary {
+  background-color: #3d5a45;
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-primary:hover {
+  background-color: #2e4736;
+}
+
+.btn-outline {
+  background-color: #ffffff;
+  color: #3d5a45;
+  border: 1px solid #3d5a45;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.15s ease;
+}
+
+.btn-outline:hover {
+  background-color: #f0f4f1;
+}
+
+/* Scroll Animation Utilities */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+
+
+
+
