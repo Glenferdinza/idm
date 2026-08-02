@@ -599,11 +599,36 @@ export default function Home() {
   const [showCredentialModal, setShowCredentialModal] = useState(false);
   const [selectedCredentialTeacher, setSelectedCredentialTeacher] = useState(null);
 
+  // Custom Modal Alert State (Replacing native browser alert)
+  const [customAlertModal, setCustomAlertModal] = useState({ show: false, title: '', message: '', type: 'info' });
+  const showAlert = (title, message, type = 'info') => {
+    setCustomAlertModal({ show: true, title, message, type });
+  };
+
+  // Material & Question Builder Tab State
+  const [builderTitle, setBuilderTitle] = useState('');
+  const [builderTotalTime, setBuilderTotalTime] = useState('60:00');
+  const [builderQuestions, setBuilderQuestions] = useState([
+    {
+      id: 'q-b-1',
+      topic: 'Matematika Aljabar',
+      questionText: 'Hasil penyederhanaan dari 5x + 3y - 2x + 7y adalah ...',
+      type: 'pg',
+      options: [
+        { id: 'A', text: '3x + 10y' },
+        { id: 'B', text: '7x + 10y' },
+        { id: 'C', text: '3x - 4y' },
+        { id: 'D', text: '10x + 3y' }
+      ],
+      correctAnswer: 'A'
+    }
+  ]);
+  const [currentBuilderQIdx, setCurrentBuilderQIdx] = useState(0);
+
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [expandedMaterials, setExpandedMaterials] = useState({});
   const [showAddMaterialModal, setShowAddMaterialModal] = useState(false);
   const [newMaterialPackageTitle, setNewMaterialPackageTitle] = useState('');
-  const [newMaterialPackageZones, setNewMaterialPackageZones] = useState('3 Zona Interaktif');
   const [newMaterialPackageTime, setNewMaterialPackageTime] = useState('60:00');
   const [targetMaterialIdForQuestion, setTargetMaterialIdForQuestion] = useState(null);
 
@@ -1785,7 +1810,7 @@ export default function Home() {
                   {isSidebarExpanded && <span>Ujian Siswa</span>}
                 </div>
               ) : (
-                // Pengajar Role: 3 menu items
+                // Pengajar Role: 5 dedicated menu items
                 <>
                   <div
                     onClick={() => setActiveTab('dashboard_telemetry')}
@@ -1804,7 +1829,7 @@ export default function Home() {
                   <div
                     onClick={() => setActiveTab('kelola_materi')}
                     className={`sidebar-item ${activeTab === 'kelola_materi' ? 'active' : ''}`}
-                    title="Kelola Materi Soal"
+                    title="Kelola Paket Materi"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                       <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -1812,7 +1837,33 @@ export default function Home() {
                       <line x1="16" y1="13" x2="8" y2="13"/>
                       <line x1="16" y1="17" x2="8" y2="17"/>
                     </svg>
-                    {isSidebarExpanded && <span>Kelola Materi Soal</span>}
+                    {isSidebarExpanded && <span>Kelola Paket Materi</span>}
+                  </div>
+
+                  <div
+                    onClick={() => setActiveTab('buat_materi_builder')}
+                    className={`sidebar-item ${activeTab === 'buat_materi_builder' ? 'active' : ''}`}
+                    title="Buat Paket & Soal Baru"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <line x1="12" y1="5" x2="12" y2="19"/>
+                      <line x1="5" y1="12" x2="19" y2="12"/>
+                    </svg>
+                    {isSidebarExpanded && <span>+ Buat Paket & Soal</span>}
+                  </div>
+
+                  <div
+                    onClick={() => setActiveTab('kelola_pengajar')}
+                    className={`sidebar-item ${activeTab === 'kelola_pengajar' ? 'active' : ''}`}
+                    title="Akses Pengajar (Admin)"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                      <circle cx="9" cy="7" r="4" />
+                      <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                    </svg>
+                    {isSidebarExpanded && <span>Akses Pengajar (Admin)</span>}
                   </div>
 
                   <div
@@ -1900,229 +1951,26 @@ export default function Home() {
 
             {/* Workspace Content Scroll Area */}
             <main className="flex-1 p-6 sm:p-8 lg:p-10 space-y-8 max-w-6xl w-full mx-auto overflow-y-auto">
-              {/* Tab 1: Kelola Materi & Kelola Akses Pengajar (Pengajar Only) */}
+              {/* Tab 1: Kelola Paket Materi (Pengajar Only) */}
               {!isSiswaRole && activeTab === 'kelola_materi' && (
-                <div className="space-y-8">
-                  <div className="flex flex-wrap justify-between items-center gap-4">
+                <div className="space-y-8 animate-fade-in-up">
+                  <div className="flex flex-wrap justify-between items-center gap-4 border-b pb-4 border-[#efece4]">
                     <div>
-                      <h1 className="text-2xl font-bold heading-font text-[#2c2825]">Kelola Materi & Bank Soal</h1>
+                      <h1 className="text-2xl font-bold heading-font text-[#2c2825]">Kelola Paket Materi Pembelajaran</h1>
                       <p className="text-xs text-[#6b635b] mt-1">
-                        Manajemen bank soal dan distribusi materi ke papan pengerjaan siswa.
+                        Pilih dan terbitkan paket materi aktif yang ingin dikirimkan ke portal pengerjaan siswa.
                       </p>
                     </div>
 
-                    {/* Teacher Action: Buat Paket Materi Baru Button */}
                     <button
-                      onClick={() => setShowAddMaterialModal(true)}
+                      onClick={() => setActiveTab('buat_materi_builder')}
                       className="btn-primary px-5 py-2.5 text-xs font-bold flex items-center gap-2"
                     >
-                      <span>+ Buat Paket Materi Baru</span>
+                      <span>+ Buat Paket & Soal Baru</span>
                     </button>
                   </div>
 
-                  {/* ADMIN PANEL CARD: Teacher Access Management (Kelola Akses Pengajar) */}
-                  <div className="bg-white border border-[#c4dcd0] rounded-xl shadow-xs overflow-hidden">
-                    <div className="bg-[#1b3323] text-white px-5 py-3 font-bold text-xs uppercase tracking-wider flex justify-between items-center">
-                      <div className="flex items-center gap-2">
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-                          <circle cx="9" cy="7" r="4" />
-                          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-                          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-                        </svg>
-                        <span>Admin Panel: Kelola Hak Akses Pengajar Baru</span>
-                      </div>
-                      <span className="text-[10px] bg-[#3d5a45] text-white font-bold px-2 py-0.5 rounded">
-                        {allowedTeachers.length} Pengajar Terdaftar
-                      </span>
-                    </div>
-
-                    <div className="p-6 space-y-6">
-                      <p className="text-xs text-[#5c554e] leading-relaxed">
-                        Tambahkan alamat email rekan Pengajar / Guru agar mereka dapat login ke Dashboard Pengajar. Pengajar yang diundang dapat langsung masuk dengan email dan kata sandi yang telah diizinkan.
-                      </p>
-
-                      {/* Add New Teacher Form */}
-                      <form onSubmit={handleAddTeacherAccess} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end bg-[#f7f5f0] p-4 rounded-xl border border-[#c4dcd0]">
-                        <div>
-                          <label className="text-[11px] font-bold text-[#423c37] block mb-1">Nama Lengkap Pengajar</label>
-                          <input
-                            type="text"
-                            value={newTeacherName}
-                            onChange={(e) => setNewTeacherName(e.target.value)}
-                            placeholder="Contoh: Dra. Siti Rahma"
-                            className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[11px] font-bold text-[#423c37] block mb-1">Email Pengajar</label>
-                          <input
-                            type="email"
-                            value={newTeacherEmail}
-                            onChange={(e) => setNewTeacherEmail(e.target.value)}
-                            placeholder="example@gmail.com"
-                            className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <label className="text-[11px] font-bold text-[#423c37] block mb-1">Kata Sandi Default</label>
-                          <input
-                            type="text"
-                            value={newTeacherPass}
-                            onChange={(e) => setNewTeacherPass(e.target.value)}
-                            placeholder="guru123"
-                            className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
-                            required
-                          />
-                        </div>
-
-                        <div>
-                          <button
-                            type="submit"
-                            className="w-full py-2 btn-primary text-xs font-bold rounded-lg transition"
-                          >
-                            + Tambah Akses Pengajar
-                          </button>
-                        </div>
-                      </form>
-
-                      {/* Whitelisted Teacher Email List Table */}
-                      <div className="space-y-2">
-                        <span className="text-[11px] font-bold text-[#3d5a45] uppercase tracking-wider block">
-                          Daftar Email Pengajar Berizin:
-                        </span>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                          {allowedTeachers.map((t, idx) => {
-                            const isAdmin = t.email.toLowerCase() === 'admin@gmail.com';
-                            const isMenuOpen = activeTeacherMenuIndex === idx;
-
-                            return (
-                              <div key={idx} className="p-3.5 bg-[#f7f5f0] border border-[#c4dcd0] rounded-xl flex items-center justify-between text-xs relative hover:border-[#3d5a45] transition shadow-2xs">
-                                <div className="space-y-0.5">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-bold text-[#2c2825]">{t.name}</span>
-                                    {isAdmin && (
-                                      <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded border border-emerald-300">
-                                        Akun Utama
-                                      </span>
-                                    )}
-                                  </div>
-                                  <span className="font-mono text-[11px] text-[#3d5a45] block">{t.email}</span>
-                                  <span className="text-[10px] text-[#6b635b] block">
-                                    Status: {isAdmin ? 'Super Admin (Terproteksi)' : `Pengajar Tim (Diizinkan: ${t.addedAt})`}
-                                  </span>
-                                </div>
-
-                                {/* Three Dots Action Button */}
-                                <div className="relative">
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      setActiveTeacherMenuIndex(isMenuOpen ? null : idx);
-                                    }}
-                                    className="w-8 h-8 rounded-lg hover:bg-[#e4efe7] flex items-center justify-center text-[#3d5a45] font-bold text-base transition"
-                                    title="Opsi Akun Pengajar"
-                                  >
-                                    ⋮
-                                  </button>
-
-                                  {/* Dropdown Menu Popup */}
-                                  {isMenuOpen && (
-                                    <div
-                                      onMouseLeave={() => setActiveTeacherMenuIndex(null)}
-                                      className="absolute right-0 top-9 w-48 bg-white border border-[#c4dcd0] rounded-xl shadow-lg z-20 py-1.5 text-xs animate-fade-in-up"
-                                    >
-                                      <button
-                                        onClick={() => {
-                                          setSelectedCredentialTeacher(t);
-                                          setShowCredentialModal(true);
-                                          setActiveTeacherMenuIndex(null);
-                                        }}
-                                        className="w-full text-left px-4 py-2 hover:bg-[#f7f5f0] text-[#2c2825] font-semibold flex items-center gap-2 transition"
-                                      >
-                                        <span>👁️</span>
-                                        <span>Lihat Kredensial</span>
-                                      </button>
-
-                                      {!isAdmin ? (
-                                        <button
-                                          onClick={() => {
-                                            setActiveTeacherMenuIndex(null);
-                                            handleRemoveTeacherAccess(t.email);
-                                          }}
-                                          className="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-semibold flex items-center gap-2 border-t border-slate-100 transition"
-                                        >
-                                          <span>🗑️</span>
-                                          <span>Hapus Akses</span>
-                                        </button>
-                                      ) : (
-                                        <div className="px-4 py-1.5 text-[10px] text-slate-400 font-medium border-t border-slate-100 flex items-center gap-1.5">
-                                          <span>🔒</span>
-                                          <span>Akun Utama Dilindungi</span>
-                                        </div>
-                                      )}
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-white border border-[#c4dcd0] rounded-xl shadow-xs overflow-hidden">
-                    <div className="bg-[#3d5a45] text-white px-5 py-3 font-bold text-xs uppercase tracking-wider">
-                      Pengiriman Cepat Materi Soal ke Siswa
-                    </div>
-                    <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
-                      <div>
-                        <label className="text-[11px] font-bold text-[#6b635b] uppercase tracking-wider block mb-2">
-                          Pilih Materi Soal
-                        </label>
-                        <select
-                          value={selectedMaterial}
-                          onChange={(e) => setSelectedMaterial(e.target.value)}
-                          className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2.5 text-xs text-[#2c2825]"
-                        >
-                          <option value="">-- Pilih Materi Soal --</option>
-                          {materials.map((m) => (
-                            <option key={m.id} value={m.id}>{m.title}</option>
-                          ))}
-                        </select>
-                      </div>
-
-                      <div>
-                        <label className="text-[11px] font-bold text-[#6b635b] uppercase tracking-wider block mb-2">
-                          Target Papan Permainan
-                        </label>
-                        <select
-                          value={targetBoard}
-                          onChange={(e) => setTargetBoard(e.target.value)}
-                          className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2.5 text-xs text-[#2c2825]"
-                        >
-                          <option value="Semua Papan">Kirim ke: Semua Papan</option>
-                          <option value="Zona 1">Kirim ke: Zona 1</option>
-                          <option value="Zona 2">Kirim ke: Zona 2</option>
-                        </select>
-                      </div>
-
-                      <div>
-                        <button
-                          disabled={!selectedMaterial}
-                          className="w-full py-2.5 btn-primary text-xs font-bold disabled:opacity-40"
-                        >
-                          Kirim Soal Sekarang
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-
+                  {/* List of Available Material Packages */}
                   <div className="space-y-4">
                     {materials.map((m) => (
                       <div key={m.id} className="bg-white border border-[#c4dcd0] rounded-xl shadow-xs overflow-hidden">
@@ -2225,18 +2073,440 @@ export default function Home() {
                             </button>
 
                             <button
-                              onClick={() => {
-                                setTargetMaterialIdForQuestion(m.id);
-                                setShowAddQuestionModal(true);
-                              }}
-                              className="px-5 py-2 btn-primary text-xs"
+                              onClick={() => handlePublishMaterialToStudents(m)}
+                              className="px-5 py-2 btn-primary text-xs font-bold flex items-center gap-2 shadow-xs"
                             >
-                              + Tambah Soal
+                              <span>🚀 Kirim Ke Server / Papan Siswa (Publish Live)</span>
                             </button>
                           </div>
                         </div>
                       </div>
                     ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 2: Buat Paket Materi & Soal Builder (Step-by-Step Interaktif) */}
+              {!isSiswaRole && activeTab === 'buat_materi_builder' && (
+                <div className="space-y-8 animate-fade-in-up">
+                  <div className="flex flex-wrap justify-between items-center gap-4 border-b pb-4 border-[#efece4]">
+                    <div>
+                      <h1 className="text-2xl font-bold heading-font text-[#2c2825]">Buat Paket & Soal Ujian Baru</h1>
+                      <p className="text-xs text-[#6b635b] mt-1">
+                        Isi informasi materi dan susun pertanyaan soal (PG / Canvas) secara step-by-step.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setActiveTab('kelola_materi')}
+                      className="btn-outline px-4 py-2 text-xs font-bold"
+                    >
+                      ← Kembali ke Daftar Paket Materi
+                    </button>
+                  </div>
+
+                  {/* Section 1: Informasi Paket Materi */}
+                  <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 shadow-xs space-y-4">
+                    <h3 className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider border-b pb-3 border-[#efece4]">
+                      1. Informasi Paket Materi Pembelajaran
+                    </h3>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-xs">
+                      <div className="md:col-span-2 space-y-1">
+                        <label className="font-bold text-[#423c37] block">Nama Judul Paket Materi</label>
+                        <input
+                          type="text"
+                          value={builderTitle}
+                          onChange={(e) => setBuilderTitle(e.target.value)}
+                          placeholder="Contoh: Matematika Aljabar, Geometri, dan Logika Kognitif"
+                          className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                        />
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="font-bold text-[#423c37] block">Total Waktu Ujian (Menit : Detik)</label>
+                        <input
+                          type="text"
+                          value={builderTotalTime}
+                          onChange={(e) => setBuilderTotalTime(e.target.value)}
+                          placeholder="Contoh: 60:00"
+                          className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Section 2: Editor Soal Interaktif (Soal Nomor X dari Y) */}
+                  <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 shadow-xs space-y-6">
+                    <div className="flex flex-wrap justify-between items-center border-b pb-3 border-[#efece4] gap-3">
+                      <div className="flex items-center gap-2">
+                        <span className="w-7 h-7 rounded-md bg-[#3d5a45] text-white font-bold text-xs flex items-center justify-center">
+                          {currentBuilderQIdx + 1}
+                        </span>
+                        <div>
+                          <h3 className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider">
+                            Editor Pertanyaan Soal (Nomor {currentBuilderQIdx + 1} dari {builderQuestions.length})
+                          </h3>
+                          <span className="text-[10px] text-[#6b635b]">Lengkapi detail soal di bawah ini</span>
+                        </div>
+                      </div>
+
+                      {/* Step Navigation Controls */}
+                      <div className="flex items-center gap-2">
+                        <button
+                          disabled={currentBuilderQIdx === 0}
+                          onClick={() => setCurrentBuilderQIdx(p => Math.max(0, p - 1))}
+                          className="btn-outline px-3 py-1.5 text-xs disabled:opacity-40"
+                        >
+                          ← Prev
+                        </button>
+                        <button
+                          disabled={currentBuilderQIdx === builderQuestions.length - 1}
+                          onClick={() => setCurrentBuilderQIdx(p => Math.min(builderQuestions.length - 1, p + 1))}
+                          className="btn-outline px-3 py-1.5 text-xs disabled:opacity-40"
+                        >
+                          Next →
+                        </button>
+                        <button
+                          onClick={() => {
+                            const newQ = {
+                              id: `q-b-${Date.now()}`,
+                              topic: 'Matematika Aljabar',
+                              questionText: '',
+                              type: 'pg',
+                              options: [
+                                { id: 'A', text: '' },
+                                { id: 'B', text: '' },
+                                { id: 'C', text: '' },
+                                { id: 'D', text: '' }
+                              ],
+                              correctAnswer: 'A'
+                            };
+                            setBuilderQuestions(prev => [...prev, newQ]);
+                            setCurrentBuilderQIdx(builderQuestions.length);
+                          }}
+                          className="btn-primary px-3 py-1.5 text-xs font-bold"
+                        >
+                          + Slot Soal Baru
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="space-y-4 text-xs">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-1">
+                          <label className="font-bold text-[#423c37] block">Topik Pertanyaan</label>
+                          <input
+                            type="text"
+                            value={builderQuestions[currentBuilderQIdx]?.topic || ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setBuilderQuestions(prev => {
+                                const copy = [...prev];
+                                copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], topic: val };
+                                return copy;
+                              });
+                            }}
+                            placeholder="Contoh: Operasi Aljabar / Persamaan Linear"
+                            className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                          />
+                        </div>
+
+                        <div className="space-y-1">
+                          <label className="font-bold text-[#423c37] block">Tipe Soal Ujian</label>
+                          <select
+                            value={builderQuestions[currentBuilderQIdx]?.type || 'pg'}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setBuilderQuestions(prev => {
+                                const copy = [...prev];
+                                copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], type: val };
+                                return copy;
+                              });
+                            }}
+                            className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                          >
+                            <option value="pg">Pilihan Ganda (PG)</option>
+                            <option value="canvas">Canvas Coretan & Jawaban Singkat</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-1">
+                        <label className="font-bold text-[#423c37] block">Teks Pertanyaan Soal</label>
+                        <textarea
+                          rows="3"
+                          value={builderQuestions[currentBuilderQIdx]?.questionText || ''}
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            setBuilderQuestions(prev => {
+                              const copy = [...prev];
+                              copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], questionText: val };
+                              return copy;
+                            });
+                          }}
+                          placeholder="Tuliskan isi pertanyaan soal di sini..."
+                          className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                        />
+                      </div>
+
+                      {/* Options for PG */}
+                      {builderQuestions[currentBuilderQIdx]?.type === 'pg' ? (
+                        <div className="space-y-3 pt-2 border-t border-[#efece4]">
+                          <span className="font-bold text-[#3d5a45] block">Pilihan Jawaban Opsi (A, B, C, D):</span>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {['A', 'B', 'C', 'D'].map((letter, optIdx) => (
+                              <div key={letter} className="flex items-center gap-2">
+                                <span className="w-6 h-6 rounded bg-[#3d5a45] text-white font-bold text-xs flex items-center justify-center flex-shrink-0">
+                                  {letter}
+                                </span>
+                                <input
+                                  type="text"
+                                  value={builderQuestions[currentBuilderQIdx]?.options?.[optIdx]?.text || ''}
+                                  onChange={(e) => {
+                                    const val = e.target.value;
+                                    setBuilderQuestions(prev => {
+                                      const copy = [...prev];
+                                      const opts = [...(copy[currentBuilderQIdx].options || [])];
+                                      opts[optIdx] = { id: letter, text: val };
+                                      copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], options: opts };
+                                      return copy;
+                                    });
+                                  }}
+                                  placeholder={`Opsi ${letter}`}
+                                  className="w-full bg-[#f7f5f0] border border-[#c4dcd0] p-2 rounded-lg text-xs"
+                                />
+                              </div>
+                            ))}
+                          </div>
+
+                          <div className="pt-2">
+                            <label className="font-bold text-[#423c37] block mb-1">Kunci Jawaban Benar</label>
+                            <select
+                              value={builderQuestions[currentBuilderQIdx]?.correctAnswer || 'A'}
+                              onChange={(e) => {
+                                const val = e.target.value;
+                                setBuilderQuestions(prev => {
+                                  const copy = [...prev];
+                                  copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], correctAnswer: val };
+                                  return copy;
+                                });
+                              }}
+                              className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs"
+                            >
+                              <option value="A">Opsi A</option>
+                              <option value="B">Opsi B</option>
+                              <option value="C">Opsi C</option>
+                              <option value="D">Opsi D</option>
+                            </select>
+                          </div>
+                        </div>
+                      ) : (
+                        <div className="pt-2 border-t border-[#efece4] space-y-1">
+                          <label className="font-bold text-[#3d5a45] block">Kunci Jawaban Singkat / Angka</label>
+                          <input
+                            type="text"
+                            value={builderQuestions[currentBuilderQIdx]?.correctAnswer || ''}
+                            onChange={(e) => {
+                              const val = e.target.value;
+                              setBuilderQuestions(prev => {
+                                const copy = [...prev];
+                                copy[currentBuilderQIdx] = { ...copy[currentBuilderQIdx], correctAnswer: val };
+                                return copy;
+                              });
+                            }}
+                            placeholder="Contoh: 11 / x = 5"
+                            className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs"
+                          />
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex justify-between items-center pt-4 border-t border-[#efece4]">
+                      {builderQuestions.length > 1 ? (
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setBuilderQuestions(prev => prev.filter((_, idx) => idx !== currentBuilderQIdx));
+                            setCurrentBuilderQIdx(p => Math.max(0, p - 1));
+                          }}
+                          className="text-rose-600 hover:text-rose-800 text-xs font-bold"
+                        >
+                          🗑️ Hapus Soal Ini
+                        </button>
+                      ) : <div />}
+
+                      <button
+                        onClick={handlePublishBuilderPackage}
+                        className="btn-primary px-8 py-3 text-xs font-bold shadow-md flex items-center gap-2"
+                      >
+                        <span>💾 Simpan & Terbitkan Paket Materi Ke Server</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {/* Tab 3: Kelola Hak Akses Pengajar (Admin Panel Terpisah) */}
+              {!isSiswaRole && activeTab === 'kelola_pengajar' && (
+                <div className="space-y-8 animate-fade-in-up">
+                  <div className="flex flex-wrap justify-between items-center gap-4 border-b pb-4 border-[#efece4]">
+                    <div>
+                      <h1 className="text-2xl font-bold heading-font text-[#2c2825]">Kelola Hak Akses Pengajar (Admin Panel)</h1>
+                      <p className="text-xs text-[#6b635b] mt-1">
+                        Undang dan atur hak akses rekan pengajar/guru untuk login ke Dashboard MEMORA.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="bg-white border border-[#c4dcd0] rounded-xl shadow-xs overflow-hidden">
+                    <div className="bg-[#1b3323] text-white px-5 py-3 font-bold text-xs uppercase tracking-wider flex justify-between items-center">
+                      <div className="flex items-center gap-2">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                          <circle cx="9" cy="7" r="4" />
+                          <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+                          <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                        </svg>
+                        <span>Admin Panel: Kelola Hak Akses Pengajar Baru</span>
+                      </div>
+                      <span className="text-[10px] bg-[#3d5a45] text-white font-bold px-2 py-0.5 rounded">
+                        {allowedTeachers.length} Pengajar Terdaftar
+                      </span>
+                    </div>
+
+                    <div className="p-6 space-y-6">
+                      <p className="text-xs text-[#5c554e] leading-relaxed">
+                        Tambahkan alamat email rekan Pengajar / Guru agar mereka dapat login ke Dashboard Pengajar. Pengajar yang diundang dapat langsung masuk dengan email dan kata sandi yang telah diizinkan.
+                      </p>
+
+                      <form onSubmit={handleAddTeacherAccess} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end bg-[#f7f5f0] p-4 rounded-xl border border-[#c4dcd0]">
+                        <div>
+                          <label className="text-[11px] font-bold text-[#423c37] block mb-1">Nama Lengkap Pengajar</label>
+                          <input
+                            type="text"
+                            value={newTeacherName}
+                            onChange={(e) => setNewTeacherName(e.target.value)}
+                            placeholder="Contoh: Dra. Siti Rahma"
+                            className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[11px] font-bold text-[#423c37] block mb-1">Email Pengajar</label>
+                          <input
+                            type="email"
+                            value={newTeacherEmail}
+                            onChange={(e) => setNewTeacherEmail(e.target.value)}
+                            placeholder="example@gmail.com"
+                            className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <label className="text-[11px] font-bold text-[#423c37] block mb-1">Kata Sandi Default</label>
+                          <input
+                            type="text"
+                            value={newTeacherPass}
+                            onChange={(e) => setNewTeacherPass(e.target.value)}
+                            placeholder="guru123"
+                            className="w-full bg-white border border-[#c4dcd0] rounded-lg p-2 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
+                            required
+                          />
+                        </div>
+
+                        <div>
+                          <button
+                            type="submit"
+                            className="w-full py-2 btn-primary text-xs font-bold rounded-lg transition"
+                          >
+                            + Tambah Akses Pengajar
+                          </button>
+                        </div>
+                      </form>
+
+                      <div className="space-y-2">
+                        <span className="text-[11px] font-bold text-[#3d5a45] uppercase tracking-wider block">
+                          Daftar Email Pengajar Berizin:
+                        </span>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {allowedTeachers.map((t, idx) => {
+                            const isAdmin = t.email.toLowerCase() === 'admin@gmail.com';
+                            const isMenuOpen = activeTeacherMenuIndex === idx;
+
+                            return (
+                              <div key={idx} className="p-3.5 bg-[#f7f5f0] border border-[#c4dcd0] rounded-xl flex items-center justify-between text-xs relative hover:border-[#3d5a45] transition shadow-2xs">
+                                <div className="space-y-0.5">
+                                  <div className="flex items-center gap-2">
+                                    <span className="font-bold text-[#2c2825]">{t.name}</span>
+                                    {isAdmin && (
+                                      <span className="text-[9px] bg-emerald-100 text-emerald-800 font-bold px-1.5 py-0.5 rounded border border-emerald-300">
+                                        Akun Utama
+                                      </span>
+                                    )}
+                                  </div>
+                                  <span className="font-mono text-[11px] text-[#3d5a45] block">{t.email}</span>
+                                  <span className="text-[10px] text-[#6b635b] block">
+                                    Status: {isAdmin ? 'Super Admin (Terproteksi)' : `Pengajar Tim (Diizinkan: ${t.addedAt})`}
+                                  </span>
+                                </div>
+
+                                <div className="relative">
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setActiveTeacherMenuIndex(isMenuOpen ? null : idx);
+                                    }}
+                                    className="w-8 h-8 rounded-lg hover:bg-[#e4efe7] flex items-center justify-center text-[#3d5a45] font-bold text-base transition"
+                                    title="Opsi Akun Pengajar"
+                                  >
+                                    ⋮
+                                  </button>
+
+                                  {isMenuOpen && (
+                                    <div
+                                      onMouseLeave={() => setActiveTeacherMenuIndex(null)}
+                                      className="absolute right-0 top-9 w-48 bg-white border border-[#c4dcd0] rounded-xl shadow-lg z-20 py-1.5 text-xs animate-fade-in-up"
+                                    >
+                                      <button
+                                        onClick={() => {
+                                          setSelectedCredentialTeacher(t);
+                                          setShowCredentialModal(true);
+                                          setActiveTeacherMenuIndex(null);
+                                        }}
+                                        className="w-full text-left px-4 py-2 hover:bg-[#f7f5f0] text-[#2c2825] font-semibold flex items-center gap-2 transition"
+                                      >
+                                        <span>👁️</span>
+                                        <span>Lihat Kredensial</span>
+                                      </button>
+
+                                      {!isAdmin ? (
+                                        <button
+                                          onClick={() => {
+                                            setActiveTeacherMenuIndex(null);
+                                            handleRemoveTeacherAccess(t.email);
+                                          }}
+                                          className="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-semibold flex items-center gap-2 border-t border-slate-100 transition"
+                                        >
+                                          <span>🗑️</span>
+                                          <span>Hapus Akses</span>
+                                        </button>
+                                      ) : (
+                                        <div className="px-4 py-1.5 text-[10px] text-slate-400 font-medium border-t border-slate-100 flex items-center gap-1.5">
+                                          <span>🔒</span>
+                                          <span>Akun Utama Dilindungi</span>
+                                        </div>
+                                      )}
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
@@ -2906,6 +3176,31 @@ export default function Home() {
             >
               Tutup
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* CUSTOM MODAL: Built-in Alert Notification Modal (Replaces browser alert) */}
+      {customAlertModal.show && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-sm w-full p-6 shadow-xl text-center space-y-4 animate-fade-in-up">
+            <div className="w-12 h-12 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto text-xl font-bold">
+              {customAlertModal.type === 'success' ? '✓' : customAlertModal.type === 'warning' ? '⚠️' : 'ℹ️'}
+            </div>
+
+            <div className="space-y-1">
+              <h3 className="font-bold text-[#2c2825] text-base heading-font">{customAlertModal.title}</h3>
+              <p className="text-xs text-[#6b635b] leading-relaxed">{customAlertModal.message}</p>
+            </div>
+
+            <div className="pt-2">
+              <button
+                onClick={() => setCustomAlertModal({ ...customAlertModal, show: false })}
+                className="w-full py-2.5 btn-primary text-xs font-bold"
+              >
+                Mengerti
+              </button>
+            </div>
           </div>
         </div>
       )}
