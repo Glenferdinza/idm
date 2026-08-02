@@ -1813,20 +1813,6 @@ export default function Home() {
                 // Pengajar Role: 5 dedicated menu items
                 <>
                   <div
-                    onClick={() => setActiveTab('dashboard_telemetry')}
-                    className={`sidebar-item ${activeTab === 'dashboard_telemetry' ? 'active' : ''}`}
-                    title="Hasil Pemantauan Siswa"
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <rect x="3" y="3" width="7" height="7"/>
-                      <rect x="14" y="3" width="7" height="7"/>
-                      <rect x="14" y="14" width="7" height="7"/>
-                      <rect x="3" y="14" width="7" height="7"/>
-                    </svg>
-                    {isSidebarExpanded && <span>Hasil Pemantauan</span>}
-                  </div>
-
-                  <div
                     onClick={() => setActiveTab('kelola_materi')}
                     className={`sidebar-item ${activeTab === 'kelola_materi' ? 'active' : ''}`}
                     title="Kelola Paket Materi"
@@ -1843,13 +1829,27 @@ export default function Home() {
                   <div
                     onClick={() => setActiveTab('buat_materi_builder')}
                     className={`sidebar-item ${activeTab === 'buat_materi_builder' ? 'active' : ''}`}
-                    title="Buat Paket & Soal Baru"
+                    title="Buat Paket & Soal"
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <line x1="12" y1="5" x2="12" y2="19"/>
-                      <line x1="5" y1="12" x2="19" y2="12"/>
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
-                    {isSidebarExpanded && <span>+ Buat Paket & Soal</span>}
+                    {isSidebarExpanded && <span>Buat Paket & Soal</span>}
+                  </div>
+
+                  <div
+                    onClick={() => setActiveTab('dashboard_telemetry')}
+                    className={`sidebar-item ${activeTab === 'dashboard_telemetry' ? 'active' : ''}`}
+                    title="Hasil Pemantauan Siswa"
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <rect x="3" y="3" width="7" height="7"/>
+                      <rect x="14" y="3" width="7" height="7"/>
+                      <rect x="14" y="14" width="7" height="7"/>
+                      <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    {isSidebarExpanded && <span>Hasil Pemantauan</span>}
                   </div>
 
                   <div
@@ -1958,29 +1958,56 @@ export default function Home() {
                     <div>
                       <h1 className="text-2xl font-bold heading-font text-[#2c2825]">Kelola Paket Materi Pembelajaran</h1>
                       <p className="text-xs text-[#6b635b] mt-1">
-                        Pilih dan terbitkan paket materi aktif yang ingin dikirimkan ke portal pengerjaan siswa.
+                        Pilih dan terbitkan paket materi aktif secara langsung ke portal pengerjaan siswa.
                       </p>
                     </div>
 
                     <button
                       onClick={() => setActiveTab('buat_materi_builder')}
-                      className="btn-primary px-5 py-2.5 text-xs font-bold flex items-center gap-2"
+                      className="btn-primary px-5 py-2.5 text-xs font-bold flex items-center gap-2 shadow-xs"
                     >
-                      <span>+ Buat Paket & Soal Baru</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                        <line x1="12" y1="5" x2="12" y2="19"/>
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                      </svg>
+                      <span>Buat Paket Materi Baru</span>
                     </button>
                   </div>
 
+                  {/* Top Status Banner: Transmitter Live Status */}
+                  <div className="bg-gradient-to-r from-[#1b3323] to-[#2d5239] text-white p-5 rounded-2xl shadow-sm border border-[#3d5a45] flex flex-wrap justify-between items-center gap-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
+                      <div>
+                        <span className="text-[10px] uppercase font-bold text-emerald-200 tracking-wider block">
+                          Transmitter Live Engine Status
+                        </span>
+                        <h3 className="font-bold text-sm text-white heading-font">
+                          Server Terhubung Ke Portal Siswa
+                        </h3>
+                      </div>
+                    </div>
+                    <span className="text-[11px] bg-white/10 text-emerald-100 px-3 py-1 rounded-full font-mono border border-white/15">
+                      Target: Portal Pengerjaan Aktif ({materials.length} Paket Siap)
+                    </span>
+                  </div>
+
                   {/* List of Available Material Packages */}
-                  <div className="space-y-4">
+                  <div className="space-y-5">
                     {materials.map((m) => (
-                      <div key={m.id} className="bg-white border border-[#c4dcd0] rounded-xl shadow-xs overflow-hidden">
+                      <div key={m.id} className="bg-white border border-[#c4dcd0] rounded-2xl shadow-xs overflow-hidden transition hover:border-[#3d5a45]">
                         <div
                           onClick={() => setExpandedMaterials((prev) => ({ ...prev, [m.id]: !prev[m.id] }))}
-                          className="bg-[#1b3323] text-white p-4 flex justify-between items-center cursor-pointer hover:bg-[#203d2b] transition select-none"
+                          className="bg-[#1b3323] text-white p-4 px-6 flex justify-between items-center cursor-pointer hover:bg-[#203d2b] transition select-none"
                         >
-                          <span className="font-bold text-xs heading-font">{m.title}</span>
-                          <div className="flex items-center gap-3 text-xs">
-                            <span className="text-[#d1caad] font-semibold">{m.soalCount} Soal Tersedia</span>
+                          <div className="flex items-center gap-3">
+                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                            <span className="font-bold text-xs heading-font tracking-wide">{m.title}</span>
+                          </div>
+                          <div className="flex items-center gap-4 text-xs">
+                            <span className="text-[#d1caad] font-medium bg-white/10 px-2.5 py-1 rounded-md text-[11px]">
+                              {m.soalCount} Soal Evaluasi
+                            </span>
                             <svg
                               className={`w-4 h-4 text-[#d1caad] transform transition-transform duration-200 ${expandedMaterials[m.id] ? 'rotate-180' : 'rotate-0'}`}
                               fill="none"
@@ -1993,23 +2020,23 @@ export default function Home() {
                           </div>
                         </div>
 
-                        <div className="p-5 space-y-4">
+                        <div className="p-6 space-y-5">
                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-xs">
-                            <div>
-                              <span className="text-[#6b635b] block mb-0.5 font-medium">Jumlah Soal</span>
-                              <span className="font-bold text-[#2c2825]">{m.soalCount} Soal</span>
+                            <div className="bg-[#f7f5f0] p-3 rounded-xl border border-[#efece4]">
+                              <span className="text-[#6b635b] block text-[10px] font-bold uppercase tracking-wider mb-0.5">Jumlah Soal</span>
+                              <span className="font-bold text-[#2c2825] text-xs">{m.soalCount} Soal Evaluasi</span>
                             </div>
-                            <div>
-                              <span className="text-[#6b635b] block mb-0.5 font-medium">Tipe Soal</span>
-                              <span className="font-bold text-[#3d5a45]">PG & Canvas Coretan</span>
+                            <div className="bg-[#f7f5f0] p-3 rounded-xl border border-[#efece4]">
+                              <span className="text-[#6b635b] block text-[10px] font-bold uppercase tracking-wider mb-0.5">Format Pengerjaan</span>
+                              <span className="font-bold text-[#3d5a45] text-xs">PG & Canvas Coretan</span>
                             </div>
-                            <div>
-                              <span className="text-[#6b635b] block mb-0.5 font-medium">Total Waktu Ujian</span>
-                              <span className="font-bold text-[#2c2825]">{m.totalTime}</span>
+                            <div className="bg-[#f7f5f0] p-3 rounded-xl border border-[#efece4]">
+                              <span className="text-[#6b635b] block text-[10px] font-bold uppercase tracking-wider mb-0.5">Total Waktu Ujian</span>
+                              <span className="font-bold text-[#2c2825] text-xs">{m.totalTime} Menit</span>
                             </div>
-                            <div>
-                              <span className="text-[#6b635b] block mb-0.5 font-medium">Tanggal Dibuat</span>
-                              <span className="font-medium text-[#5c554e]">{m.createdAt}</span>
+                            <div className="bg-[#f7f5f0] p-3 rounded-xl border border-[#efece4]">
+                              <span className="text-[#6b635b] block text-[10px] font-bold uppercase tracking-wider mb-0.5">Tanggal Dibuat</span>
+                              <span className="font-medium text-[#5c554e] text-xs">{m.createdAt}</span>
                             </div>
                           </div>
 
@@ -2025,9 +2052,9 @@ export default function Home() {
 
                               <div className="space-y-2">
                                 {m.questions.map((q, qIdx) => (
-                                  <div key={q.id || qIdx} className="bg-[#f7f5f0] p-3 rounded-lg border border-[#c4dcd0] text-xs flex items-center justify-between hover:bg-white transition">
+                                  <div key={q.id || qIdx} className="bg-[#f7f5f0] p-3 rounded-xl border border-[#c4dcd0] text-xs flex items-center justify-between hover:bg-white transition">
                                     <div className="flex items-center gap-3">
-                                      <span className="w-6 h-6 rounded bg-[#3d5a45] text-white font-bold text-[10px] flex items-center justify-center">
+                                      <span className="w-6 h-6 rounded-md bg-[#3d5a45] text-white font-bold text-[10px] flex items-center justify-center flex-shrink-0">
                                         {qIdx + 1}
                                       </span>
                                       <div>
@@ -2055,10 +2082,10 @@ export default function Home() {
                             </div>
                           )}
 
-                          <div className="flex items-center justify-between pt-2 border-t border-[#efece4]">
+                          <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#efece4]">
                             <button
                               onClick={() => setExpandedMaterials((prev) => ({ ...prev, [m.id]: !prev[m.id] }))}
-                              className="py-1.5 px-4 bg-[#f7f5f0] hover:bg-[#e4efe7] border border-[#c4dcd0] rounded-lg text-xs font-bold text-[#3d5a45] flex items-center gap-2 transition"
+                              className="py-2 px-4 bg-[#f7f5f0] hover:bg-[#e4efe7] border border-[#c4dcd0] rounded-xl text-xs font-bold text-[#3d5a45] flex items-center gap-2 transition"
                             >
                               <span>{expandedMaterials[m.id] ? 'Tutup Daftar Soal' : `Lihat Daftar (${m.questions?.length || 0}) Soal Ujian`}</span>
                               <svg
@@ -2074,9 +2101,13 @@ export default function Home() {
 
                             <button
                               onClick={() => handlePublishMaterialToStudents(m)}
-                              className="px-5 py-2 btn-primary text-xs font-bold flex items-center gap-2 shadow-xs"
+                              className="px-6 py-2.5 bg-[#1b3323] hover:bg-[#203d2b] text-white text-xs font-bold rounded-xl flex items-center gap-2.5 shadow-md hover:shadow-lg transition transform active:scale-98 cursor-pointer border border-[#3d5a45]"
                             >
-                              <span>Kirim Ke Server / Papan Siswa (Publish Live)</span>
+                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                <line x1="22" y1="2" x2="11" y2="13"/>
+                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                              </svg>
+                              <span>Terbitkan Ke Papan Siswa (Live Transmitter)</span>
                             </button>
                           </div>
                         </div>
