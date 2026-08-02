@@ -613,6 +613,21 @@ async function initDB() {
   }
 }
 
+let initPromise = null;
+
+async function ensureConnected() {
+  if (isConnected) return true;
+  if (!initPromise) {
+    initPromise = initDB().then(() => {
+      if (!isConnected) initPromise = null;
+    }).catch(err => {
+      initPromise = null;
+    });
+  }
+  await initPromise;
+  return isConnected;
+}
+
 function getIsConnected() {
   return isConnected;
 }
@@ -621,6 +636,7 @@ module.exports = {
   getPool,
   queryDB,
   initDB,
+  ensureConnected,
   getIsConnected,
   getDbError,
   getDriver
