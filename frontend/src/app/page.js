@@ -2998,15 +2998,15 @@ export default function Home() {
                               {questionsList[currentQIdx]?.options.map((opt) => (
                                 <button
                                   key={opt.id}
-                                  onClick={() => setPgAnswers({ ...pgAnswers, [currentQIdx]: opt.id })}
+                                  onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQIdx]: opt.id })}
                                   className={`w-full text-left p-3 rounded-lg border text-xs font-medium transition flex items-center gap-3 ${
-                                    pgAnswers[currentQIdx] === opt.id
+                                    selectedAnswers[currentQIdx] === opt.id
                                       ? 'bg-[#3d5a45] text-white border-[#3d5a45] shadow-xs'
                                       : 'bg-[#f7f5f0] text-[#2c2825] border-[#c4dcd0] hover:bg-[#e4efe7]'
                                   }`}
                                 >
                                   <span className={`w-5 h-5 rounded-full border text-[10px] font-bold flex items-center justify-center ${
-                                    pgAnswers[currentQIdx] === opt.id ? 'border-white bg-white/20' : 'border-[#6b635b]'
+                                    selectedAnswers[currentQIdx] === opt.id ? 'border-white bg-white/20' : 'border-[#6b635b]'
                                   }`}>
                                     {opt.id}
                                   </span>
@@ -3087,11 +3087,7 @@ export default function Home() {
                             {currentQIdx === questionsList.length - 1 ? (
                               <button
                                 onClick={handleAttemptSubmit}
-                                className={`px-5 py-2 text-xs font-bold rounded-lg transition ${
-                                  answeredCount < questionsList.length
-                                    ? 'bg-[#3d5a45]/50 opacity-60 text-white hover:opacity-80'
-                                    : 'btn-primary bg-[#3d5a45] hover:bg-[#2e4736]'
-                                }`}
+                                className="px-5 py-2 text-xs font-bold rounded-lg transition btn-primary bg-[#3d5a45] hover:bg-[#2e4736]"
                               >
                                 Selesaikan Ujian
                               </button>
