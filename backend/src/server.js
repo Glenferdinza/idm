@@ -67,7 +67,7 @@ initDB();
 app.get('/', (req, res) => {
   res.json({
     status: 'ok',
-    message: '🚀 Memori DNA REST API Backend Server is Running!',
+    message: 'Memori DNA REST API Backend Server is Running!',
     dbConnected: getIsConnected(),
     endpoints: {
       health: '/api/health',
