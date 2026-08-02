@@ -142,14 +142,14 @@ async function initDB() {
           {
             id: 'q-1',
             number: 1,
-            topic: 'Bilangan Bulat',
-            question_text: 'Hasil dari 41 + 28 adalah ...',
+            topic: 'Matematika Aljabar',
+            question_text: 'Hasil penyederhanaan dari 5x + 3y - 2x + 7y adalah ...',
             type: 'pg',
             options_json: JSON.stringify([
-              { id: 'A', text: '69' },
-              { id: 'B', text: '59' },
-              { id: 'C', text: '13' },
-              { id: 'D', text: '79' }
+              { id: 'A', text: '3x + 10y' },
+              { id: 'B', text: '7x + 10y' },
+              { id: 'C', text: '3x + 4y' },
+              { id: 'D', text: '10x + 3y' }
             ]),
             correct_answer: 'A',
             difficulty: 'Mudah'
@@ -158,10 +158,90 @@ async function initDB() {
             id: 'q-2',
             number: 2,
             topic: 'Persamaan Linear Satu Variabel',
-            question_text: 'Tentukan nilai x jika 3x + 12 = 45. Gunakan area canvas untuk menguraikan langkah perhitungan.',
+            question_text: 'Tentukan nilai x jika 3x + 12 = 45. Gunakan area canvas telemetry di bawah untuk mencoret dan ketikkan jawaban angka di bawah.',
             type: 'canvas',
             options_json: JSON.stringify([]),
-            correct_answer: 'x = 11',
+            correct_answer: '11',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-3',
+            number: 3,
+            topic: 'Penggolongan Narkotika & Regulasi',
+            question_text: 'Berdasarkan regulasi medis dan UU No. 35 Tahun 2009, narkotika Golongan I difungsikan khusus untuk ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: 'Kepentingan ilmu pengetahuan dan tidak digunakan dalam terapi medis' },
+              { id: 'B', text: 'Pengobatan umum yang dijual bebas tanpa resep dokter' },
+              { id: 'C', text: 'Suplemen peningkat daya ingat jangka pendek' },
+              { id: 'D', text: 'Obat resep tingkat pertama untuk demam' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-4',
+            number: 4,
+            topic: 'Operasi Bilangan Bulat',
+            question_text: 'Hasil dari 45 + (-18) × 3 adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '-9' },
+              { id: 'B', text: '81' },
+              { id: 'C', text: '-81' },
+              { id: 'D', text: '27' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-5',
+            number: 5,
+            topic: 'Geometri dan Aljabar',
+            question_text: 'Sebuah persegi panjang memiliki panjang (2x + 4) cm dan lebar 5 cm. Jika luasnya adalah 50 cm², berapakah nilai x?',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '3',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-6',
+            number: 6,
+            topic: 'Dampak Kognitif & Bahaya Zat',
+            question_text: 'Mengapa penggunaan zat adiktif psikotropika dapat menurunkan refleks motorik dan meningkatkan hesitation index seseorang saat menyelesaikan tugas kognitif?',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: 'Mengganggu transmisi sinapsis saraf pusat di otak' },
+              { id: 'B', text: 'Meningkatkan jumlah sel darah merah secara drastis' },
+              { id: 'C', text: 'Merangsang pertumbuhan jaringan otot rangka' },
+              { id: 'D', text: 'Mempercepat denyut jantung tanpa efek ke sistem saraf' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Sangat Sulit'
+          },
+          {
+            id: 'q-7',
+            number: 7,
+            topic: 'Aritmatika Sosial & Persentase',
+            question_text: 'Sebuah toko memberikan diskon 20% untuk buku seharga Rp 150.000,00. Berapakah harga buku setelah diskon?',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: 'Rp 120.000,00' },
+              { id: 'B', text: 'Rp 130.000,00' },
+              { id: 'C', text: 'Rp 110.000,00' },
+              { id: 'D', text: 'Rp 125.000,00' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-8',
+            number: 8,
+            topic: 'Sistem Persamaan Dua Variabel (SPLDV)',
+            question_text: 'Diketahui dua buah persamaan: x + y = 10 dan x - y = 4. Tentukan nilai y.',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '3',
             difficulty: 'Sedang'
           }
         ];

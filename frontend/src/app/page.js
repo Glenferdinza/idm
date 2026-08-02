@@ -259,7 +259,7 @@ export default function Home() {
 
   // Sync with Express Backend API on mount
   useEffect(() => {
-    fetch('http://localhost:5000/api/bank-soal')
+    fetch(`${API_URL}/api/bank-soal`)
       .then((res) => res.json())
       .then((resData) => {
         if (resData.success && resData.data && resData.data.length > 0) {
@@ -736,7 +736,7 @@ export default function Home() {
 
     // Post Telemetry Log to Express Backend REST API
     try {
-      fetch('http://localhost:5000/api/telemetry', {
+      fetch(`${API_URL}/api/telemetry`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -777,7 +777,7 @@ export default function Home() {
 
     // Sync with Express backend REST API
     try {
-      await fetch('http://localhost:5000/api/bank-soal', {
+      await fetch(`${API_URL}/api/bank-soal`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newQuestion)
@@ -809,6 +809,30 @@ export default function Home() {
     setNewOptC('');
     setNewOptD('');
     setNewCorrectAns('A');
+  };
+
+  // Handle deleting a question by Teacher
+  const handleDeleteQuestion = async (qId) => {
+    try {
+      await fetch(`${API_URL}/api/bank-soal/${qId}`, {
+        method: 'DELETE'
+      });
+    } catch (err) {
+      console.log('Backend delete offline');
+    }
+
+    setMaterials((prev) => {
+      const updated = [...prev];
+      if (updated.length > 0) {
+        const filtered = updated[0].questions.filter(q => q.id !== qId);
+        updated[0] = {
+          ...updated[0],
+          soalCount: filtered.length,
+          questions: filtered
+        };
+      }
+      return updated;
+    });
   };
 
   const activeQuestion = questionsList[currentQIdx] || questionsList[0];

@@ -396,6 +396,65 @@ app.post('/api/bank-soal', async (req, res) => {
   }
 });
 
+// Edit / Update Question
+app.put('/api/bank-soal/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { topic, questionText, type, options, correctAnswer, difficulty } = req.body;
+    const optionsJson = JSON.stringify(options || []);
+
+    if (getIsConnected()) {
+      const driver = getDriver();
+      const updateQuery = driver === 'pg'
+        ? 'UPDATE questions SET topic = $1, question_text = $2, type = $3, options_json = $4, correct_answer = $5, difficulty = $6 WHERE id = $7'
+        : 'UPDATE questions SET topic = ?, question_text = ?, type = ?, options_json = ?, correct_answer = ?, difficulty = ? WHERE id = ?';
+
+      await queryDB(updateQuery, [topic, questionText, type, optionsJson, correctAnswer, difficulty, id]);
+      return res.json({ success: true, message: 'Soal berhasil diperbarui di database.' });
+    } else {
+      const idx = questionBankInMemory.findIndex(q => q.id === id);
+      if (idx !== -1) {
+        questionBankInMemory[idx] = {
+          ...questionBankInMemory[idx],
+          topic: topic || questionBankInMemory[idx].topic,
+          questionText: questionText || questionBankInMemory[idx].questionText,
+          type: type || questionBankInMemory[idx].type,
+          options: options || questionBankInMemory[idx].options,
+          correctAnswer: correctAnswer !== undefined ? correctAnswer : questionBankInMemory[idx].correctAnswer,
+          difficulty: difficulty || questionBankInMemory[idx].difficulty
+        };
+      }
+      return res.json({ success: true, message: 'Soal berhasil diperbarui (In-Memory).' });
+    }
+  } catch (err) {
+    console.error('Error in PUT /api/bank-soal/:id:', err);
+    res.status(500).json({ success: false, message: 'Gagal mengedit soal.' });
+  }
+});
+
+// Delete Question
+app.delete('/api/bank-soal/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    if (getIsConnected()) {
+      const driver = getDriver();
+      const deleteQuery = driver === 'pg'
+        ? 'DELETE FROM questions WHERE id = $1'
+        : 'DELETE FROM questions WHERE id = ?';
+
+      await queryDB(deleteQuery, [id]);
+      return res.json({ success: true, message: 'Soal berhasil dihapus dari database.' });
+    } else {
+      questionBankInMemory = questionBankInMemory.filter(q => q.id !== id);
+      return res.json({ success: true, message: 'Soal berhasil dihapus (In-Memory).' });
+    }
+  } catch (err) {
+    console.error('Error in DELETE /api/bank-soal/:id:', err);
+    res.status(500).json({ success: false, message: 'Gagal menghapus soal.' });
+  }
+});
+
 // ----------------------------------------------------
 // Telemetry & Analytics Endpoints
 // ----------------------------------------------------
