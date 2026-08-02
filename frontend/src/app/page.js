@@ -68,7 +68,7 @@ const DEMO_QUESTIONS = [
 const DEFAULT_MATERIALS = [
   {
     id: 'mat-1',
-    title: 'Pengertian dan Penggolongan Narkotika serta Dampak Kognitif',
+    title: 'Matematika Aljabar, Geometri, dan Logika Kognitif',
     soalCount: 30,
     quotesCount: 4,
     zonesCount: '3 Zona Interaktif',
@@ -598,6 +598,12 @@ export default function Home() {
 
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [expandedMaterials, setExpandedMaterials] = useState({});
+  const [showAddMaterialModal, setShowAddMaterialModal] = useState(false);
+  const [newMaterialPackageTitle, setNewMaterialPackageTitle] = useState('');
+  const [newMaterialPackageZones, setNewMaterialPackageZones] = useState('3 Zona Interaktif');
+  const [newMaterialPackageTime, setNewMaterialPackageTime] = useState('60:00');
+  const [targetMaterialIdForQuestion, setTargetMaterialIdForQuestion] = useState(null);
+
   const [unansweredList, setUnansweredList] = useState([]);
   const [lastSubmittedResult, setLastSubmittedResult] = useState(null);
 
@@ -1131,13 +1137,41 @@ export default function Home() {
     setStudentStep('result');
   };
 
+  // Handle creating a new Material Package
+  const handleCreateNewMaterialPackage = (e) => {
+    if (e) e.preventDefault();
+    if (!newMaterialPackageTitle.trim()) {
+      alert('Masukkan nama paket materi!');
+      return;
+    }
+
+    const newMatObj = {
+      id: `mat-${Date.now()}`,
+      title: newMaterialPackageTitle.trim(),
+      soalCount: 0,
+      zonesCount: newMaterialPackageZones || '3 Zona Interaktif',
+      totalTime: newMaterialPackageTime || '60:00',
+      createdAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+      questions: []
+    };
+
+    setMaterials((prev) => [newMatObj, ...prev]);
+    setShowAddMaterialModal(false);
+    setNewMaterialPackageTitle('');
+    setNewMaterialPackageZones('3 Zona Interaktif');
+    setNewMaterialPackageTime('60:00');
+    alert(`Paket Materi "${newMatObj.title}" berhasil dibuat! Silakan tambahkan soal di dalamnya.`);
+  };
+
   // Handle saving new question created by Teacher
   const handleSaveNewQuestion = async (e) => {
     if (e) e.preventDefault();
 
+    const targetMat = materials.find(m => m.id === (targetMaterialIdForQuestion || materials[0]?.id)) || materials[0];
+
     const newQuestion = {
       id: `q-${Date.now()}`,
-      number: (materials[0]?.questions?.length || 0) + 1,
+      number: (targetMat?.questions?.length || 0) + 1,
       topic: newQTopic || 'Materi Umum',
       questionText: newQText,
       type: newQType,
@@ -1161,13 +1195,19 @@ export default function Home() {
       console.log('Backend sync offline, saving locally to active materials');
     }
 
-    // Append to active materials list so students get the question immediately
+    // Append to selected target material package so students get the question immediately
     setMaterials((prev) => {
       const updated = [...prev];
-      if (updated.length > 0) {
+      const targetIdx = updated.findIndex(m => m.id === (targetMaterialIdForQuestion || updated[0]?.id));
+      if (targetIdx !== -1) {
+        updated[targetIdx] = {
+          ...updated[targetIdx],
+          soalCount: updated[targetIdx].questions.length + 1,
+          questions: [...updated[targetIdx].questions, newQuestion]
+        };
+      } else if (updated.length > 0) {
         updated[0] = {
           ...updated[0],
-          title: newMaterialTitle || updated[0].title,
           soalCount: updated[0].questions.length + 1,
           questions: [...updated[0].questions, newQuestion]
         };
@@ -1176,7 +1216,6 @@ export default function Home() {
     });
 
     setShowAddQuestionModal(false);
-    // Reset form fields
     setNewQTopic('');
     setNewQText('');
     setNewOptA('');
@@ -1869,12 +1908,12 @@ export default function Home() {
                       </p>
                     </div>
 
-                    {/* Teacher Action: Buat Soal Baru Button */}
+                    {/* Teacher Action: Buat Paket Materi Baru Button */}
                     <button
-                      onClick={() => setShowAddQuestionModal(true)}
+                      onClick={() => setShowAddMaterialModal(true)}
                       className="btn-primary px-5 py-2.5 text-xs font-bold flex items-center gap-2"
                     >
-                      <span>+ Buat Soal Baru</span>
+                      <span>+ Buat Paket Materi Baru</span>
                     </button>
                   </div>
 
@@ -2129,7 +2168,10 @@ export default function Home() {
                             </button>
 
                             <button
-                              onClick={() => setShowAddQuestionModal(true)}
+                              onClick={() => {
+                                setTargetMaterialIdForQuestion(m.id);
+                                setShowAddQuestionModal(true);
+                              }}
                               className="px-5 py-2 btn-primary text-xs"
                             >
                               + Tambah Soal
@@ -2210,7 +2252,7 @@ export default function Home() {
                           </div>
 
                           <div className="text-[11px] text-[#3d5a45] font-bold text-right pt-2 border-t border-[#c4dcd0]">
-                            Lihat Detail Analisis →
+                            Lihat Detail Telemetry →
                           </div>
                         </div>
                       ))}
@@ -2219,21 +2261,19 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Tab 3: Ujian Siswa (Accessible for both Siswa & Pengajar) */}
+              {/* Tab 3: Pengerjaan Soal Siswa */}
               {activeTab === 'pengerjaan_soal' && (
                 <div className="space-y-6">
-                  {studentStep === 'prep' ? (
-                    <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 shadow-xs space-y-6 max-w-2xl">
-                      <div className="border-b pb-4 border-[#efece4]">
-                        <span className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider block mb-1">Portal Ujian Siswa</span>
-                        <h2 className="text-xl font-bold heading-font text-[#2c2825]">Preparasi dan Petunjuk Ujian</h2>
-                      </div>
+                  {studentStep === 'prep' && (
+                    <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 max-w-xl mx-auto text-center space-y-6 shadow-xs">
+                      <span className="text-3xl block">📝</span>
+                      <h2 className="text-xl font-bold heading-font text-[#2c2825]">Persiapan Ujian Evaluasi Siswa</h2>
+                      <p className="text-xs text-[#6b635b]">
+                        Isikan nama Anda di bawah ini dan klik mulai untuk memasuki portal ujian interactive canvas.
+                      </p>
 
-                      {/* Interactive Student Name Input */}
-                      <div className="space-y-1.5">
-                        <label className="text-xs font-bold text-[#423c37] block">
-                          Nama Lengkap Siswa Pengerja Ujian:
-                        </label>
+                      <div className="space-y-4 text-left">
+                        <label className="text-xs font-bold text-[#423c37] block">Nama Lengkap Siswa</label>
                         <input
                           type="text"
                           value={currentUser?.name || ''}
@@ -2243,135 +2283,80 @@ export default function Home() {
                         />
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-                        <div className="bg-[#efece4]/60 p-4 rounded-lg border border-[#c4dcd0] space-y-1">
-                          <span className="text-[#6b635b] font-semibold uppercase">Materi Ujian</span>
-                          <span className="font-bold text-[#2c2825] block">{materials[0]?.title}</span>
-                        </div>
-                        <div className="bg-[#efece4]/60 p-4 rounded-lg border border-[#c4dcd0] space-y-1">
-                          <span className="text-[#6b635b] font-semibold uppercase">Jumlah Soal Aktif</span>
-                          <span className="font-bold text-[#2c2825] block">{questionsList.length} Soal</span>
-                        </div>
-                      </div>
-
-                      <div className="bg-[#efece4]/60 p-4 rounded-lg border border-[#c4dcd0] space-y-1 text-xs text-[#5c554e]">
-                        <span className="font-bold text-[#2c2825] block uppercase">Petunjuk Pengerjaan:</span>
-                        <p>1. Pilihan Ganda: Pilih salah satu jawaban yang sesuai.</p>
-                        <p>2. Canvas Coretan & Jawaban Singkat: Gunakan canvas untuk menguraikan rumus dan ketikkan jawaban singkat di kolom yang tersedia.</p>
-                        <p>3. Seluruh soal wajib dijawab sebelum menekan tombol Selesaikan Ujian.</p>
-                      </div>
-
                       <button
+                        disabled={!currentUser?.name?.trim()}
                         onClick={() => {
                           setStudentStep('exam');
-                          setExamTimerSeconds(3600);
+                          setCurrentQIdx(0);
                         }}
-                        className="px-8 py-3 btn-primary text-xs font-bold"
+                        className="w-full py-3 btn-primary text-xs font-bold disabled:opacity-40"
                       >
-                        Mulai Pengerjaan Ujian
+                        Mulai Pengerjaan Ujian Sekarang →
                       </button>
                     </div>
-                  ) : studentStep === 'exam' ? (
-                    <div className="space-y-4">
-                      {/* Top Exam Header Bar (Timer & Progress Bar) */}
-                      <div className="bg-white border border-[#c4dcd0] rounded-xl p-4 flex flex-wrap items-center justify-between gap-4 shadow-xs">
-                        <div className="flex items-center gap-3">
-                          <span className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider">
-                            Pengerjaan Ujian Aktif: {currentUser?.name || 'Siswa'}
-                          </span>
-                          <span className="text-xs text-[#6b635b] font-medium">|</span>
-                          <span className="text-xs font-bold text-[#2c2825]">
-                            Progres: {answeredCount} / {questionsList.length} Soal ({Math.round((answeredCount / questionsList.length) * 100)}%)
-                          </span>
-                        </div>
+                  )}
 
-                        <div className="flex items-center gap-4">
-                          <div className="flex items-center gap-2 bg-[#efece4] px-3 py-1.5 rounded-lg border border-[#c4dcd0]">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                              <circle cx="12" cy="12" r="10" />
-                              <polyline points="12 6 12 12 16 14" />
-                            </svg>
-                            <span className="text-xs font-mono font-bold text-[#2c2825]">
-                              Waktu: {formatTimer(examTimerSeconds)}
+                  {studentStep === 'exam' && (
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                      {/* Left 2 Cols: Question Box & Canvas */}
+                      <div className="lg:col-span-2 space-y-6">
+                        <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-4 shadow-xs">
+                          <div className="flex justify-between items-center border-b pb-3 border-[#efece4]">
+                            <span className="text-xs font-bold text-[#3d5a45]">
+                              Soal Nomor {currentQIdx + 1} dari {questionsList.length}
                             </span>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                        <div className="lg:col-span-2 bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-6 shadow-xs">
-                          <div className="flex items-center justify-between border-b pb-4 border-[#efece4]">
-                            <div className="flex items-center gap-3">
-                              <div className="w-7 h-7 rounded-md bg-[#3d5a45] text-white font-bold text-xs flex items-center justify-center">
-                                {activeQuestion?.number || (currentQIdx + 1)}
-                              </div>
-                              <div>
-                                <span className="text-[10px] text-[#6b635b] font-bold block uppercase">Topik Materi</span>
-                                <span className="text-xs font-bold text-[#2c2825]">{activeQuestion?.topic}</span>
-                              </div>
-                            </div>
-                            <span className="text-[11px] bg-[#efece4] text-[#5c554e] px-3 py-1 rounded font-semibold border border-[#c4dcd0]">
-                              Tipe: {activeQuestion?.type === 'pg' ? 'Pilihan Ganda' : 'Canvas Coretan'}
+                            <span className="text-xs bg-[#f0f4f1] text-[#3d5a45] px-3 py-1 rounded font-mono font-bold border border-[#c7d8cb]">
+                              {questionsList[currentQIdx]?.topic}
                             </span>
                           </div>
 
-                          <h3 className="text-sm font-semibold text-[#2c2825] leading-relaxed">
-                            {activeQuestion?.questionText}
+                          <h3 className="font-bold text-[#2c2825] text-sm leading-relaxed">
+                            {questionsList[currentQIdx]?.questionText}
                           </h3>
 
-                          {activeQuestion?.type === 'pg' ? (
-                            <div className="space-y-3">
-                              {activeQuestion?.options?.map((opt) => (
-                                <div
+                          {/* Multiple Choice Options if type is PG */}
+                          {questionsList[currentQIdx]?.type === 'pg' && (
+                            <div className="space-y-2 pt-2">
+                              {questionsList[currentQIdx]?.options.map((opt) => (
+                                <button
                                   key={opt.id}
-                                  onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQIdx]: opt.id })}
-                                  className={`p-3.5 border rounded-lg flex items-center gap-4 cursor-pointer transition ${
-                                    selectedAnswers[currentQIdx] === opt.id
-                                      ? 'border-[#3d5a45] bg-[#f0f4f1] font-bold'
-                                      : 'border-[#c4dcd0] hover:border-slate-300'
+                                  onClick={() => setPgAnswers({ ...pgAnswers, [currentQIdx]: opt.id })}
+                                  className={`w-full text-left p-3 rounded-lg border text-xs font-medium transition flex items-center gap-3 ${
+                                    pgAnswers[currentQIdx] === opt.id
+                                      ? 'bg-[#3d5a45] text-white border-[#3d5a45] shadow-xs'
+                                      : 'bg-[#f7f5f0] text-[#2c2825] border-[#c4dcd0] hover:bg-[#e4efe7]'
                                   }`}
                                 >
-                                  <div className="w-7 h-7 rounded bg-[#efece4] text-[#2c2825] text-xs font-bold flex items-center justify-center">
+                                  <span className={`w-5 h-5 rounded-full border text-[10px] font-bold flex items-center justify-center ${
+                                    pgAnswers[currentQIdx] === opt.id ? 'border-white bg-white/20' : 'border-[#6b635b]'
+                                  }`}>
                                     {opt.id}
-                                  </div>
-                                  <span className="text-xs text-[#2c2825]">{opt.text}</span>
-                                </div>
+                                  </span>
+                                  <span>{opt.text}</span>
+                                </button>
                               ))}
                             </div>
-                          ) : (
-                            <div className="space-y-4">
-                              <div className="flex items-center justify-between bg-[#efece4]/60 p-2.5 rounded border border-[#c4dcd0] text-xs">
-                                <div className="flex items-center gap-3">
-                                  <span className="font-semibold text-[#423c37]">Warna Pen:</span>
-                                  <input
-                                    type="color"
-                                    value={penColor}
-                                    onChange={(e) => setPenColor(e.target.value)}
-                                    className="w-6 h-6 rounded cursor-pointer border border-[#c4dcd0]"
-                                  />
-                                </div>
-                                <div className="flex items-center gap-3">
-                                  <span className="font-semibold text-[#423c37]">Ketebalan:</span>
-                                  <input
-                                    type="range"
-                                    min="1"
-                                    max="8"
-                                    value={penWidth}
-                                    onChange={(e) => setPenWidth(Number(e.target.value))}
-                                    className="w-20 accent-[#3d5a45]"
-                                  />
-                                </div>
-                                <button
-                                  onClick={clearCanvas}
-                                  className="text-xs bg-white text-[#2c2825] border border-[#c4dcd0] px-3 py-1 rounded font-medium hover:bg-[#efece4] transition"
-                                >
-                                  Hapus Canvas
-                                </button>
-                              </div>
+                          )}
 
-                              {/* Scratchpad Canvas */}
+                          {/* Interactive Drawing Canvas */}
+                          <div className="space-y-2 pt-3 border-t border-[#efece4]">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs font-bold text-[#3d5a45]">
+                                Canvas Coretan Pengerjaan (Telemetri Pen Motorik):
+                              </span>
+                              <button
+                                onClick={clearCanvas}
+                                className="text-[11px] text-rose-600 hover:text-rose-800 font-bold underline"
+                              >
+                                Bersihkan Canvas
+                              </button>
+                            </div>
+
+                            <div className="border border-[#c4dcd0] rounded-xl overflow-hidden bg-white shadow-inner">
                               <canvas
                                 ref={canvasRef}
+                                width={650}
+                                height={280}
                                 onMouseDown={startDraw}
                                 onMouseMove={draw}
                                 onMouseUp={stopDraw}
@@ -2379,18 +2364,14 @@ export default function Home() {
                                 onTouchStart={startDraw}
                                 onTouchMove={draw}
                                 onTouchEnd={stopDraw}
-                                onPointerDown={startDraw}
-                                onPointerMove={draw}
-                                onPointerUp={stopDraw}
-                                onPointerCancel={stopDraw}
-                                className="canvas-scratchpad w-full"
+                                className="w-full h-70 touch-none cursor-crosshair"
                               />
+                            </div>
 
-                              {/* Short Answer Input Box */}
-                              <div className="space-y-2 pt-3 border-t border-[#c4dcd0]">
-                                <label className="text-xs font-bold text-[#2c2825] block">
-                                  Jawaban Singkat:
-                                </label>
+                            {/* Short Answer Input for Canvas questions */}
+                            {questionsList[currentQIdx]?.type === 'canvas' && (
+                              <div className="pt-2 space-y-1">
+                                <label className="text-xs font-bold text-[#423c37] block">Jawaban Akhir Singkat:</label>
                                 <input
                                   type="text"
                                   value={shortAnswers[currentQIdx] || ''}
@@ -2399,15 +2380,15 @@ export default function Home() {
                                   className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
                                 />
                               </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
 
-                          {/* Navigation Actions Bar with Ragu-Ragu Toggle & Selesaikan Button */}
-                          <div className="flex items-center justify-between border-t pt-4 border-[#efece4]">
+                          {/* Bottom Navigation Buttons */}
+                          <div className="flex justify-between items-center pt-4 border-t border-[#efece4]">
                             <button
                               disabled={currentQIdx === 0}
                               onClick={() => setCurrentQIdx((p) => Math.max(0, p - 1))}
-                              className="px-4 py-2 bg-[#efece4] hover:bg-[#ded8cb] text-[#423c37] font-semibold rounded text-xs disabled:opacity-40 transition"
+                              className="px-4 py-2 btn-outline text-xs disabled:opacity-40"
                             >
                               Sebelumnya
                             </button>
@@ -2446,179 +2427,119 @@ export default function Home() {
                             )}
                           </div>
                         </div>
+                      </div>
 
-                        {/* Right Sidebar: Telemetry (Pengajar Only) & Question Navigation Palette */}
-                        <div className="space-y-6">
-                          {/* Live Telemetry Card (Hidden for Siswa, running silently in background) */}
-                          {!isSiswaRole && (
-                            <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-4 shadow-xs">
-                              <h4 className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider border-b pb-3 border-[#efece4] flex items-center justify-between">
-                                <span>Live Telemetry Pengerjaan</span>
-                                <span className="flex items-center gap-1.5 text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
-                                  <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
-                                  </span>
-                                  LIVE MOTORIC
-                                </span>
-                              </h4>
-
-                              <div className="space-y-3 text-xs">
-                                <div className="flex justify-between items-center">
-                                  <span className="text-[#6b635b] font-medium">Kecepatan Goresan:</span>
-                                  <span className="font-mono font-bold text-[#2c2825]">{strokeSpeed} px/s</span>
-                                </div>
-
-                                <div className="flex justify-between items-center pt-2 border-t border-slate-100">
-                                  <span className="text-[#6b635b] font-medium">Hesitation Index:</span>
-                                  <span className="font-mono font-bold text-[#2c2825]">{hesitationIndex}%</span>
-                                </div>
-
-                                <div className="flex justify-between items-center pt-2 border-t border-slate-100">
-                                  <span className="text-[#6b635b] font-medium">Status Intent:</span>
-                                  <span className="font-bold text-[#3d5a45]">{strokeIntent}</span>
-                                </div>
-
-                                <div className="pt-3 border-t border-[#c4dcd0] space-y-1.5">
-                                  <div className="flex justify-between items-center text-[10px] text-[#4e6355]">
-                                    <span className="font-semibold">Sinyal Gelombang Motorik Pen:</span>
-                                    <span className="font-mono font-bold text-[#3d5a45]">ECG Stream</span>
-                                  </div>
-                                  <div className="w-full h-9 bg-[#f7f5f0] rounded-lg p-1.5 border border-[#c4dcd0] flex items-center overflow-hidden shadow-inner">
-                                    <svg className="w-full h-full" viewBox="0 0 100 28" fill="none">
-                                      <path
-                                        d="M0 14 L15 14 L18 6 L22 22 L26 2 L30 26 L34 10 L38 18 L42 14 L60 14 L63 6 L67 22 L71 2 L75 26 L79 10 L83 18 L87 14 L100 14"
-                                        stroke="#3d5a45"
-                                        strokeWidth="2.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        className="animate-ecg-pulse"
-                                      />
-                                    </svg>
-                                  </div>
-                                </div>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Question Navigation Grid Box */}
+                      {/* Right Sidebar: Telemetry (Pengajar Only) & Question Navigation Palette */}
+                      <div className="space-y-6">
+                        {/* Live Telemetry Card (Hidden for Siswa, running silently in background) */}
+                        {!isSiswaRole && (
                           <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-4 shadow-xs">
-                            <h4 className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider border-b pb-3 border-[#efece4]">
-                              Navigasi Nomor Soal
+                            <h4 className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider border-b pb-3 border-[#efece4] flex items-center justify-between">
+                              <span>Live Telemetry Pengerjaan</span>
+                              <span className="flex items-center gap-1.5 text-[10px] text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
+                                <span className="relative flex h-2 w-2">
+                                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                  <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600"></span>
+                                </span>
+                                LIVE MOTORIC
+                              </span>
                             </h4>
 
-                            <div className="grid grid-cols-5 gap-2">
-                              {questionsList.map((q, idx) => {
-                                const isCurrent = currentQIdx === idx;
-                                const isAnswered = Boolean(selectedAnswers[idx] || (shortAnswers[idx] && shortAnswers[idx].trim() !== ''));
-                                const isDoubtful = Boolean(doubtfulQuestions[idx]);
-
-                                let colorClass = "bg-[#efece4] text-[#6b635b] border-[#c4dcd0]";
-                                if (isDoubtful) {
-                                  colorClass = "bg-amber-100 text-amber-900 border-amber-300 font-bold";
-                                } else if (isAnswered) {
-                                  colorClass = "bg-emerald-100 text-emerald-900 border-emerald-300 font-bold";
-                                }
-
-                                return (
-                                  <button
-                                    key={q.id || idx}
-                                    onClick={() => setCurrentQIdx(idx)}
-                                    className={`h-10 rounded-lg border flex items-center justify-center text-xs transition ${colorClass} ${
-                                      isCurrent ? 'ring-2 ring-[#3d5a45] ring-offset-1 font-extrabold' : 'hover:opacity-90'
-                                    }`}
-                                  >
-                                    {idx + 1}
-                                  </button>
-                                );
-                              })}
-                            </div>
-
-                            {/* Navigation Status Legend */}
-                            <div className="pt-2 border-t border-[#efece4] space-y-1.5 text-[11px] text-[#6b635b]">
-                              <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded bg-emerald-100 border border-emerald-300"></div>
-                                <span>Sudah Terjawab (Soft Hijau)</span>
+                            <div className="space-y-3 text-xs">
+                              <div className="flex justify-between items-center">
+                                <span className="text-[#6b635b] font-medium">Kecepatan Goresan:</span>
+                                <span className="font-mono font-bold text-[#2c2825]">{strokeSpeed} px/s</span>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded bg-amber-100 border border-amber-300"></div>
-                                <span>Ragu-Ragu (Soft Kuning)</span>
+
+                              <div className="flex justify-between items-center pt-2 border-t border-slate-100">
+                                <span className="text-[#6b635b] font-medium">Hesitation Index:</span>
+                                <span className="font-mono font-bold text-[#2c2825]">{hesitationIndex}%</span>
                               </div>
-                              <div className="flex items-center gap-2">
-                                <div className="w-3 h-3 rounded bg-[#efece4] border border-[#c4dcd0]"></div>
-                                <span>Belum Terjawab (Soft Abu-Abu)</span>
+
+                              <div className="flex justify-between items-center pt-2 border-t border-slate-100">
+                                <span className="text-[#6b635b] font-medium">Status Intent:</span>
+                                <span className="font-bold text-[#3d5a45]">{strokeIntent}</span>
+                              </div>
+
+                              <div className="pt-3 border-t border-[#c4dcd0] space-y-1.5">
+                                <div className="flex justify-between items-center text-[10px] text-[#4e6355]">
+                                  <span className="font-semibold">Sinyal Gelombang Motorik Pen:</span>
+                                  <span className="font-mono font-bold text-[#3d5a45]">ECG Stream</span>
+                                </div>
+                                <div className="w-full h-9 bg-[#f7f5f0] rounded-lg p-1.5 border border-[#c4dcd0] flex items-center overflow-hidden shadow-inner">
+                                  <svg className="w-full h-full" viewBox="0 0 100 28" fill="none">
+                                    <path
+                                      d="M0 14 L15 14 L18 6 L22 22 L26 2 L30 26 L34 10 L38 18 L42 14 L60 14 L63 6 L67 22 L71 2 L75 26 L79 10 L83 18 L87 14 L100 14"
+                                      stroke="#3d5a45"
+                                      strokeWidth="2.5"
+                                      strokeLinecap="round"
+                                      strokeLinejoin="round"
+                                      className="animate-ecg-pulse"
+                                    />
+                                  </svg>
+                                </div>
                               </div>
                             </div>
+                          </div>
+                        )}
+
+                        {/* Question Navigation Grid Box */}
+                        <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-4 shadow-xs">
+                          <h4 className="text-xs font-bold text-[#3d5a45] uppercase tracking-wider border-b pb-3 border-[#efece4]">
+                            Navigasi Nomor Soal
+                          </h4>
+
+                          <div className="grid grid-cols-5 gap-2">
+                            {questionsList.map((q, idx) => {
+                              const isAnswered = pgAnswers[idx] || shortAnswers[idx];
+                              const isDoubt = doubtfulQuestions[idx];
+                              const isCurrent = idx === currentQIdx;
+
+                              let btnStyle = 'bg-[#f7f5f0] text-[#2c2825] border-[#c4dcd0]';
+                              if (isCurrent) btnStyle = 'ring-2 ring-[#3d5a45] bg-[#3d5a45] text-white border-[#3d5a45] font-extrabold';
+                              else if (isDoubt) btnStyle = 'bg-amber-100 text-amber-900 border-amber-300 font-bold';
+                              else if (isAnswered) btnStyle = 'bg-emerald-100 text-emerald-900 border-emerald-300 font-bold';
+
+                              return (
+                                <button
+                                  key={idx}
+                                  onClick={() => setCurrentQIdx(idx)}
+                                  className={`p-2.5 rounded-lg border text-xs font-mono transition flex items-center justify-center relative ${btnStyle}`}
+                                >
+                                  {idx + 1}
+                                </button>
+                              );
+                            })}
                           </div>
                         </div>
                       </div>
                     </div>
-                  ) : (
-                    /* Exam Completion & Result Summary View */
-                    <div className="bg-white border border-[#c4dcd0] rounded-2xl p-8 space-y-6 shadow-xs max-w-2xl mx-auto text-center animate-fade-in-up">
-                      <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-800 flex items-center justify-center mx-auto border border-emerald-300">
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-                          <polyline points="20 6 9 17 4 12" />
-                        </svg>
-                      </div>
+                  )}
 
-                      <div className="space-y-2">
-                        <h2 className="text-2xl font-bold heading-font text-[#2c2825]">
-                          Ujian Berhasil Diselesaikan!
-                        </h2>
-                        <p className="text-xs text-[#6b635b]">
-                          Jawaban dan telemetry kognitif untuk <span className="font-bold text-[#3d5a45]">{lastSubmittedResult?.name}</span> telah disimpan.
-                        </p>
-                      </div>
+                  {studentStep === 'result' && (
+                    <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 max-w-2xl mx-auto text-center space-y-6 shadow-xs">
+                      <span className="text-4xl block">🎉</span>
+                      <h2 className="text-2xl font-bold heading-font text-[#2c2825]">Ujian Evaluasi Berhasil Diselesaikan!</h2>
 
-                      <div className="grid grid-cols-3 gap-4 pt-4 border-t border-[#efece4]">
-                        <div className="bg-[#f0f4f1] p-4 rounded-xl border border-[#c7d8cb]">
-                          <span className="text-[11px] text-[#6b635b] font-bold block uppercase">Akurasi Ujian</span>
+                      <div className="grid grid-cols-3 gap-4 pt-2">
+                        <div className="bg-[#f7f5f0] p-4 rounded-xl border border-[#c4dcd0]">
+                          <span className="text-[11px] text-[#6b635b] font-bold block uppercase">Skor Akurasi</span>
                           <span className="text-2xl font-extrabold font-mono text-[#3d5a45]">
                             {lastSubmittedResult?.accuracy}%
                           </span>
                         </div>
-
-                        <div className="bg-[#efece4] p-4 rounded-xl border border-[#c4dcd0]">
+                        <div className="bg-[#f7f5f0] p-4 rounded-xl border border-[#c4dcd0]">
                           <span className="text-[11px] text-[#6b635b] font-bold block uppercase">Hesitation Index</span>
                           <span className="text-2xl font-extrabold font-mono text-[#2c2825]">
                             {lastSubmittedResult?.hesitation}%
                           </span>
                         </div>
-
-                        <div className="bg-[#efece4] p-4 rounded-xl border border-[#c4dcd0]">
+                        <div className="bg-[#f7f5f0] p-4 rounded-xl border border-[#c4dcd0]">
                           <span className="text-[11px] text-[#6b635b] font-bold block uppercase">Stroke Speed</span>
                           <span className="text-2xl font-extrabold font-mono text-[#2c2825]">
                             {lastSubmittedResult?.speed} <span className="text-xs font-normal">px/s</span>
                           </span>
                         </div>
-                      </div>
-
-                      <div className="bg-[#f0f4f1] border border-[#c7d8cb] p-5 rounded-xl text-left space-y-2 text-xs">
-                        <span className="font-bold text-[#3d5a45] uppercase tracking-wider block">
-                          Diagnosa AI Kognitif Individu ({lastSubmittedResult?.name}):
-                        </span>
-                        <p className="text-[#2c2825] leading-relaxed font-medium">
-                          {lastSubmittedResult?.diagnosis}
-                        </p>
-                      </div>
-
-                      <div className="flex justify-center gap-4 pt-4">
-                        <button
-                          onClick={() => setStudentStep('prep')}
-                          className="btn-outline px-6 py-2.5 text-xs font-bold"
-                        >
-                          Ulangi Ujian
-                        </button>
-
-                        {!isSiswaRole && (
-                          <button
-                            onClick={() => setActiveTab('dashboard_telemetry')}
-                            className="btn-primary px-6 py-2.5 text-xs font-bold"
-                          >
-                            Lihat Hasil di Pemantauan →
-                          </button>
-                        )}
                       </div>
                     </div>
                   )}
@@ -2638,29 +2559,25 @@ export default function Home() {
                       Perkembangan Akurasi dan Efisiensi Belajar (Hari 1 hingga Hari 7)
                     </h3>
 
-                    <div className="space-y-4 pt-2">
-                      <div className="flex justify-between items-center text-xs font-semibold text-[#423c37]">
-                        <span>Hari 1: Pengenalan Materi</span>
-                        <span>Akurasi: 65% | Keraguan: 42%</span>
-                      </div>
-                      <div className="w-full bg-[#efece4] h-2 rounded-full overflow-hidden">
-                        <div className="bg-slate-400 h-full" style={{ width: '65%' }}></div>
-                      </div>
-
-                      <div className="flex justify-between items-center text-xs font-semibold text-[#423c37] pt-2">
-                        <span>Hari 3: Penerapan Soal Adaptif</span>
-                        <span>Akurasi: 82% | Keraguan: 24%</span>
-                      </div>
-                      <div className="w-full bg-[#efece4] h-2 rounded-full overflow-hidden">
-                        <div className="bg-[#3d5a45]/70 h-full" style={{ width: '82%' }}></div>
+                    <div className="space-y-3">
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between font-bold text-[#2c2825]">
+                          <span>Rata-Rata Akurasi Kognitif Seluruh Siswa</span>
+                          <span>92% (Tinggi)</span>
+                        </div>
+                        <div className="w-full bg-[#efece4] h-2 rounded-full overflow-hidden">
+                          <div className="bg-[#3d5a45] h-full" style={{ width: '92%' }}></div>
+                        </div>
                       </div>
 
-                      <div className="flex justify-between items-center text-xs font-semibold text-[#423c37] pt-2">
-                        <span>Hari 7: Penguasaan Mandiri</span>
-                        <span>Akurasi: 96% | Keraguan: 9%</span>
-                      </div>
-                      <div className="w-full bg-[#efece4] h-2 rounded-full overflow-hidden">
-                        <div className="bg-[#3d5a45] h-full" style={{ width: '96%' }}></div>
+                      <div className="space-y-1 text-xs pt-2">
+                        <div className="flex justify-between font-bold text-[#2c2825]">
+                          <span>Stabilitas Pen Motorik & Kecepatan Goresan</span>
+                          <span>96% (Stabil)</span>
+                        </div>
+                        <div className="w-full bg-[#efece4] h-2 rounded-full overflow-hidden">
+                          <div className="bg-[#3d5a45] h-full" style={{ width: '96%' }}></div>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -2671,14 +2588,86 @@ export default function Home() {
         </div>
       )}
 
+      {/* CUSTOM MODAL: Teacher Add New Material Package */}
+      {showAddMaterialModal && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-5 animate-fade-in-up">
+            <div className="flex justify-between items-center border-b pb-3 border-[#efece4]">
+              <div>
+                <h3 className="font-bold text-[#3d5a45] heading-font text-base">Buat Paket Materi Pembelajaran Baru</h3>
+                <span className="text-xs text-[#6b635b]">Buat paket materi kustom baru untuk menambahkan kumpulan soal</span>
+              </div>
+              <button onClick={() => setShowAddMaterialModal(false)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-lg">✕</button>
+            </div>
+
+            <form onSubmit={handleCreateNewMaterialPackage} className="space-y-4 text-xs">
+              <div>
+                <label className="font-bold text-[#423c37] block mb-1">Nama Paket Materi Pembelajaran</label>
+                <input
+                  type="text"
+                  value={newMaterialPackageTitle}
+                  onChange={(e) => setNewMaterialPackageTitle(e.target.value)}
+                  placeholder="Contoh: Matematika Aljabar, Geometri, dan Logika Kognitif"
+                  className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="font-bold text-[#423c37] block mb-1">Zona Interaktif</label>
+                  <input
+                    type="text"
+                    value={newMaterialPackageZones}
+                    onChange={(e) => setNewMaterialPackageZones(e.target.value)}
+                    placeholder="Contoh: 3 Zona Interaktif"
+                    className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="font-bold text-[#423c37] block mb-1">Total Waktu Ujian</label>
+                  <input
+                    type="text"
+                    value={newMaterialPackageTime}
+                    onChange={(e) => setNewMaterialPackageTime(e.target.value)}
+                    placeholder="Contoh: 60:00"
+                    className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div className="flex justify-end gap-3 pt-3 border-t border-[#efece4]">
+                <button
+                  type="button"
+                  onClick={() => setShowAddMaterialModal(false)}
+                  className="btn-outline px-4 py-2 text-xs font-bold"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="btn-primary px-5 py-2 text-xs font-bold"
+                >
+                  Simpan Paket Materi Baru
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       {/* CUSTOM MODAL: Teacher Add Question & Bank Soal Builder */}
       {showAddQuestionModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
           <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-lg w-full p-6 shadow-xl space-y-5 animate-fade-in-up">
             <div className="flex justify-between items-center border-b pb-3 border-[#efece4]">
               <div>
-                <h3 className="font-bold text-[#3d5a45] heading-font text-base">Buat Soal & Bank Ujian Baru</h3>
-                <span className="text-xs text-[#6b635b]">Terbitkan soal baru secara otomatis ke portal pengerjaan siswa</span>
+                <h3 className="font-bold text-[#3d5a45] heading-font text-base">Tambah Soal untuk Paket Materi</h3>
+                <span className="text-xs font-bold text-[#3d5a45] block mt-0.5">
+                  Target: {materials.find(m => m.id === (targetMaterialIdForQuestion || materials[0]?.id))?.title || 'Materi Pembelajaran'}
+                </span>
               </div>
               <button onClick={() => setShowAddQuestionModal(false)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-lg">✕</button>
             </div>

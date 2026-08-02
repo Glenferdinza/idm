@@ -167,7 +167,7 @@ async function initDB() {
           {
             id: 'q-3',
             number: 3,
-            topic: 'Penggolongan Narkotika & Regulasi',
+            topic: 'Regulasi dan Hukum Kesehatan',
             question_text: 'Berdasarkan regulasi medis dan UU No. 35 Tahun 2009, narkotika Golongan I difungsikan khusus untuk ...',
             type: 'pg',
             options_json: JSON.stringify([
