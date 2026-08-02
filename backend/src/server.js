@@ -3,7 +3,7 @@ const cors = require('cors');
 const bcrypt = require('bcryptjs');
 require('dotenv').config();
 
-const { queryDB, initDB, getIsConnected, getDriver } = require('./config/db');
+const { queryDB, initDB, getIsConnected, getDbError, getDriver } = require('./config/db');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -69,6 +69,7 @@ app.get('/', (req, res) => {
     status: 'ok',
     message: 'Memori DNA REST API Backend Server is Running!',
     dbConnected: getIsConnected(),
+    dbError: getIsConnected() ? null : getDbError(),
     dbDriver: getDriver(),
     endpoints: {
       health: '/api/health',
@@ -86,6 +87,7 @@ app.get('/api/health', (req, res) => {
     status: 'ok',
     service: 'Memori DNA Backend',
     dbConnected: getIsConnected(),
+    dbError: getIsConnected() ? null : getDbError(),
     dbDriver: getDriver(),
     timestamp: new Date().toISOString()
   });

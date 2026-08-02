@@ -9,9 +9,14 @@ const databaseUrl = process.env.DATABASE_URL || process.env.POSTGRES_URL;
 let pgPool = null;
 let mysqlPool = null;
 let isConnected = false;
+let lastDbError = null;
 
 function getDriver() {
   return dbDriver;
+}
+
+function getDbError() {
+  return lastDbError;
 }
 
 async function getPool() {
@@ -225,10 +230,12 @@ async function initDB() {
 
       conn.release();
       isConnected = true;
+      lastDbError = null;
       console.log('🚀 Connected successfully to MySQL Database!');
     }
   } catch (err) {
     isConnected = false;
+    lastDbError = err.message || String(err);
     console.warn(`⚠️ Cloud Database Connection Warning (${err.message}). App will fallback to in-memory mode if DB is unreachable.`);
   }
 }
@@ -242,5 +249,6 @@ module.exports = {
   queryDB,
   initDB,
   getIsConnected,
+  getDbError,
   getDriver
 };
