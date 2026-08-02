@@ -530,7 +530,7 @@ const INITIAL_ALLOWED_TEACHERS = [
   { email: 'pengajar@gmail.com', name: 'Pengajar Tim 1', defaultPass: 'pengajar123', addedAt: '16 Jul 2026' }
 ];
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export default function Home() {
   const [viewState, setViewState] = useState('landing');
@@ -668,10 +668,11 @@ export default function Home() {
 
   // Sync with Express Backend API on mount
   useEffect(() => {
+    if (!API_URL) return;
     fetch(`${API_URL}/api/bank-soal`)
       .then((res) => res.json())
       .then((resData) => {
-        if (resData.success && resData.data && resData.data.length > 0) {
+        if (resData && resData.success && resData.data && resData.data.length > 0) {
           setMaterials((prev) => {
             const updated = [...prev];
             updated[0] = {
@@ -2310,14 +2311,18 @@ export default function Home() {
                                   className="absolute right-0 bottom-11 w-48 bg-white border border-[#c4dcd0] rounded-xl shadow-xl z-30 py-1.5 text-xs animate-fade-in-up"
                                 >
                                   <button
-                                    onClick={() => handleStartEditMaterial(m)}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      handleStartEditMaterial(m);
+                                    }}
                                     className="w-full text-left px-4 py-2 hover:bg-[#f7f5f0] text-[#2c2825] font-semibold transition cursor-pointer"
                                   >
                                     Edit Paket Materi
                                   </button>
 
                                   <button
-                                    onClick={() => {
+                                    onClick={(e) => {
+                                      e.stopPropagation();
                                       setActiveMaterialMenuIndex(null);
                                       setDeletingMaterialId(m.id);
                                     }}
