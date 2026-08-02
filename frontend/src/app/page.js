@@ -68,379 +68,11 @@ const DEMO_QUESTIONS = [
 const DEFAULT_MATERIALS = [
   {
     id: 'mat-1',
-    title: 'Matematika Aljabar, Geometri, dan Logika Kognitif',
-    soalCount: 30,
-    quotesCount: 4,
-    zonesCount: '3 Zona Interaktif',
-    totalTime: '65:59',
-    createdAt: '16 Jul 2026',
-    questions: [
-      {
-        id: 'q-1',
-        number: 1,
-        topic: 'Matematika Aljabar',
-        questionText: 'Hasil penyederhanaan dari 5x + 3y - 2x + 7y adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '3x + 10y' },
-          { id: 'B', text: '7x + 10y' },
-          { id: 'C', text: '3x + 4y' },
-          { id: 'D', text: '10x + 3y' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-2',
-        number: 2,
-        topic: 'Persamaan Linear Satu Variabel',
-        questionText: 'Tentukan nilai x jika 3x + 12 = 45.',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '11'
-      },
-      {
-        id: 'q-3',
-        number: 3,
-        topic: 'Penggolongan Narkotika & Regulasi',
-        questionText: 'Berdasarkan regulasi medis dan UU No. 35 Tahun 2009, narkotika Golongan I difungsikan khusus untuk ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: 'Kepentingan ilmu pengetahuan dan tidak digunakan dalam terapi medis' },
-          { id: 'B', text: 'Pengobatan umum yang dijual bebas tanpa resep dokter' },
-          { id: 'C', text: 'Suplemen peningkat daya ingat jangka pendek' },
-          { id: 'D', text: 'Obat resep tingkat pertama untuk demam' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-4',
-        number: 4,
-        topic: 'Operasi Bilangan Bulat',
-        questionText: 'Hasil dari 45 + (-18) * 3 adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '-9' },
-          { id: 'B', text: '81' },
-          { id: 'C', text: '-81' },
-          { id: 'D', text: '27' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-5',
-        number: 5,
-        topic: 'Geometri dan Aljabar',
-        questionText: 'Sebuah persegi panjang memiliki panjang (2x + 4) cm dan lebar 5 cm. Jika luasnya adalah 50 cm2, berapakah nilai x?',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '3'
-      },
-      {
-        id: 'q-6',
-        number: 6,
-        topic: 'Dampak Kognitif & Bahaya Zat',
-        questionText: 'Mengapa penggunaan zat adiktif psikotropika dapat menurunkan refleks motorik dan meningkatkan hesitation index seseorang saat menyelesaikan tugas kognitif?',
-        type: 'pg',
-        options: [
-          { id: 'A', text: 'Mengganggu transmisi sinapsis saraf pusat di otak' },
-          { id: 'B', text: 'Meningkatkan jumlah sel darah merah secara drastis' },
-          { id: 'C', text: 'Merangsang pertumbuhan jaringan otot rangka' },
-          { id: 'D', text: 'Mempercepat denyut jantung tanpa efek ke sistem saraf' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-7',
-        number: 7,
-        topic: 'Aritmatika Sosial & Persentase',
-        questionText: 'Sebuah toko memberikan diskon 20% untuk buku seharga Rp 150.000,00. Berapakah harga buku setelah diskon?',
-        type: 'pg',
-        options: [
-          { id: 'A', text: 'Rp 120.000,00' },
-          { id: 'B', text: 'Rp 130.000,00' },
-          { id: 'C', text: 'Rp 110.000,00' },
-          { id: 'D', text: 'Rp 125.000,00' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-8',
-        number: 8,
-        topic: 'Sistem Persamaan Dua Variabel (SPLDV)',
-        questionText: 'Diketahui dua buah persamaan: x + y = 10 dan x - y = 4. Tentukan nilai y.',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '3'
-      },
-      {
-        id: 'q-9',
-        number: 9,
-        topic: 'Perkalian Bentuk Aljabar',
-        questionText: 'Hasil perkalian aljabar (2x + 3)(x - 4) adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '2x^2 - 5x - 12' },
-          { id: 'B', text: '2x^2 + 5x - 12' },
-          { id: 'C', text: '2x^2 - 11x - 12' },
-          { id: 'D', text: '2x^2 - 5x + 12' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-10',
-        number: 10,
-        topic: 'Aritmatika Keuntungan',
-        questionText: 'Budi membeli barang seharga Rp 800.000,00 dan menjualnya kembali seharga Rp 1.000.000,00. Berapakah persentase keuntungan Budi (tuliskan angka saja)?',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '25'
-      },
-      {
-        id: 'q-11',
-        number: 11,
-        topic: 'Pemfaktoran Aljabar',
-        questionText: 'Hasil pemfaktoran dari bentuk x^2 - 9 adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '(x - 3)(x + 3)' },
-          { id: 'B', text: '(x - 3)(x - 3)' },
-          { id: 'C', text: '(x + 9)(x - 1)' },
-          { id: 'D', text: '(x + 3)(x + 3)' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-12',
-        number: 12,
-        topic: 'Penggolongan Psikotropika',
-        questionText: 'Zat psikotropika yang berkhasiat pengobatan dan banyak digunakan dalam terapi dengan potensi kuat mengakibatkan sindrom ketergantungan adalah Golongan II, contohnya ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: 'Amphetamine' },
-          { id: 'B', text: 'Ganja' },
-          { id: 'C', text: 'Heroin' },
-          { id: 'D', text: 'Alkohol murni' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-13',
-        number: 13,
-        topic: 'Persamaan Aljabar Satu Variabel',
-        questionText: 'Jika 4x - 7 = 2x + 9, tentukan nilai x.',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '8'
-      },
-      {
-        id: 'q-14',
-        number: 14,
-        topic: 'Eksponen dan Bilangan Berpangkat',
-        questionText: 'Nilai dari (2^3) * (2^4) adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '128' },
-          { id: 'B', text: '64' },
-          { id: 'C', text: '256' },
-          { id: 'D', text: '32' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-15',
-        number: 15,
-        topic: 'Geometri Bangun Datar',
-        questionText: 'Sebuah segitiga sama sisi memiliki panjang sisi 14 cm. Berapakah keliling segitiga tersebut (tuliskan angka dalam cm)?',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '42'
-      },
-      {
-        id: 'q-16',
-        number: 16,
-        topic: 'Edukasi Neurobiologi Adiksi',
-        questionText: 'Kondisi penurunan respons zat di mana seseorang membutuhkan dosis zat adiktif semakin tinggi untuk memperoleh efek yang sama dinamakan ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: 'Toleransi zat' },
-          { id: 'B', text: 'Sakaw / Adiksi total' },
-          { id: 'C', text: 'Detoksifikasi' },
-          { id: 'D', text: 'Rehabilitasi medis' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-17',
-        number: 17,
-        topic: 'Peluang Matematika',
-        questionText: 'Sebuah dadu bermata 6 dilempar satu kali. Peluang muncul mata dadu berangka genap adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '1/2' },
-          { id: 'B', text: '1/3' },
-          { id: 'C', text: '1/6' },
-          { id: 'D', text: '2/3' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-18',
-        number: 18,
-        topic: 'Pembagian Bentuk Aljabar',
-        questionText: 'Sederhanakan bentuk pecahan aljabar (12x^2y) / (4xy). Tuliskan jawaban variabelnya.',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '3x'
-      },
-      {
-        id: 'q-19',
-        number: 19,
-        topic: 'Teorema Phytagoras',
-        questionText: 'Sebuah segitiga siku-siku memiliki panjang sisi siku-siku 6 cm dan 8 cm. Panjang sisi miringnya adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '10 cm' },
-          { id: 'B', text: '12 cm' },
-          { id: 'C', text: '14 cm' },
-          { id: 'D', text: '9 cm' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-20',
-        number: 20,
-        topic: 'Persamaan Aljabar Perkalian',
-        questionText: 'Tentukan nilai x dari persamaan 5(x - 2) = 20.',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '6'
-      },
-      {
-        id: 'q-21',
-        number: 21,
-        topic: 'Anatomi Sistem Saraf Kognitif',
-        questionText: 'Struktur jaringan otak yang memproses fungsi kognitif kompleks seperti penalaran logika dan pengendalian impuls adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: 'Prefrontal Cortex' },
-          { id: 'B', text: 'Cerebellum' },
-          { id: 'C', text: 'Batang Otak' },
-          { id: 'D', text: 'Sumsum Belakang' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-22',
-        number: 22,
-        topic: 'Barisan dan Deret Aritmatika',
-        questionText: 'Suku ke-10 dari barisan aritmatika 3, 7, 11, 15, ... adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '39' },
-          { id: 'B', text: '35' },
-          { id: 'C', text: '43' },
-          { id: 'D', text: '37' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-23',
-        number: 23,
-        topic: 'Luas Bangun Datar',
-        questionText: 'Sebuah segitiga memiliki alas 16 cm dan tinggi 10 cm. Tentukan luas segitiga tersebut dalam cm2.',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '80'
-      },
-      {
-        id: 'q-24',
-        number: 24,
-        topic: 'Rehabilitasi dan Hukum',
-        questionText: 'Proses penanganan terpadu untuk memulihkan korban penyalahgunaan zat baik secara medis maupun sosial disebut ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: 'Rehabilitasi' },
-          { id: 'B', text: 'Karantina Hukum' },
-          { id: 'C', text: 'Vonis Pidana' },
-          { id: 'D', text: 'Isolasi Mandiri' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-25',
-        number: 25,
-        topic: 'Perbandingan Senilai',
-        questionText: 'Jika 5 liter bensin dapat menempuh jarak 60 km, berapakah jarak yang dapat ditempuh dengan 8 liter bensin?',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '96 km' },
-          { id: 'B', text: '80 km' },
-          { id: 'C', text: '100 km' },
-          { id: 'D', text: '90 km' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-26',
-        number: 26,
-        topic: 'Persamaan Kuadrat Sederhana',
-        questionText: 'Jika x^2 = 81 dan x adalah bilangan positif, tentukan nilai x.',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '9'
-      },
-      {
-        id: 'q-27',
-        number: 27,
-        topic: 'Neurotransmitter Otak',
-        questionText: 'Senyawa kimia otak yang berperan penting dalam sistem imbalan (reward system) dan motivasi kognitif adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: 'Dopamin' },
-          { id: 'B', text: 'Insulin' },
-          { id: 'C', text: 'Hemoglobin' },
-          { id: 'D', text: 'Tirosin' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-28',
-        number: 28,
-        topic: 'Statistika Dasar - Rata-Rata',
-        questionText: 'Rata-rata (mean) dari data nilai: 7, 8, 6, 9, 10 adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '8' },
-          { id: 'B', text: '7.5' },
-          { id: 'C', text: '8.5' },
-          { id: 'D', text: '7' }
-        ],
-        correctAnswer: 'A'
-      },
-      {
-        id: 'q-29',
-        number: 29,
-        topic: 'Persamaan Pecahan Aljabar',
-        questionText: 'Tentukan nilai x dari persamaan pecahan (x / 4) + 3 = 8.',
-        type: 'canvas',
-        options: [],
-        correctAnswer: '20'
-      },
-      {
-        id: 'q-30',
-        number: 30,
-        topic: 'Statistika Dasar - Modus',
-        questionText: 'Modus dari kelompok data: 5, 7, 7, 8, 9, 7, 10, 6 adalah ...',
-        type: 'pg',
-        options: [
-          { id: 'A', text: '7' },
-          { id: 'B', text: '8' },
-          { id: 'C', text: '5' },
-          { id: 'D', text: '9' }
-        ],
-        correctAnswer: 'A'
-      }
-    ]
+    title: 'Paket Evaluasi 5 Soal Demo (Behavioral AI Telemetry)',
+    soalCount: 5,
+    totalTime: '15:00',
+    createdAt: '3 Aug 2026',
+    questions: DEMO_QUESTIONS
   }
 ];
 
@@ -740,6 +372,8 @@ export default function Home() {
   const isDemo = Boolean(currentUser?.isDemo || isDemoMode);
   const questionsList = isDemo ? DEMO_QUESTIONS : (materials[0]?.questions || []);
   const isSiswaRole = currentUser?.role === 'Siswa';
+  const pgAnswers = selectedAnswers;
+  const setPgAnswers = setSelectedAnswers;
 
   // Live Timer Effect
   useEffect(() => {
@@ -2983,38 +2617,38 @@ export default function Home() {
                             </div>
                           )}
 
-                          {/* Interactive Drawing Canvas */}
-                          <div className="space-y-2 pt-3 border-t border-[#efece4]">
-                            <div className="flex justify-between items-center">
-                              <span className="text-xs font-bold text-[#3d5a45]">
-                                Canvas Coretan Pengerjaan (Telemetri Pen Motorik):
-                              </span>
-                              <button
-                                onClick={clearCanvas}
-                                className="text-[11px] text-rose-600 hover:text-rose-800 font-bold underline"
-                              >
-                                Bersihkan Canvas
-                              </button>
-                            </div>
+                          {/* Interactive Drawing Canvas (Only for Canvas type questions) */}
+                          {questionsList[currentQIdx]?.type === 'canvas' && (
+                            <div className="space-y-2 pt-3 border-t border-[#efece4]">
+                              <div className="flex justify-between items-center">
+                                <span className="text-xs font-bold text-[#3d5a45]">
+                                  Canvas Coretan Pengerjaan (Telemetri Pen Motorik):
+                                </span>
+                                <button
+                                  onClick={clearCanvas}
+                                  className="text-[11px] text-rose-600 hover:text-rose-800 font-bold underline"
+                                >
+                                  Bersihkan Canvas
+                                </button>
+                              </div>
 
-                            <div className="border border-[#c4dcd0] rounded-xl overflow-hidden bg-white shadow-inner">
-                              <canvas
-                                ref={canvasRef}
-                                width={650}
-                                height={280}
-                                onMouseDown={startDraw}
-                                onMouseMove={draw}
-                                onMouseUp={stopDraw}
-                                onMouseLeave={stopDraw}
-                                onTouchStart={startDraw}
-                                onTouchMove={draw}
-                                onTouchEnd={stopDraw}
-                                className="w-full h-70 touch-none cursor-crosshair"
-                              />
-                            </div>
+                              <div className="border border-[#c4dcd0] rounded-xl overflow-hidden bg-white shadow-inner">
+                                <canvas
+                                  ref={canvasRef}
+                                  width={650}
+                                  height={280}
+                                  onMouseDown={startDraw}
+                                  onMouseMove={draw}
+                                  onMouseUp={stopDraw}
+                                  onMouseLeave={stopDraw}
+                                  onTouchStart={startDraw}
+                                  onTouchMove={draw}
+                                  onTouchEnd={stopDraw}
+                                  className="w-full h-70 touch-none cursor-crosshair"
+                                />
+                              </div>
 
-                            {/* Short Answer Input for Canvas questions */}
-                            {questionsList[currentQIdx]?.type === 'canvas' && (
+                              {/* Short Answer Input for Canvas questions */}
                               <div className="pt-2 space-y-1">
                                 <label className="text-xs font-bold text-[#423c37] block">Jawaban Akhir Singkat:</label>
                                 <input
@@ -3025,8 +2659,8 @@ export default function Home() {
                                   className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
                                 />
                               </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
 
                           {/* Bottom Navigation Buttons */}
                           <div className="flex justify-between items-center pt-4 border-t border-[#efece4]">
