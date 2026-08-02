@@ -3025,101 +3025,101 @@ export default function Home() {
                             </div>
                           )}
 
-                          {/* Interactive Drawing Canvas (Active for ALL Questions: PG & Canvas) */}
-                          <div className="space-y-3 pt-4 border-t border-[#efece4]">
-                            <div className="flex flex-wrap justify-between items-center gap-2">
-                              <div>
-                                <div className="flex items-center gap-2">
-                                  <span className="text-xs font-extrabold text-[#3d5a45] uppercase tracking-wide">
-                                    Canvas Coretan & Oret-oretan Perhitungan
-                                  </span>
-                                  <span className="text-[10px] font-bold bg-[#e4efe7] text-[#3d5a45] px-2 py-0.5 rounded-full border border-[#c4dcd0]">
-                                    Telemetri Motorik AI Live
-                                  </span>
+                          {/* Interactive Drawing Canvas (Active ONLY for Canvas/Isian Questions) */}
+                          {questionsList[currentQIdx]?.type === 'canvas' && (
+                            <div className="space-y-3 pt-4 border-t border-[#efece4]">
+                              <div className="flex flex-wrap justify-between items-center gap-2">
+                                <div>
+                                  <div className="flex items-center gap-2">
+                                    <span className="text-xs font-extrabold text-[#3d5a45] uppercase tracking-wide">
+                                      Canvas Coretan & Oret-oretan Perhitungan
+                                    </span>
+                                    <span className="text-[10px] font-bold bg-[#e4efe7] text-[#3d5a45] px-2 py-0.5 rounded-full border border-[#c4dcd0]">
+                                      Telemetri Motorik AI Live
+                                    </span>
+                                  </div>
+                                  <p className="text-[11px] text-[#6b635b] mt-0.5">
+                                    Gunakan area canvas di bawah untuk menghitung rumus / coretan. AI menganalisis pola gerakan pen stylus kamu secara real-time.
+                                  </p>
                                 </div>
-                                <p className="text-[11px] text-[#6b635b] mt-0.5">
-                                  Gunakan area canvas di bawah untuk menghitung rumus / coretan. AI menganalisis pola gerakan pen stylus kamu secara real-time.
-                                </p>
+
+                                {/* Stylus Pen Palette Toolbar */}
+                                <div className="flex items-center gap-2 bg-[#f7f5f0] p-1.5 rounded-xl border border-[#c4dcd0]">
+                                  {/* Color Selector Buttons */}
+                                  <div className="flex items-center gap-1 pr-2 border-r border-[#c4dcd0]">
+                                    <button
+                                      type="button"
+                                      onClick={() => setPenColor('#1f2b23')}
+                                      className={`w-5 h-5 rounded-full bg-[#1f2b23] border-2 transition ${penColor === '#1f2b23' ? 'border-amber-400 scale-110 shadow-xs' : 'border-transparent'}`}
+                                      title="Tinta Hijau Tua"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => setPenColor('#2563eb')}
+                                      className={`w-5 h-5 rounded-full bg-blue-600 border-2 transition ${penColor === '#2563eb' ? 'border-amber-400 scale-110 shadow-xs' : 'border-transparent'}`}
+                                      title="Tinta Biru"
+                                    />
+                                    <button
+                                      type="button"
+                                      onClick={() => setPenColor('#dc2626')}
+                                      className={`w-5 h-5 rounded-full bg-rose-600 border-2 transition ${penColor === '#dc2626' ? 'border-amber-400 scale-110 shadow-xs' : 'border-transparent'}`}
+                                      title="Tinta Merah"
+                                    />
+                                  </div>
+
+                                  {/* Pen Width Selector */}
+                                  <div className="flex items-center gap-1 text-[10px] font-bold text-[#5c554e] pr-2 border-r border-[#c4dcd0]">
+                                    <button
+                                      type="button"
+                                      onClick={() => setPenWidth(2)}
+                                      className={`px-2 py-0.5 rounded ${penWidth === 2 ? 'bg-[#3d5a45] text-white' : 'hover:bg-[#efece4]'}`}
+                                    >
+                                      Halus
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => setPenWidth(4)}
+                                      className={`px-2 py-0.5 rounded ${penWidth === 4 ? 'bg-[#3d5a45] text-white' : 'hover:bg-[#efece4]'}`}
+                                    >
+                                      Sedang
+                                    </button>
+                                    <button
+                                      type="button"
+                                      onClick={() => setPenWidth(8)}
+                                      className={`px-2 py-0.5 rounded ${penWidth === 8 ? 'bg-[#3d5a45] text-white' : 'hover:bg-[#efece4]'}`}
+                                    >
+                                      Tebal
+                                    </button>
+                                  </div>
+
+                                  {/* Clear Canvas Button */}
+                                  <button
+                                    type="button"
+                                    onClick={clearCanvas}
+                                    className="text-[11px] text-rose-700 hover:text-rose-900 font-bold px-2 py-0.5 hover:bg-rose-50 rounded transition"
+                                  >
+                                    Hapus Coretan
+                                  </button>
+                                </div>
                               </div>
 
-                              {/* Stylus Pen Palette Toolbar */}
-                              <div className="flex items-center gap-2 bg-[#f7f5f0] p-1.5 rounded-xl border border-[#c4dcd0]">
-                                {/* Color Selector Buttons */}
-                                <div className="flex items-center gap-1 pr-2 border-r border-[#c4dcd0]">
-                                  <button
-                                    type="button"
-                                    onClick={() => setPenColor('#1f2b23')}
-                                    className={`w-5 h-5 rounded-full bg-[#1f2b23] border-2 transition ${penColor === '#1f2b23' ? 'border-amber-400 scale-110 shadow-xs' : 'border-transparent'}`}
-                                    title="Tinta Hijau Tua"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => setPenColor('#2563eb')}
-                                    className={`w-5 h-5 rounded-full bg-blue-600 border-2 transition ${penColor === '#2563eb' ? 'border-amber-400 scale-110 shadow-xs' : 'border-transparent'}`}
-                                    title="Tinta Biru"
-                                  />
-                                  <button
-                                    type="button"
-                                    onClick={() => setPenColor('#dc2626')}
-                                    className={`w-5 h-5 rounded-full bg-rose-600 border-2 transition ${penColor === '#dc2626' ? 'border-amber-400 scale-110 shadow-xs' : 'border-transparent'}`}
-                                    title="Tinta Merah"
-                                  />
-                                </div>
-
-                                {/* Pen Width Selector */}
-                                <div className="flex items-center gap-1 text-[10px] font-bold text-[#5c554e] pr-2 border-r border-[#c4dcd0]">
-                                  <button
-                                    type="button"
-                                    onClick={() => setPenWidth(2)}
-                                    className={`px-2 py-0.5 rounded ${penWidth === 2 ? 'bg-[#3d5a45] text-white' : 'hover:bg-[#efece4]'}`}
-                                  >
-                                    Halus
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => setPenWidth(4)}
-                                    className={`px-2 py-0.5 rounded ${penWidth === 4 ? 'bg-[#3d5a45] text-white' : 'hover:bg-[#efece4]'}`}
-                                  >
-                                    Sedang
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => setPenWidth(8)}
-                                    className={`px-2 py-0.5 rounded ${penWidth === 8 ? 'bg-[#3d5a45] text-white' : 'hover:bg-[#efece4]'}`}
-                                  >
-                                    Tebal
-                                  </button>
-                                </div>
-
-                                {/* Clear Canvas Button */}
-                                <button
-                                  type="button"
-                                  onClick={clearCanvas}
-                                  className="text-[11px] text-rose-700 hover:text-rose-900 font-bold px-2 py-0.5 hover:bg-rose-50 rounded transition"
-                                >
-                                  Hapus Coretan
-                                </button>
+                              <div className="border border-[#c4dcd0] rounded-xl overflow-hidden bg-white shadow-inner relative">
+                                <canvas
+                                  ref={canvasRef}
+                                  width={650}
+                                  height={280}
+                                  onMouseDown={startDraw}
+                                  onMouseMove={draw}
+                                  onMouseUp={stopDraw}
+                                  onMouseLeave={stopDraw}
+                                  onTouchStart={startDraw}
+                                  onTouchMove={draw}
+                                  onTouchEnd={stopDraw}
+                                  className="w-full h-72 touch-none cursor-crosshair bg-white"
+                                />
                               </div>
-                            </div>
 
-                            <div className="border border-[#c4dcd0] rounded-xl overflow-hidden bg-white shadow-inner relative">
-                              <canvas
-                                ref={canvasRef}
-                                width={650}
-                                height={280}
-                                onMouseDown={startDraw}
-                                onMouseMove={draw}
-                                onMouseUp={stopDraw}
-                                onMouseLeave={stopDraw}
-                                onTouchStart={startDraw}
-                                onTouchMove={draw}
-                                onTouchEnd={stopDraw}
-                                className="w-full h-72 touch-none cursor-crosshair bg-white"
-                              />
-                            </div>
-
-                            {/* Short Answer Input for Canvas / Isian questions */}
-                            {questionsList[currentQIdx]?.type === 'canvas' && (
+                              {/* Short Answer Input for Canvas / Isian questions */}
                               <div className="pt-2 space-y-1">
                                 <label className="text-xs font-bold text-[#423c37] block">Jawaban Akhir Singkat:</label>
                                 <input
@@ -3130,8 +3130,8 @@ export default function Home() {
                                   className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
                                 />
                               </div>
-                            )}
-                          </div>
+                            </div>
+                          )}
 
                           {/* Bottom Navigation Buttons */}
                           <div className="flex justify-between items-center pt-4 border-t border-[#efece4]">
