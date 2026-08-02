@@ -619,11 +619,26 @@ export default function Home() {
     setViewState('dashboard');
   };
 
-  const startDraw = (e) => {
-    if (!ctxRef.current) return;
+  const getCanvasCoords = (e) => {
+    if (!canvasRef.current) return { x: 0, y: 0 };
     const rect = canvasRef.current.getBoundingClientRect();
-    const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-    const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+    let clientX = e.clientX;
+    let clientY = e.clientY;
+
+    if (clientX === undefined && e.touches && e.touches[0]) {
+      clientX = e.touches[0].clientX;
+      clientY = e.touches[0].clientY;
+    }
+
+    return {
+      x: clientX - rect.left,
+      y: clientY - rect.top
+    };
+  };
+
+  const startDraw = (e) => {
+    if (!ctxRef.current || !canvasRef.current) return;
+    const { x, y } = getCanvasCoords(e);
 
     ctxRef.current.beginPath();
     ctxRef.current.moveTo(x, y);
@@ -643,14 +658,12 @@ export default function Home() {
   };
 
   const draw = (e) => {
-    if (!isDrawing || !ctxRef.current) return;
-    if (e.buttons !== undefined && e.buttons !== 1 && !e.touches) {
+    if (!isDrawing || !ctxRef.current || !canvasRef.current) return;
+    if (e.buttons !== undefined && e.buttons !== 1 && !e.touches && e.pointerType !== 'pen' && e.pointerType !== 'touch') {
       setIsDrawing(false);
       return;
     }
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = (e.clientX || (e.touches && e.touches[0].clientX)) - rect.left;
-    const y = (e.clientY || (e.touches && e.touches[0].clientY)) - rect.top;
+    const { x, y } = getCanvasCoords(e);
 
     ctxRef.current.lineTo(x, y);
     ctxRef.current.stroke();
@@ -1916,6 +1929,10 @@ export default function Home() {
                                 onTouchStart={startDraw}
                                 onTouchMove={draw}
                                 onTouchEnd={stopDraw}
+                                onPointerDown={startDraw}
+                                onPointerMove={draw}
+                                onPointerUp={stopDraw}
+                                onPointerCancel={stopDraw}
                                 className="canvas-scratchpad w-full"
                               />
 
