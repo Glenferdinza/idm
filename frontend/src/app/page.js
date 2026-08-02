@@ -68,11 +68,379 @@ const DEMO_QUESTIONS = [
 const DEFAULT_MATERIALS = [
   {
     id: 'mat-1',
-    title: 'Paket Evaluasi 5 Soal Demo (Behavioral AI Telemetry)',
-    soalCount: 5,
-    totalTime: '15:00',
-    createdAt: '3 Aug 2026',
-    questions: DEMO_QUESTIONS
+    title: 'Matematika Aljabar, Geometri, dan Logika Kognitif',
+    soalCount: 30,
+    quotesCount: 4,
+    zonesCount: '3 Zona Interaktif',
+    totalTime: '65:59',
+    createdAt: '16 Jul 2026',
+    questions: [
+      {
+        id: 'q-1',
+        number: 1,
+        topic: 'Matematika Aljabar',
+        questionText: 'Hasil penyederhanaan dari 5x + 3y - 2x + 7y adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '3x + 10y' },
+          { id: 'B', text: '7x + 10y' },
+          { id: 'C', text: '3x + 4y' },
+          { id: 'D', text: '10x + 3y' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-2',
+        number: 2,
+        topic: 'Persamaan Linear Satu Variabel',
+        questionText: 'Tentukan nilai x jika 3x + 12 = 45.',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '11'
+      },
+      {
+        id: 'q-3',
+        number: 3,
+        topic: 'Penggolongan Narkotika & Regulasi',
+        questionText: 'Berdasarkan regulasi medis dan UU No. 35 Tahun 2009, narkotika Golongan I difungsikan khusus untuk ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: 'Kepentingan ilmu pengetahuan dan tidak digunakan dalam terapi medis' },
+          { id: 'B', text: 'Pengobatan umum yang dijual bebas tanpa resep dokter' },
+          { id: 'C', text: 'Suplemen peningkat daya ingat jangka pendek' },
+          { id: 'D', text: 'Obat resep tingkat pertama untuk demam' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-4',
+        number: 4,
+        topic: 'Operasi Bilangan Bulat',
+        questionText: 'Hasil dari 45 + (-18) * 3 adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '-9' },
+          { id: 'B', text: '81' },
+          { id: 'C', text: '-81' },
+          { id: 'D', text: '27' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-5',
+        number: 5,
+        topic: 'Geometri dan Aljabar',
+        questionText: 'Sebuah persegi panjang memiliki panjang (2x + 4) cm dan lebar 5 cm. Jika luasnya adalah 50 cm2, berapakah nilai x?',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '3'
+      },
+      {
+        id: 'q-6',
+        number: 6,
+        topic: 'Dampak Kognitif & Bahaya Zat',
+        questionText: 'Mengapa penggunaan zat adiktif psikotropika dapat menurunkan refleks motorik dan meningkatkan hesitation index seseorang saat menyelesaikan tugas kognitif?',
+        type: 'pg',
+        options: [
+          { id: 'A', text: 'Mengganggu transmisi sinapsis saraf pusat di otak' },
+          { id: 'B', text: 'Meningkatkan jumlah sel darah merah secara drastis' },
+          { id: 'C', text: 'Merangsang pertumbuhan jaringan otot rangka' },
+          { id: 'D', text: 'Mempercepat denyut jantung tanpa efek ke sistem saraf' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-7',
+        number: 7,
+        topic: 'Aritmatika Sosial & Persentase',
+        questionText: 'Sebuah toko memberikan diskon 20% untuk buku seharga Rp 150.000,00. Berapakah harga buku setelah diskon?',
+        type: 'pg',
+        options: [
+          { id: 'A', text: 'Rp 120.000,00' },
+          { id: 'B', text: 'Rp 130.000,00' },
+          { id: 'C', text: 'Rp 110.000,00' },
+          { id: 'D', text: 'Rp 125.000,00' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-8',
+        number: 8,
+        topic: 'Sistem Persamaan Dua Variabel (SPLDV)',
+        questionText: 'Diketahui dua buah persamaan: x + y = 10 dan x - y = 4. Tentukan nilai y.',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '3'
+      },
+      {
+        id: 'q-9',
+        number: 9,
+        topic: 'Perkalian Bentuk Aljabar',
+        questionText: 'Hasil perkalian aljabar (2x + 3)(x - 4) adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '2x^2 - 5x - 12' },
+          { id: 'B', text: '2x^2 + 5x - 12' },
+          { id: 'C', text: '2x^2 - 11x - 12' },
+          { id: 'D', text: '2x^2 - 5x + 12' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-10',
+        number: 10,
+        topic: 'Aritmatika Keuntungan',
+        questionText: 'Budi membeli barang seharga Rp 800.000,00 dan menjualnya kembali seharga Rp 1.000.000,00. Berapakah persentase keuntungan Budi (tuliskan angka saja)?',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '25'
+      },
+      {
+        id: 'q-11',
+        number: 11,
+        topic: 'Pemfaktoran Aljabar',
+        questionText: 'Hasil pemfaktoran dari bentuk x^2 - 9 adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '(x - 3)(x + 3)' },
+          { id: 'B', text: '(x - 3)(x - 3)' },
+          { id: 'C', text: '(x + 9)(x - 1)' },
+          { id: 'D', text: '(x + 3)(x + 3)' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-12',
+        number: 12,
+        topic: 'Penggolongan Psikotropika',
+        questionText: 'Zat psikotropika yang berkhasiat pengobatan dan banyak digunakan dalam terapi dengan potensi kuat mengakibatkan sindrom ketergantungan adalah Golongan II, contohnya ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: 'Amphetamine' },
+          { id: 'B', text: 'Ganja' },
+          { id: 'C', text: 'Heroin' },
+          { id: 'D', text: 'Alkohol murni' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-13',
+        number: 13,
+        topic: 'Persamaan Aljabar Satu Variabel',
+        questionText: 'Jika 4x - 7 = 2x + 9, tentukan nilai x.',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '8'
+      },
+      {
+        id: 'q-14',
+        number: 14,
+        topic: 'Eksponen dan Bilangan Berpangkat',
+        questionText: 'Nilai dari (2^3) * (2^4) adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '128' },
+          { id: 'B', text: '64' },
+          { id: 'C', text: '256' },
+          { id: 'D', text: '32' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-15',
+        number: 15,
+        topic: 'Geometri Bangun Datar',
+        questionText: 'Sebuah segitiga sama sisi memiliki panjang sisi 14 cm. Berapakah keliling segitiga tersebut (tuliskan angka dalam cm)?',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '42'
+      },
+      {
+        id: 'q-16',
+        number: 16,
+        topic: 'Edukasi Neurobiologi Adiksi',
+        questionText: 'Kondisi penurunan respons zat di mana seseorang membutuhkan dosis zat adiktif semakin tinggi untuk memperoleh efek yang sama dinamakan ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: 'Toleransi zat' },
+          { id: 'B', text: 'Sakaw / Adiksi total' },
+          { id: 'C', text: 'Detoksifikasi' },
+          { id: 'D', text: 'Rehabilitasi medis' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-17',
+        number: 17,
+        topic: 'Peluang Matematika',
+        questionText: 'Sebuah dadu bermata 6 dilempar satu kali. Peluang muncul mata dadu berangka genap adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '1/2' },
+          { id: 'B', text: '1/3' },
+          { id: 'C', text: '1/6' },
+          { id: 'D', text: '2/3' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-18',
+        number: 18,
+        topic: 'Pembagian Bentuk Aljabar',
+        questionText: 'Sederhanakan bentuk pecahan aljabar (12x^2y) / (4xy). Tuliskan jawaban variabelnya.',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '3x'
+      },
+      {
+        id: 'q-19',
+        number: 19,
+        topic: 'Teorema Phytagoras',
+        questionText: 'Sebuah segitiga siku-siku memiliki panjang sisi siku-siku 6 cm dan 8 cm. Panjang sisi miringnya adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '10 cm' },
+          { id: 'B', text: '12 cm' },
+          { id: 'C', text: '14 cm' },
+          { id: 'D', text: '9 cm' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-20',
+        number: 20,
+        topic: 'Persamaan Aljabar Perkalian',
+        questionText: 'Tentukan nilai x dari persamaan 5(x - 2) = 20.',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '6'
+      },
+      {
+        id: 'q-21',
+        number: 21,
+        topic: 'Anatomi Sistem Saraf Kognitif',
+        questionText: 'Struktur jaringan otak yang memproses fungsi kognitif kompleks seperti penalaran logika dan pengendalian impuls adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: 'Prefrontal Cortex' },
+          { id: 'B', text: 'Cerebellum' },
+          { id: 'C', text: 'Batang Otak' },
+          { id: 'D', text: 'Sumsum Belakang' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-22',
+        number: 22,
+        topic: 'Barisan dan Deret Aritmatika',
+        questionText: 'Suku ke-10 dari barisan aritmatika 3, 7, 11, 15, ... adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '39' },
+          { id: 'B', text: '35' },
+          { id: 'C', text: '43' },
+          { id: 'D', text: '37' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-23',
+        number: 23,
+        topic: 'Luas Bangun Datar',
+        questionText: 'Sebuah segitiga memiliki alas 16 cm dan tinggi 10 cm. Tentukan luas segitiga tersebut dalam cm2.',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '80'
+      },
+      {
+        id: 'q-24',
+        number: 24,
+        topic: 'Rehabilitasi dan Hukum',
+        questionText: 'Proses penanganan terpadu untuk memulihkan korban penyalahgunaan zat baik secara medis maupun sosial disebut ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: 'Rehabilitasi' },
+          { id: 'B', text: 'Karantina Hukum' },
+          { id: 'C', text: 'Vonis Pidana' },
+          { id: 'D', text: 'Isolasi Mandiri' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-25',
+        number: 25,
+        topic: 'Perbandingan Senilai',
+        questionText: 'Jika 5 liter bensin dapat menempuh jarak 60 km, berapakah jarak yang dapat ditempuh dengan 8 liter bensin?',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '96 km' },
+          { id: 'B', text: '80 km' },
+          { id: 'C', text: '100 km' },
+          { id: 'D', text: '90 km' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-26',
+        number: 26,
+        topic: 'Persamaan Kuadrat Sederhana',
+        questionText: 'Jika x^2 = 81 dan x adalah bilangan positif, tentukan nilai x.',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '9'
+      },
+      {
+        id: 'q-27',
+        number: 27,
+        topic: 'Neurotransmitter Otak',
+        questionText: 'Senyawa kimia otak yang berperan penting dalam sistem imbalan (reward system) dan motivasi kognitif adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: 'Dopamin' },
+          { id: 'B', text: 'Insulin' },
+          { id: 'C', text: 'Hemoglobin' },
+          { id: 'D', text: 'Tirosin' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-28',
+        number: 28,
+        topic: 'Statistika Dasar - Rata-Rata',
+        questionText: 'Rata-rata (mean) dari data nilai: 7, 8, 6, 9, 10 adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '8' },
+          { id: 'B', text: '7.5' },
+          { id: 'C', text: '8.5' },
+          { id: 'D', text: '7' }
+        ],
+        correctAnswer: 'A'
+      },
+      {
+        id: 'q-29',
+        number: 29,
+        topic: 'Persamaan Pecahan Aljabar',
+        questionText: 'Tentukan nilai x dari persamaan pecahan (x / 4) + 3 = 8.',
+        type: 'canvas',
+        options: [],
+        correctAnswer: '20'
+      },
+      {
+        id: 'q-30',
+        number: 30,
+        topic: 'Statistika Dasar - Modus',
+        questionText: 'Modus dari kelompok data: 5, 7, 7, 8, 9, 7, 10, 6 adalah ...',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '7' },
+          { id: 'B', text: '8' },
+          { id: 'C', text: '5' },
+          { id: 'D', text: '9' }
+        ],
+        correctAnswer: 'A'
+      }
+    ]
   }
 ];
 
@@ -698,16 +1066,14 @@ export default function Home() {
         questions: builderQuestions.map((q, idx) => ({ ...q, number: idx + 1 }))
       };
 
-      if (!isDemoMode && API_URL) {
-        try {
-          await fetch(`${API_URL}/api/bank-soal`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(newMatPackage)
-          });
-        } catch (err) {
-          console.log('Backend sync offline, saving locally');
-        }
+      try {
+        await fetch(`${API_URL}/api/bank-soal`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newMatPackage)
+        });
+      } catch (err) {
+        console.log('Backend sync offline, saving locally');
       }
 
       setMaterials((prev) => [newMatPackage, ...prev]);
@@ -728,7 +1094,7 @@ export default function Home() {
     setMaterials((prev) => [targetMat, ...prev.filter((m) => m.id !== targetMat.id)]);
     showAlert(
       'Transmisi Berhasil Live',
-      `Paket materi "${targetMat.title}" (${targetMat.questions.length} Soal) telah berhasil dikirim! Portal pengerjaan siswa otomatis meng-override soal secara real-time.`,
+      `Paket materi "${targetMat.title}" (${targetMat.questions.length} Soal) telah berhasil dikirim ke ${quickTargetBoard}! Portal siswa otomatis meng-override soal secara real-time.`,
       'success'
     );
   };
@@ -791,28 +1157,18 @@ export default function Home() {
 
   const demoTeacherLogin = () => {
     const user = {
-      name: 'Pengajar Utama (Demo)',
+      name: 'Pengajar Utama (Admin)',
       role: 'Pengajar',
-      email: 'pengajar.demo@gmail.com',
+      email: 'admin@gmail.com',
       isDemo: true
     };
     setIsDemoMode(true);
     setCurrentUser(user);
-    setMaterials([
-      {
-        id: 'demo-package',
-        title: 'Paket Evaluasi 5 Soal Demo (Behavioral AI Telemetry)',
-        soalCount: 5,
-        totalTime: '15:00',
-        createdAt: '3 Aug 2026',
-        questions: DEMO_FIVE_QUESTIONS
-      }
-    ]);
-    setActiveTab('hasil_pemantauan');
+    setActiveTab('kelola_materi');
     setViewState('dashboard');
     showAlert(
       'Mode Demo Pengajar Aktif',
-      'Mode Demo Pengajar dimuat secara independen (tanpa sync database). Menampilkan pemantauan telemetri & AI analytics dari 5 soal demo.',
+      'Data diagnostik AI behavioral telemetri, hasil pemantauan kognitif 10+ siswa, dan bank soal interaktif telah dimuat secara otomatis.',
       'info'
     );
   };
@@ -854,16 +1210,7 @@ export default function Home() {
   };
 
   const startDraw = (e) => {
-    if (!canvasRef.current) return;
-    const canvas = canvasRef.current;
-    const ctx = canvas.getContext('2d');
-    if (ctx) {
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.strokeStyle = penColor;
-      ctx.lineWidth = penWidth;
-      ctxRef.current = ctx;
-    }
+    if (!ctxRef.current || !canvasRef.current) return;
     const { x, y } = getCanvasCoords(e);
 
     ctxRef.current.beginPath();
@@ -935,7 +1282,7 @@ export default function Home() {
     setTimeout(() => setAiTransmissionStep(2), 700);
     setTimeout(() => setAiTransmissionStep(3), 1400);
 
-    setTimeout(async () => {
+    setTimeout(() => {
       let correctCount = 0;
       questionsList.forEach((q, idx) => {
         if (q.type === 'pg' && selectedAnswers[idx] === q.correctAnswer) {
@@ -948,34 +1295,6 @@ export default function Home() {
       const accuracy = Math.round((correctCount / questionsList.length) * 100);
       const status = accuracy >= 80 ? 'Optimal' : accuracy >= 60 ? 'Perlu Perhatian' : 'Kebuntuan Konsep';
 
-      let aiDiagText = accuracy >= 80
-        ? 'Siswa menyelesaikan ujian dengan pemahaman kognitif yang sangat tinggi dan tempo pengerjaan yang stabil.'
-        : 'Siswa mengalami beberapa kendala dalam penataan persamaan aljabar dasar.';
-
-      // Call Real AI Hugging Face Qwen 7B Inference API
-      try {
-        const aiRes = await fetch('/api/ai/analyze-telemetry', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            studentName: currentUser?.name || 'Siswa',
-            accuracy: accuracy,
-            hesitationIndex: hesitationIndex,
-            strokeSpeed: strokeSpeed,
-            strokeIntent: strokeIntent,
-            topic: 'Matematika & Aljabar'
-          })
-        });
-        if (aiRes.ok) {
-          const aiJson = await aiRes.json();
-          if (aiJson?.data?.diagnosis) {
-            aiDiagText = aiJson.data.diagnosis;
-          }
-        }
-      } catch (err) {
-        console.warn('Real AI endpoint fetch fallback:', err);
-      }
-
       const newResult = {
         id: `stu-sub-${Date.now()}`,
         name: currentUser?.name || 'Siswa Bina Demo',
@@ -985,7 +1304,9 @@ export default function Home() {
         topic: 'Materi Pembelajaran & Aljabar',
         intent: strokeIntent,
         accuracy: accuracy,
-        diagnosis: aiDiagText,
+        diagnosis: accuracy >= 80
+          ? 'Siswa menyelesaikan ujian dengan pemahaman kognitif yang sangat tinggi dan tempo pengerjaan yang stabil.'
+          : 'Siswa mengalami beberapa kendala dalam penataan persamaan aljabar dasar.',
         sparkline: accuracy >= 80
           ? 'M0 14 L20 14 L24 10 L28 18 L32 2 L36 22 L40 14 L50 14 L70 14 L78 18 L82 2 L86 22 L90 14 L100 14'
           : 'M0 14 L10 14 L12 4 L14 24 L16 14 L30 14 L32 2 L34 26 L36 10 L38 20 L40 14 L60 14 L62 4 L64 24 L66 14 L80 14 L82 2 L84 26 L100 14',
@@ -1897,6 +2218,19 @@ export default function Home() {
                       </div>
 
                       <div>
+                        <label className="text-[11px] font-bold text-[#423c37] block mb-1">Target Papan Permainan</label>
+                        <select
+                          value={quickTargetBoard}
+                          onChange={(e) => setQuickTargetBoard(e.target.value)}
+                          className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-xl p-2.5 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
+                        >
+                          <option value="Semua Papan">Kirim ke: Semua Papan Siswa</option>
+                          <option value="Zona 1">Kirim ke: Zona 1</option>
+                          <option value="Zona 2">Kirim ke: Zona 2</option>
+                        </select>
+                      </div>
+
+                      <div>
                         <button
                           type="submit"
                           disabled={!selectedQuickMaterialId}
@@ -2572,19 +2906,12 @@ export default function Home() {
                 </div>
               )}
 
-              {/* Tab 3: Pengerjaan Soal Siswa - MEMORA Production Clean UI v1.2 */}
+              {/* Tab 3: Pengerjaan Soal Siswa */}
               {activeTab === 'pengerjaan_soal' && (
                 <div className="space-y-6">
                   {studentStep === 'prep' && (
                     <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 max-w-xl mx-auto text-center space-y-6 shadow-xs">
-                      <div className="w-12 h-12 rounded-xl bg-[#3d5a45] text-white flex items-center justify-center mx-auto shadow-xs">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-                          <polyline points="14 2 14 8 20 8" />
-                          <line x1="16" y1="13" x2="8" y2="13" />
-                          <line x1="16" y1="17" x2="8" y2="17" />
-                        </svg>
-                      </div>
+                      <span className="text-3xl block">📝</span>
                       <h2 className="text-xl font-bold heading-font text-[#2c2825]">Persiapan Ujian Evaluasi Siswa</h2>
                       <p className="text-xs text-[#6b635b]">
                         Isikan nama Anda di bawah ini dan klik mulai untuk memasuki portal ujian interactive canvas.
@@ -2638,15 +2965,15 @@ export default function Home() {
                               {questionsList[currentQIdx]?.options.map((opt) => (
                                 <button
                                   key={opt.id}
-                                  onClick={() => setSelectedAnswers({ ...selectedAnswers, [currentQIdx]: opt.id })}
+                                  onClick={() => setPgAnswers({ ...pgAnswers, [currentQIdx]: opt.id })}
                                   className={`w-full text-left p-3 rounded-lg border text-xs font-medium transition flex items-center gap-3 ${
-                                    selectedAnswers[currentQIdx] === opt.id
+                                    pgAnswers[currentQIdx] === opt.id
                                       ? 'bg-[#3d5a45] text-white border-[#3d5a45] shadow-xs'
                                       : 'bg-[#f7f5f0] text-[#2c2825] border-[#c4dcd0] hover:bg-[#e4efe7]'
                                   }`}
                                 >
                                   <span className={`w-5 h-5 rounded-full border text-[10px] font-bold flex items-center justify-center ${
-                                    selectedAnswers[currentQIdx] === opt.id ? 'border-white bg-white/20' : 'border-[#6b635b]'
+                                    pgAnswers[currentQIdx] === opt.id ? 'border-white bg-white/20' : 'border-[#6b635b]'
                                   }`}>
                                     {opt.id}
                                   </span>
@@ -2656,113 +2983,50 @@ export default function Home() {
                             </div>
                           )}
 
-                          {/* Interactive Drawing Canvas (Active ONLY for Canvas/Isian Questions) */}
-                          {questionsList[currentQIdx]?.type === 'canvas' && (
-                            <div className="space-y-3 pt-4 border-t border-[#efece4]">
-                              <div className="flex flex-wrap justify-between items-center gap-2">
-                                <div>
-                                  <div className="flex items-center gap-2">
-                                    <span className="text-xs font-extrabold text-[#3d5a45] uppercase tracking-wide">
-                                      Canvas Coretan & Oret-oretan Perhitungan
-                                    </span>
-                                    <span className="text-[10px] font-bold bg-[#e4efe7] text-[#3d5a45] px-2 py-0.5 rounded-full border border-[#c4dcd0]">
-                                      Telemetri Motorik AI Live
-                                    </span>
-                                  </div>
-                                  <p className="text-[11px] text-[#6b635b] mt-0.5">
-                                    Gunakan area canvas di bawah untuk menghitung rumus / coretan. AI menganalisis pola gerakan pen stylus kamu secara real-time.
-                                  </p>
-                                </div>
+                          {/* Interactive Drawing Canvas */}
+                          <div className="space-y-2 pt-3 border-t border-[#efece4]">
+                            <div className="flex justify-between items-center">
+                              <span className="text-xs font-bold text-[#3d5a45]">
+                                Canvas Coretan Pengerjaan (Telemetri Pen Motorik):
+                              </span>
+                              <button
+                                onClick={clearCanvas}
+                                className="text-[11px] text-rose-600 hover:text-rose-800 font-bold underline"
+                              >
+                                Bersihkan Canvas
+                              </button>
+                            </div>
 
-                                {/* Stylus Pen Palette Toolbar */}
-                                <div className="flex items-center gap-2 bg-[#f7f5f0] p-1.5 rounded-xl border border-[#c4dcd0]">
-                                  {/* Color Selector Buttons */}
-                                  <div className="flex items-center gap-1 pr-2 border-r border-[#c4dcd0]">
-                                    <button
-                                      type="button"
-                                      onClick={() => setPenColor('#1f2b23')}
-                                      className={`w-5 h-5 rounded-full bg-[#1f2b23] border-2 transition ${penColor === '#1f2b23' ? 'border-amber-400 scale-110 shadow-xs' : 'border-transparent'}`}
-                                      title="Tinta Hijau Tua"
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() => setPenColor('#2563eb')}
-                                      className={`w-5 h-5 rounded-full bg-blue-600 border-2 transition ${penColor === '#2563eb' ? 'border-amber-400 scale-110 shadow-xs' : 'border-transparent'}`}
-                                      title="Tinta Biru"
-                                    />
-                                    <button
-                                      type="button"
-                                      onClick={() => setPenColor('#dc2626')}
-                                      className={`w-5 h-5 rounded-full bg-rose-600 border-2 transition ${penColor === '#dc2626' ? 'border-amber-400 scale-110 shadow-xs' : 'border-transparent'}`}
-                                      title="Tinta Merah"
-                                    />
-                                  </div>
+                            <div className="border border-[#c4dcd0] rounded-xl overflow-hidden bg-white shadow-inner">
+                              <canvas
+                                ref={canvasRef}
+                                width={650}
+                                height={280}
+                                onMouseDown={startDraw}
+                                onMouseMove={draw}
+                                onMouseUp={stopDraw}
+                                onMouseLeave={stopDraw}
+                                onTouchStart={startDraw}
+                                onTouchMove={draw}
+                                onTouchEnd={stopDraw}
+                                className="w-full h-70 touch-none cursor-crosshair"
+                              />
+                            </div>
 
-                                  {/* Pen Width Selector */}
-                                  <div className="flex items-center gap-1 text-[10px] font-bold text-[#5c554e] pr-2 border-r border-[#c4dcd0]">
-                                    <button
-                                      type="button"
-                                      onClick={() => setPenWidth(2)}
-                                      className={`px-2 py-0.5 rounded ${penWidth === 2 ? 'bg-[#3d5a45] text-white' : 'hover:bg-[#efece4]'}`}
-                                    >
-                                      Halus
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => setPenWidth(4)}
-                                      className={`px-2 py-0.5 rounded ${penWidth === 4 ? 'bg-[#3d5a45] text-white' : 'hover:bg-[#efece4]'}`}
-                                    >
-                                      Sedang
-                                    </button>
-                                    <button
-                                      type="button"
-                                      onClick={() => setPenWidth(8)}
-                                      className={`px-2 py-0.5 rounded ${penWidth === 8 ? 'bg-[#3d5a45] text-white' : 'hover:bg-[#efece4]'}`}
-                                    >
-                                      Tebal
-                                    </button>
-                                  </div>
-
-                                  {/* Clear Canvas Button */}
-                                  <button
-                                    type="button"
-                                    onClick={clearCanvas}
-                                    className="text-[11px] text-rose-700 hover:text-rose-900 font-bold px-2 py-0.5 hover:bg-rose-50 rounded transition"
-                                  >
-                                    Hapus Coretan
-                                  </button>
-                                </div>
-                              </div>
-
-                              <div className="border border-[#c4dcd0] rounded-xl overflow-hidden bg-white shadow-inner relative">
-                                <canvas
-                                  ref={canvasRef}
-                                  width={650}
-                                  height={280}
-                                  onMouseDown={startDraw}
-                                  onMouseMove={draw}
-                                  onMouseUp={stopDraw}
-                                  onMouseLeave={stopDraw}
-                                  onTouchStart={startDraw}
-                                  onTouchMove={draw}
-                                  onTouchEnd={stopDraw}
-                                  className="w-full h-72 touch-none cursor-crosshair bg-white"
-                                />
-                              </div>
-
-                              {/* Short Answer Input for Canvas / Isian questions */}
+                            {/* Short Answer Input for Canvas questions */}
+                            {questionsList[currentQIdx]?.type === 'canvas' && (
                               <div className="pt-2 space-y-1">
                                 <label className="text-xs font-bold text-[#423c37] block">Jawaban Akhir Singkat:</label>
                                 <input
                                   type="text"
                                   value={shortAnswers[currentQIdx] || ''}
                                   onChange={(e) => setShortAnswers({ ...shortAnswers, [currentQIdx]: e.target.value })}
-                                  placeholder="Ketikkan jawaban akhir singkat di sini..."
+                                  placeholder="Ketikkan jawaban singkat di sini..."
                                   className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
                                 />
                               </div>
-                            </div>
-                          )}
+                            )}
+                          </div>
 
                           {/* Bottom Navigation Buttons */}
                           <div className="flex justify-between items-center pt-4 border-t border-[#efece4]">
@@ -2790,7 +3054,11 @@ export default function Home() {
                             {currentQIdx === questionsList.length - 1 ? (
                               <button
                                 onClick={handleAttemptSubmit}
-                                className="px-5 py-2 text-xs font-bold rounded-lg transition btn-primary bg-[#3d5a45] hover:bg-[#2e4736]"
+                                className={`px-5 py-2 text-xs font-bold rounded-lg transition ${
+                                  answeredCount < questionsList.length
+                                    ? 'bg-[#3d5a45]/50 opacity-60 text-white hover:opacity-80'
+                                    : 'btn-primary bg-[#3d5a45] hover:bg-[#2e4736]'
+                                }`}
                               >
                                 Selesaikan Ujian
                               </button>
@@ -2868,7 +3136,7 @@ export default function Home() {
 
                           <div className="grid grid-cols-5 gap-2">
                             {questionsList.map((q, idx) => {
-                              const isAnswered = selectedAnswers[idx] || shortAnswers[idx];
+                              const isAnswered = pgAnswers[idx] || shortAnswers[idx];
                               const isDoubt = doubtfulQuestions[idx];
                               const isCurrent = idx === currentQIdx;
 
@@ -2895,12 +3163,7 @@ export default function Home() {
 
                   {studentStep === 'result' && (
                     <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 max-w-2xl mx-auto text-center space-y-6 shadow-xs">
-                      <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-700 flex items-center justify-center mx-auto shadow-xs border border-emerald-200">
-                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
-                          <polyline points="22 4 12 14.01 9 11.01" />
-                        </svg>
-                      </div>
+                      <span className="text-4xl block">🎉</span>
                       <h2 className="text-2xl font-bold heading-font text-[#2c2825]">Ujian Evaluasi Berhasil Diselesaikan!</h2>
 
                       <div className="grid grid-cols-3 gap-4 pt-2">
