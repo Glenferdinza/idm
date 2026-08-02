@@ -132,10 +132,10 @@ async function initDB() {
           'INSERT INTO users (id, name, email, password_hash, role, added_at) VALUES ($1, $2, $3, $4, $5, $6)',
           ['user-teacher-1', 'Pengajar Tim 1', 'pengajar@gmail.com', defaultTeacherHash, 'Pengajar', '16 Jul 2026']
         );
-        console.log('✅ Default Admin & Teacher seeded in PostgreSQL database.');
+        console.log('Default Admin & Teacher seeded in PostgreSQL database.');
       }
 
-      // Seed Default Questions in PostgreSQL
+      // Seed 30 Realistic Answerable Questions in PostgreSQL
       const qRes = await pool.query('SELECT COUNT(*) as count FROM questions');
       if (parseInt(qRes.rows[0].count, 10) === 0) {
         const defaultQuestions = [
@@ -158,7 +158,7 @@ async function initDB() {
             id: 'q-2',
             number: 2,
             topic: 'Persamaan Linear Satu Variabel',
-            question_text: 'Tentukan nilai x jika 3x + 12 = 45. Gunakan area canvas telemetry di bawah untuk mencoret dan ketikkan jawaban angka di bawah.',
+            question_text: 'Tentukan nilai x jika 3x + 12 = 45.',
             type: 'canvas',
             options_json: JSON.stringify([]),
             correct_answer: '11',
@@ -183,7 +183,7 @@ async function initDB() {
             id: 'q-4',
             number: 4,
             topic: 'Operasi Bilangan Bulat',
-            question_text: 'Hasil dari 45 + (-18) × 3 adalah ...',
+            question_text: 'Hasil dari 45 + (-18) * 3 adalah ...',
             type: 'pg',
             options_json: JSON.stringify([
               { id: 'A', text: '-9' },
@@ -198,7 +198,7 @@ async function initDB() {
             id: 'q-5',
             number: 5,
             topic: 'Geometri dan Aljabar',
-            question_text: 'Sebuah persegi panjang memiliki panjang (2x + 4) cm dan lebar 5 cm. Jika luasnya adalah 50 cm², berapakah nilai x?',
+            question_text: 'Sebuah persegi panjang memiliki panjang (2x + 4) cm dan lebar 5 cm. Jika luasnya adalah 50 cm2, berapakah nilai x?',
             type: 'canvas',
             options_json: JSON.stringify([]),
             correct_answer: '3',
@@ -243,6 +243,296 @@ async function initDB() {
             options_json: JSON.stringify([]),
             correct_answer: '3',
             difficulty: 'Sedang'
+          },
+          {
+            id: 'q-9',
+            number: 9,
+            topic: 'Perkalian Bentuk Aljabar',
+            question_text: 'Hasil perkalian aljabar (2x + 3)(x - 4) adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '2x^2 - 5x - 12' },
+              { id: 'B', text: '2x^2 + 5x - 12' },
+              { id: 'C', text: '2x^2 - 11x - 12' },
+              { id: 'D', text: '2x^2 - 5x + 12' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-10',
+            number: 10,
+            topic: 'Aritmatika Keuntungan',
+            question_text: 'Budi membeli barang seharga Rp 800.000,00 dan menjualnya kembali seharga Rp 1.000.000,00. Berapakah persentase keuntungan Budi (tuliskan angka saja)?',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '25',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-11',
+            number: 11,
+            topic: 'Pemfaktoran Aljabar',
+            question_text: 'Hasil pemfaktoran dari bentuk x^2 - 9 adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '(x - 3)(x + 3)' },
+              { id: 'B', text: '(x - 3)(x - 3)' },
+              { id: 'C', text: '(x + 9)(x - 1)' },
+              { id: 'D', text: '(x + 3)(x + 3)' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-12',
+            number: 12,
+            topic: 'Penggolongan Psikotropika',
+            question_text: 'Zat psikotropika yang berkhasiat pengobatan dan banyak digunakan dalam terapi dengan potensi kuat mengakibatkan sindrom ketergantungan adalah Golongan II, contohnya ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: 'Amphetamine' },
+              { id: 'B', text: 'Ganja' },
+              { id: 'C', text: 'Heroin' },
+              { id: 'D', text: 'Alkohol murni' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-13',
+            number: 13,
+            topic: 'Persamaan Aljabar Satu Variabel',
+            question_text: 'Jika 4x - 7 = 2x + 9, tentukan nilai x.',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '8',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-14',
+            number: 14,
+            topic: 'Eksponen dan Bilangan Berpangkat',
+            question_text: 'Nilai dari (2^3) * (2^4) adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '128' },
+              { id: 'B', text: '64' },
+              { id: 'C', text: '256' },
+              { id: 'D', text: '32' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-15',
+            number: 15,
+            topic: 'Geometri Bangun Datar',
+            question_text: 'Sebuah segitiga sama sisi memiliki panjang sisi 14 cm. Berapakah keliling segitiga tersebut (tuliskan angka dalam cm)?',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '42',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-16',
+            number: 16,
+            topic: 'Edukasi Neurobiologi Adiksi',
+            question_text: 'Kondisi penurunan respons zat di mana seseorang membutuhkan dosis zat adiktif semakin tinggi untuk memperoleh efek yang sama dinamakan ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: 'Toleransi zat' },
+              { id: 'B', text: 'Sakaw / Adiksi total' },
+              { id: 'C', text: 'Detoksifikasi' },
+              { id: 'D', text: 'Rehabilitasi medis' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-17',
+            number: 17,
+            topic: 'Peluang Matematika',
+            question_text: 'Sebuah dadu bermata 6 dilempar satu kali. Peluang muncul mata dadu berangka genap adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '1/2' },
+              { id: 'B', text: '1/3' },
+              { id: 'C', text: '1/6' },
+              { id: 'D', text: '2/3' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-18',
+            number: 18,
+            topic: 'Pembagian Bentuk Aljabar',
+            question_text: 'Sederhanakan bentuk pecahan aljabar (12x^2y) / (4xy). Tuliskan jawaban variabelnya.',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '3x',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-19',
+            number: 19,
+            topic: 'Teorema Phytagoras',
+            question_text: 'Sebuah segitiga siku-siku memiliki panjang sisi siku-siku 6 cm dan 8 cm. Panjang sisi miringnya adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '10 cm' },
+              { id: 'B', text: '12 cm' },
+              { id: 'C', text: '14 cm' },
+              { id: 'D', text: '9 cm' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-20',
+            number: 20,
+            topic: 'Persamaan Aljabar Perkalian',
+            question_text: 'Tentukan nilai x dari persamaan 5(x - 2) = 20.',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '6',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-21',
+            number: 21,
+            topic: 'Anatomi Sistem Saraf Kognitif',
+            question_text: 'Struktur jaringan otak yang memproses fungsi kognitif kompleks seperti penalaran logika dan pengendalian impuls adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: 'Prefrontal Cortex' },
+              { id: 'B', text: 'Cerebellum' },
+              { id: 'C', text: 'Batang Otak' },
+              { id: 'D', text: 'Sumsum Belakang' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-22',
+            number: 22,
+            topic: 'Barisan dan Deret Aritmatika',
+            question_text: 'Suku ke-10 dari barisan aritmatika 3, 7, 11, 15, ... adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '39' },
+              { id: 'B', text: '35' },
+              { id: 'C', text: '43' },
+              { id: 'D', text: '37' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-23',
+            number: 23,
+            topic: 'Luas Bangun Datar',
+            question_text: 'Sebuah segitiga memiliki alas 16 cm dan tinggi 10 cm. Tentukan luas segitiga tersebut dalam cm2.',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '80',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-24',
+            number: 24,
+            topic: 'Rehabilitasi dan Hukum',
+            question_text: 'Proses penanganan terpadu untuk memulihkan korban penyalahgunaan zat baik secara medis maupun sosial disebut ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: 'Rehabilitasi' },
+              { id: 'B', text: 'Karantina Hukum' },
+              { id: 'C', text: 'Vonis Pidana' },
+              { id: 'D', text: 'Isolasi Mandiri' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-25',
+            number: 25,
+            topic: 'Perbandingan Senilai',
+            question_text: 'Jika 5 liter bensin dapat menempuh jarak 60 km, berapakah jarak yang dapat ditempuh dengan 8 liter bensin?',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '96 km' },
+              { id: 'B', text: '80 km' },
+              { id: 'C', text: '100 km' },
+              { id: 'D', text: '90 km' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-26',
+            number: 26,
+            topic: 'Persamaan Kuadrat Sederhana',
+            question_text: 'Jika x^2 = 81 dan x adalah bilangan positif, tentukan nilai x.',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '9',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-27',
+            number: 27,
+            topic: 'Neurotransmitter Otak',
+            question_text: 'Senyawa kimia otak yang berperan penting dalam sistem imbalan (reward system) dan motivasi kognitif adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: 'Dopamin' },
+              { id: 'B', text: 'Insulin' },
+              { id: 'C', text: 'Hemoglobin' },
+              { id: 'D', text: 'Tirosin' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-28',
+            number: 28,
+            topic: 'Statistika Dasar - Rata-Rata',
+            question_text: 'Rata-rata (mean) dari data nilai: 7, 8, 6, 9, 10 adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '8' },
+              { id: 'B', text: '7.5' },
+              { id: 'C', text: '8.5' },
+              { id: 'D', text: '7' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
+          },
+          {
+            id: 'q-29',
+            number: 29,
+            topic: 'Persamaan Pecahan Aljabar',
+            question_text: 'Tentukan nilai x dari persamaan pecahan (x / 4) + 3 = 8.',
+            type: 'canvas',
+            options_json: JSON.stringify([]),
+            correct_answer: '20',
+            difficulty: 'Sedang'
+          },
+          {
+            id: 'q-30',
+            number: 30,
+            topic: 'Statistika Dasar - Modus',
+            question_text: 'Modus dari kelompok data: 5, 7, 7, 8, 9, 7, 10, 6 adalah ...',
+            type: 'pg',
+            options_json: JSON.stringify([
+              { id: 'A', text: '7' },
+              { id: 'B', text: '8' },
+              { id: 'C', text: '5' },
+              { id: 'D', text: '9' }
+            ]),
+            correct_answer: 'A',
+            difficulty: 'Mudah'
           }
         ];
 
@@ -252,11 +542,11 @@ async function initDB() {
             [q.id, q.number, q.topic, q.question_text, q.type, q.options_json, q.correct_answer, q.difficulty]
           );
         }
-        console.log('✅ Default Question Bank seeded in PostgreSQL database.');
+        console.log('Default 30 Questions seeded in PostgreSQL database.');
       }
 
       isConnected = true;
-      console.log('🚀 Connected successfully to PostgreSQL (Supabase / Neon) Database!');
+      console.log('Connected successfully to PostgreSQL (Supabase / Neon) Database!');
     } else {
       // MySQL Table Initialization
       const conn = await pool.getConnection();
@@ -314,12 +604,12 @@ async function initDB() {
       conn.release();
       isConnected = true;
       lastDbError = null;
-      console.log('🚀 Connected successfully to MySQL Database!');
+      console.log('Connected successfully to MySQL Database!');
     }
   } catch (err) {
     isConnected = false;
     lastDbError = err.message || String(err);
-    console.warn(`⚠️ Cloud Database Connection Warning (${err.message}). App will fallback to in-memory mode if DB is unreachable.`);
+    console.warn(`Cloud Database Connection Warning (${err.message}). App will fallback to in-memory mode if DB is unreachable.`);
   }
 }
 
