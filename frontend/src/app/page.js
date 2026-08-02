@@ -623,7 +623,12 @@ export default function Home() {
       correctAnswer: 'A'
     }
   ]);
-  const [currentBuilderQIdx, setCurrentBuilderQIdx] = useState(0);
+  // Material Package Editing & Three Dots Menu State
+  const [editingMaterialId, setEditingMaterialId] = useState(null);
+  const [activeMaterialMenuIndex, setActiveMaterialMenuIndex] = useState(null);
+  const [deletingMaterialId, setDeletingMaterialId] = useState(null);
+  const [selectedQuickMaterialId, setSelectedQuickMaterialId] = useState('');
+  const [quickTargetBoard, setQuickTargetBoard] = useState('Semua Papan');
 
   const [isDemoMode, setIsDemoMode] = useState(false);
   const [expandedMaterials, setExpandedMaterials] = useState({});
@@ -963,6 +968,138 @@ export default function Home() {
     setResetOtp('');
     setNewResetPassword('');
     setConfirmResetPassword('');
+  };
+
+  // Handle Start Editing an Existing Material Package
+  const handleStartEditMaterial = (mat) => {
+    setEditingMaterialId(mat.id);
+    setBuilderTitle(mat.title);
+    setBuilderTotalTime(mat.totalTime || '60:00');
+    setBuilderQuestions(
+      mat.questions && mat.questions.length > 0
+        ? mat.questions
+        : [
+            {
+              id: 'q-b-1',
+              topic: 'Matematika Aljabar',
+              questionText: '',
+              type: 'pg',
+              options: [
+                { id: 'A', text: '' },
+                { id: 'B', text: '' },
+                { id: 'C', text: '' },
+                { id: 'D', text: '' }
+              ],
+              correctAnswer: 'A'
+            }
+          ]
+    );
+    setCurrentBuilderQIdx(0);
+    setActiveMaterialMenuIndex(null);
+    setActiveTab('buat_materi_builder');
+  };
+
+  // Handle Cancel Edit / Clear Builder Form
+  const handleCancelEditMaterial = () => {
+    setEditingMaterialId(null);
+    setBuilderTitle('');
+    setBuilderTotalTime('60:00');
+    setBuilderQuestions([
+      {
+        id: 'q-b-1',
+        topic: 'Matematika Aljabar',
+        questionText: '',
+        type: 'pg',
+        options: [
+          { id: 'A', text: '' },
+          { id: 'B', text: '' },
+          { id: 'C', text: '' },
+          { id: 'D', text: '' }
+        ],
+        correctAnswer: 'A'
+      }
+    ]);
+    setCurrentBuilderQIdx(0);
+    setActiveTab('kelola_materi');
+  };
+
+  // Save / Update Builder Package
+  const handlePublishBuilderPackage = async (e) => {
+    if (e) e.preventDefault();
+    if (!builderTitle.trim()) {
+      showAlert('Peringatan Builder', 'Masukkan nama paket materi pembelajaran!', 'warning');
+      return;
+    }
+    if (builderQuestions.length === 0) {
+      showAlert('Peringatan Builder', 'Tambahkan minimal 1 soal dalam paket materi!', 'warning');
+      return;
+    }
+
+    if (editingMaterialId) {
+      setMaterials((prev) =>
+        prev.map((m) => {
+          if (m.id === editingMaterialId) {
+            return {
+              ...m,
+              title: builderTitle.trim(),
+              soalCount: builderQuestions.length,
+              totalTime: builderTotalTime || '60:00',
+              questions: builderQuestions.map((q, idx) => ({ ...q, number: idx + 1 }))
+            };
+          }
+          return m;
+        })
+      );
+      showAlert('Pembaruan Berhasil', `Paket Materi "${builderTitle.trim()}" berhasil diperbarui!`, 'success');
+      handleCancelEditMaterial();
+    } else {
+      const newMatPackage = {
+        id: `mat-${Date.now()}`,
+        title: builderTitle.trim(),
+        soalCount: builderQuestions.length,
+        totalTime: builderTotalTime || '60:00',
+        createdAt: new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }),
+        questions: builderQuestions.map((q, idx) => ({ ...q, number: idx + 1 }))
+      };
+
+      try {
+        await fetch(`${API_URL}/api/bank-soal`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newMatPackage)
+        });
+      } catch (err) {
+        console.log('Backend sync offline, saving locally');
+      }
+
+      setMaterials((prev) => [newMatPackage, ...prev]);
+      showAlert('Sukses Terbit', `Paket Materi "${newMatPackage.title}" dengan ${newMatPackage.soalCount} soal berhasil disimpan dan diterbitkan!`, 'success');
+      handleCancelEditMaterial();
+    }
+  };
+
+  // Quick Transmit Selected Material Package to Students
+  const handleQuickTransmitMaterial = (e) => {
+    if (e) e.preventDefault();
+    const targetMat = materials.find((m) => m.id === selectedQuickMaterialId);
+    if (!targetMat) {
+      showAlert('Peringatan Transmisi', 'Pilih paket materi yang ingin dikirimkan ke siswa!', 'warning');
+      return;
+    }
+
+    setMaterials((prev) => [targetMat, ...prev.filter((m) => m.id !== targetMat.id)]);
+    showAlert(
+      'Transmisi Berhasil Live',
+      `Paket materi "${targetMat.title}" (${targetMat.questions.length} Soal) telah berhasil dikirim ke ${quickTargetBoard}! Portal siswa otomatis meng-override soal secara real-time.`,
+      'success'
+    );
+  };
+
+  // Delete Material Package Confirmation
+  const handleConfirmDeleteMaterial = (matId) => {
+    setMaterials((prev) => prev.filter((m) => m.id !== matId));
+    setDeletingMaterialId(null);
+    showAlert('Sukses Hapus', 'Paket materi telah berhasil dihapus dari daftar.', 'success');
   };
 
   // Add New Teacher Access (Teacher Admin Feature - MySQL connected)
@@ -1963,7 +2100,28 @@ export default function Home() {
                     </div>
 
                     <button
-                      onClick={() => setActiveTab('buat_materi_builder')}
+                      onClick={() => {
+                        setEditingMaterialId(null);
+                        setBuilderTitle('');
+                        setBuilderTotalTime('60:00');
+                        setBuilderQuestions([
+                          {
+                            id: 'q-b-1',
+                            topic: 'Matematika Aljabar',
+                            questionText: '',
+                            type: 'pg',
+                            options: [
+                              { id: 'A', text: '' },
+                              { id: 'B', text: '' },
+                              { id: 'C', text: '' },
+                              { id: 'D', text: '' }
+                            ],
+                            correctAnswer: 'A'
+                          }
+                        ]);
+                        setCurrentBuilderQIdx(0);
+                        setActiveTab('buat_materi_builder');
+                      }}
                       className="btn-primary px-5 py-2.5 text-xs font-bold flex items-center gap-2 shadow-xs"
                     >
                       <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -1974,22 +2132,57 @@ export default function Home() {
                     </button>
                   </div>
 
-                  {/* Top Status Banner: Transmitter Live Status */}
-                  <div className="bg-gradient-to-r from-[#1b3323] to-[#2d5239] text-white p-5 rounded-2xl shadow-sm border border-[#3d5a45] flex flex-wrap justify-between items-center gap-4">
-                    <div className="flex items-center gap-3">
-                      <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping flex-shrink-0" />
+                  {/* Quick Transmit Container: Kirim Cepat Paket Materi Ke Siswa */}
+                  <div className="bg-white border border-[#c4dcd0] rounded-2xl p-6 shadow-xs space-y-4">
+                    <div className="flex items-center justify-between border-b pb-3 border-[#efece4]">
                       <div>
-                        <span className="text-[10px] uppercase font-bold text-emerald-200 tracking-wider block">
-                          Transmitter Live Engine Status
-                        </span>
-                        <h3 className="font-bold text-sm text-white heading-font">
-                          Server Terhubung Ke Portal Siswa
-                        </h3>
+                        <h3 className="font-bold text-sm text-[#3d5a45] heading-font">Pengiriman Cepat Paket Materi Ke Siswa</h3>
+                        <p className="text-xs text-[#6b635b]">Pilih paket materi dan terbitkan secara instan ke portal pengerjaan siswa.</p>
                       </div>
+                      <span className="text-[10px] bg-[#f0f4f1] text-[#3d5a45] font-bold px-2.5 py-1 rounded-md border border-[#c4dcd0]">
+                        Override Live Active
+                      </span>
                     </div>
-                    <span className="text-[11px] bg-white/10 text-emerald-100 px-3 py-1 rounded-full font-mono border border-white/15">
-                      Target: Portal Pengerjaan Aktif ({materials.length} Paket Siap)
-                    </span>
+
+                    <form onSubmit={handleQuickTransmitMaterial} className="grid grid-cols-1 md:grid-cols-3 gap-4 items-end">
+                      <div>
+                        <label className="text-[11px] font-bold text-[#423c37] block mb-1">Pilih Paket Materi</label>
+                        <select
+                          value={selectedQuickMaterialId}
+                          onChange={(e) => setSelectedQuickMaterialId(e.target.value)}
+                          className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-xl p-2.5 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
+                          required
+                        >
+                          <option value="">-- Pilih Paket Materi --</option>
+                          {materials.map((m) => (
+                            <option key={m.id} value={m.id}>{m.title} ({m.soalCount} Soal)</option>
+                          ))}
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="text-[11px] font-bold text-[#423c37] block mb-1">Target Papan Permainan</label>
+                        <select
+                          value={quickTargetBoard}
+                          onChange={(e) => setQuickTargetBoard(e.target.value)}
+                          className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-xl p-2.5 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45]"
+                        >
+                          <option value="Semua Papan">Kirim ke: Semua Papan Siswa</option>
+                          <option value="Zona 1">Kirim ke: Zona 1</option>
+                          <option value="Zona 2">Kirim ke: Zona 2</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <button
+                          type="submit"
+                          disabled={!selectedQuickMaterialId}
+                          className="w-full py-2.5 btn-primary text-xs font-bold rounded-xl disabled:opacity-40 flex items-center justify-center gap-2"
+                        >
+                          <span>Kirim Soal Sekarang</span>
+                        </button>
+                      </div>
+                    </form>
                   </div>
 
                   {/* List of Available Material Packages */}
@@ -2085,7 +2278,7 @@ export default function Home() {
                           <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#efece4]">
                             <button
                               onClick={() => setExpandedMaterials((prev) => ({ ...prev, [m.id]: !prev[m.id] }))}
-                              className="py-2 px-4 bg-[#f7f5f0] hover:bg-[#e4efe7] border border-[#c4dcd0] rounded-xl text-xs font-bold text-[#3d5a45] flex items-center gap-2 transition"
+                              className="py-2 px-4 bg-[#f7f5f0] hover:bg-[#e4efe7] border border-[#c4dcd0] rounded-xl text-xs font-bold text-[#3d5a45] flex items-center gap-2 transition cursor-pointer"
                             >
                               <span>{expandedMaterials[m.id] ? 'Tutup Daftar Soal' : `Lihat Daftar (${m.questions?.length || 0}) Soal Ujian`}</span>
                               <svg
@@ -2099,16 +2292,43 @@ export default function Home() {
                               </svg>
                             </button>
 
-                            <button
-                              onClick={() => handlePublishMaterialToStudents(m)}
-                              className="px-6 py-2.5 bg-[#1b3323] hover:bg-[#203d2b] text-white text-xs font-bold rounded-xl flex items-center gap-2.5 shadow-md hover:shadow-lg transition transform active:scale-98 cursor-pointer border border-[#3d5a45]"
-                            >
-                              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                                <line x1="22" y1="2" x2="11" y2="13"/>
-                                <polygon points="22 2 15 22 11 13 2 9 22 2"/>
-                              </svg>
-                              <span>Terbitkan Ke Papan Siswa (Live Transmitter)</span>
-                            </button>
+                            {/* Three Dots Menu Replacing Direct Publish Button */}
+                            <div className="relative">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setActiveMaterialMenuIndex(activeMaterialMenuIndex === m.id ? null : m.id);
+                                }}
+                                className="w-9 h-9 rounded-xl hover:bg-[#e4efe7] flex items-center justify-center text-[#3d5a45] font-bold text-base border border-[#c4dcd0] transition cursor-pointer"
+                                title="Opsi Paket Materi"
+                              >
+                                ⋮
+                              </button>
+
+                              {activeMaterialMenuIndex === m.id && (
+                                <div
+                                  onMouseLeave={() => setActiveMaterialMenuIndex(null)}
+                                  className="absolute right-0 top-10 w-48 bg-white border border-[#c4dcd0] rounded-xl shadow-lg z-20 py-1.5 text-xs animate-fade-in-up"
+                                >
+                                  <button
+                                    onClick={() => handleStartEditMaterial(m)}
+                                    className="w-full text-left px-4 py-2 hover:bg-[#f7f5f0] text-[#2c2825] font-semibold transition"
+                                  >
+                                    Edit Paket Materi
+                                  </button>
+
+                                  <button
+                                    onClick={() => {
+                                      setActiveMaterialMenuIndex(null);
+                                      setDeletingMaterialId(m.id);
+                                    }}
+                                    className="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-semibold border-t border-slate-100 transition"
+                                  >
+                                    Hapus Paket Materi
+                                  </button>
+                                </div>
+                              )}
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -2122,16 +2342,20 @@ export default function Home() {
                 <div className="space-y-8 animate-fade-in-up">
                   <div className="flex flex-wrap justify-between items-center gap-4 border-b pb-4 border-[#efece4]">
                     <div>
-                      <h1 className="text-2xl font-bold heading-font text-[#2c2825]">Buat Paket & Soal Ujian Baru</h1>
+                      <h1 className="text-2xl font-bold heading-font text-[#2c2825]">
+                        {editingMaterialId ? 'Edit Paket & Soal Ujian' : 'Buat Paket & Soal Ujian Baru'}
+                      </h1>
                       <p className="text-xs text-[#6b635b] mt-1">
-                        Isi informasi materi dan susun pertanyaan soal (PG / Canvas) secara step-by-step.
+                        {editingMaterialId
+                          ? 'Perbarui detail materi dan pertanyaan soal yang telah dipilih.'
+                          : 'Isi informasi materi dan susun pertanyaan soal (PG / Canvas) secara step-by-step.'}
                       </p>
                     </div>
                     <button
-                      onClick={() => setActiveTab('kelola_materi')}
+                      onClick={handleCancelEditMaterial}
                       className="btn-outline px-4 py-2 text-xs font-bold"
                     >
-                      ← Kembali ke Daftar Paket Materi
+                      Kembali ke Kelola Paket Materi
                     </button>
                   </div>
 
@@ -3204,6 +3428,39 @@ export default function Home() {
             >
               Tutup
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* CUSTOM MODAL: Confirm Delete Material Package */}
+      {deletingMaterialId && (
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-[#c4dcd0] rounded-2xl max-w-sm w-full p-6 shadow-xl text-center space-y-4 animate-fade-in-up">
+            <div className="w-12 h-12 rounded-full bg-rose-100 text-rose-700 flex items-center justify-center mx-auto text-xl font-bold border border-rose-200">
+              !
+            </div>
+
+            <div className="space-y-1">
+              <h3 className="font-bold text-[#2c2825] text-base heading-font">Hapus Paket Materi</h3>
+              <p className="text-xs text-[#6b635b] leading-relaxed">
+                Apakah Anda yakin ingin menghapus paket materi ini? Data soal di dalamnya akan terhapus.
+              </p>
+            </div>
+
+            <div className="flex gap-3 pt-2">
+              <button
+                onClick={() => setDeletingMaterialId(null)}
+                className="flex-1 py-2.5 btn-outline text-xs font-bold"
+              >
+                Batal
+              </button>
+              <button
+                onClick={() => handleConfirmDeleteMaterial(deletingMaterialId)}
+                className="flex-1 py-2.5 bg-rose-600 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition"
+              >
+                Ya, Hapus
+              </button>
+            </div>
           </div>
         </div>
       )}
