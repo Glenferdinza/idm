@@ -2188,10 +2188,10 @@ export default function Home() {
                   {/* List of Available Material Packages */}
                   <div className="space-y-5">
                     {materials.map((m) => (
-                      <div key={m.id} className="bg-white border border-[#c4dcd0] rounded-2xl shadow-xs overflow-hidden transition hover:border-[#3d5a45]">
+                      <div key={m.id} className="bg-white border border-[#c4dcd0] rounded-2xl shadow-xs transition hover:border-[#3d5a45] relative">
                         <div
                           onClick={() => setExpandedMaterials((prev) => ({ ...prev, [m.id]: !prev[m.id] }))}
-                          className="bg-[#1b3323] text-white p-4 px-6 flex justify-between items-center cursor-pointer hover:bg-[#203d2b] transition select-none"
+                          className="bg-[#1b3323] text-white p-4 px-6 rounded-t-2xl flex justify-between items-center cursor-pointer hover:bg-[#203d2b] transition select-none"
                         >
                           <div>
                             <span className="font-bold text-xs heading-font tracking-wide">{m.title}</span>
@@ -2291,7 +2291,7 @@ export default function Home() {
                               </svg>
                             </button>
 
-                            {/* Three Dots Menu Replacing Direct Publish Button */}
+                            {/* Three Dots Menu Positioned Upwards to Prevent Overflow Clipping */}
                             <div className="relative">
                               <button
                                 onClick={(e) => {
@@ -2307,11 +2307,11 @@ export default function Home() {
                               {activeMaterialMenuIndex === m.id && (
                                 <div
                                   onMouseLeave={() => setActiveMaterialMenuIndex(null)}
-                                  className="absolute right-0 top-10 w-48 bg-white border border-[#c4dcd0] rounded-xl shadow-lg z-20 py-1.5 text-xs animate-fade-in-up"
+                                  className="absolute right-0 bottom-11 w-48 bg-white border border-[#c4dcd0] rounded-xl shadow-xl z-30 py-1.5 text-xs animate-fade-in-up"
                                 >
                                   <button
                                     onClick={() => handleStartEditMaterial(m)}
-                                    className="w-full text-left px-4 py-2 hover:bg-[#f7f5f0] text-[#2c2825] font-semibold transition"
+                                    className="w-full text-left px-4 py-2 hover:bg-[#f7f5f0] text-[#2c2825] font-semibold transition cursor-pointer"
                                   >
                                     Edit Paket Materi
                                   </button>
@@ -2321,7 +2321,7 @@ export default function Home() {
                                       setActiveMaterialMenuIndex(null);
                                       setDeletingMaterialId(m.id);
                                     }}
-                                    className="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-semibold border-t border-slate-100 transition"
+                                    className="w-full text-left px-4 py-2 hover:bg-rose-50 text-rose-600 font-semibold border-t border-slate-100 transition cursor-pointer"
                                   >
                                     Hapus Paket Materi
                                   </button>
