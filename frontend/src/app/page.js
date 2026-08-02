@@ -1222,9 +1222,9 @@ export default function Home() {
   ).length;
 
   return (
-    <div className="min-h-screen bg-[#f2f7f4] text-[#2c2825] flex flex-col font-sans selection:bg-[#3d5a45] selection:text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#f7f5f0] text-[#2c2825] flex flex-col font-sans selection:bg-[#3d5a45] selection:text-white overflow-x-hidden">
       {viewState === 'landing' && (
-        <div className="min-h-screen flex flex-col bg-[#f2f7f4] relative">
+        <div className="min-h-screen flex flex-col bg-[#f7f5f0] relative">
           {/* Smooth Fixed Floating Navbar with Animated Scroll State */}
           <header
             className={`fixed top-0 left-0 right-0 z-50 px-6 lg:px-12 transition-all duration-300 ease-in-out flex items-center justify-between border-b ${
@@ -1281,7 +1281,7 @@ export default function Home() {
           {/* Main Landing Area with Clean Meaningful Feature Highlights */}
           <main className="flex-1 flex flex-col pt-22 sm:pt-24">
             {/* Hero Section */}
-            <section className="relative min-h-[calc(100vh-96px)] flex flex-col justify-between py-6 lg:py-10 bg-[#f2f7f4]">
+            <section className="relative min-h-[calc(100vh-96px)] flex flex-col justify-between py-6 lg:py-10 bg-[#f7f5f0]">
               <div className="max-w-7xl mx-auto px-6 lg:px-12 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center my-auto">
                 <div className="lg:col-span-7 space-y-5 text-left animate-fade-in-up">
                   <span className="inline-block px-3.5 py-1 bg-[#f0f4f1] text-[#3d5a45] text-[11px] sm:text-xs font-bold rounded-md border border-[#c7d8cb] uppercase tracking-wider">
@@ -1686,7 +1686,7 @@ export default function Home() {
 
       {/* Main Dashboard View (Full Height Sidebar with Integrated Toggle Arrow & Top Header) */}
       {viewState === 'dashboard' && (
-        <div className="flex h-screen overflow-hidden bg-[#f2f7f4] w-full">
+        <div className="flex h-screen overflow-hidden bg-[#f7f5f0] w-full">
           {/* Full Height Sidebar Starting at top-0 left-0 */}
           <aside
             onMouseEnter={() => setSidebarHovered(true)}
@@ -1900,7 +1900,7 @@ export default function Home() {
                       </p>
 
                       {/* Add New Teacher Form */}
-                      <form onSubmit={handleAddTeacherAccess} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end bg-[#f2f7f4] p-4 rounded-xl border border-[#c4dcd0]">
+                      <form onSubmit={handleAddTeacherAccess} className="grid grid-cols-1 md:grid-cols-4 gap-3 items-end bg-[#f7f5f0] p-4 rounded-xl border border-[#c4dcd0]">
                         <div>
                           <label className="text-[11px] font-bold text-[#423c37] block mb-1">Nama Lengkap Pengajar</label>
                           <input
@@ -2061,7 +2061,7 @@ export default function Home() {
                             </span>
                             <div className="space-y-2">
                               {m.questions.map((q, qIdx) => (
-                                <div key={q.id || qIdx} className="bg-[#f2f7f4] p-3 rounded-lg border border-[#c4dcd0] text-xs flex items-center justify-between">
+                                <div key={q.id || qIdx} className="bg-[#f7f5f0] p-3 rounded-lg border border-[#c4dcd0] text-xs flex items-center justify-between">
                                   <div className="flex items-center gap-3">
                                     <span className="w-6 h-6 rounded bg-[#3d5a45] text-white font-bold text-[10px] flex items-center justify-center">
                                       {qIdx + 1}
@@ -2194,7 +2194,7 @@ export default function Home() {
                           value={currentUser?.name || ''}
                           onChange={(e) => setCurrentUser({ ...currentUser, name: e.target.value, role: 'Siswa' })}
                           placeholder="Masukkan nama lengkap Anda (Contoh: Ahmad Fauzi)"
-                          className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-3 text-xs font-semibold text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
+                          className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-3 text-xs font-semibold text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
                         />
                       </div>
 
@@ -2351,7 +2351,7 @@ export default function Home() {
                                   value={shortAnswers[currentQIdx] || ''}
                                   onChange={(e) => setShortAnswers({ ...shortAnswers, [currentQIdx]: e.target.value })}
                                   placeholder="Ketikkan jawaban singkat di sini..."
-                                  className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
+                                  className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-3 text-xs text-[#2c2825] outline-none focus:border-[#3d5a45] focus:bg-white transition"
                                 />
                               </div>
                             </div>
@@ -2439,7 +2439,7 @@ export default function Home() {
                                     <span className="font-semibold">Sinyal Gelombang Motorik Pen:</span>
                                     <span className="font-mono font-bold text-[#3d5a45]">ECG Stream</span>
                                   </div>
-                                  <div className="w-full h-9 bg-[#f2f7f4] rounded-lg p-1.5 border border-[#c4dcd0] flex items-center overflow-hidden shadow-inner">
+                                  <div className="w-full h-9 bg-[#f7f5f0] rounded-lg p-1.5 border border-[#c4dcd0] flex items-center overflow-hidden shadow-inner">
                                     <svg className="w-full h-full" viewBox="0 0 100 28" fill="none">
                                       <path
                                         d="M0 14 L15 14 L18 6 L22 22 L26 2 L30 26 L34 10 L38 18 L42 14 L60 14 L63 6 L67 22 L71 2 L75 26 L79 10 L83 18 L87 14 L100 14"
@@ -2646,7 +2646,7 @@ export default function Home() {
                   value={newQTopic}
                   onChange={(e) => setNewQTopic(e.target.value)}
                   placeholder="Contoh: Aljabar Dasar / Efek Kognitif"
-                  className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                  className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
                   required
                 />
               </div>
@@ -2656,7 +2656,7 @@ export default function Home() {
                 <select
                   value={newQType}
                   onChange={(e) => setNewQType(e.target.value)}
-                  className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                  className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
                 >
                   <option value="pg">Pilihan Ganda (PG)</option>
                   <option value="canvas">Canvas Coretan & Jawaban Singkat</option>
@@ -2670,7 +2670,7 @@ export default function Home() {
                   value={newQText}
                   onChange={(e) => setNewQText(e.target.value)}
                   placeholder="Tuliskan isi pertanyaan soal di sini..."
-                  className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
+                  className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs outline-none focus:border-[#3d5a45]"
                   required
                 />
               </div>
@@ -2684,7 +2684,7 @@ export default function Home() {
                       value={newOptA}
                       onChange={(e) => setNewOptA(e.target.value)}
                       placeholder="Opsi A"
-                      className="bg-[#f2f7f4] border border-[#c4dcd0] p-2 rounded text-xs"
+                      className="bg-[#f7f5f0] border border-[#c4dcd0] p-2 rounded text-xs"
                       required
                     />
                     <input
@@ -2692,7 +2692,7 @@ export default function Home() {
                       value={newOptB}
                       onChange={(e) => setNewOptB(e.target.value)}
                       placeholder="Opsi B"
-                      className="bg-[#f2f7f4] border border-[#c4dcd0] p-2 rounded text-xs"
+                      className="bg-[#f7f5f0] border border-[#c4dcd0] p-2 rounded text-xs"
                       required
                     />
                     <input
@@ -2700,7 +2700,7 @@ export default function Home() {
                       value={newOptC}
                       onChange={(e) => setNewOptC(e.target.value)}
                       placeholder="Opsi C"
-                      className="bg-[#f2f7f4] border border-[#c4dcd0] p-2 rounded text-xs"
+                      className="bg-[#f7f5f0] border border-[#c4dcd0] p-2 rounded text-xs"
                       required
                     />
                     <input
@@ -2708,7 +2708,7 @@ export default function Home() {
                       value={newOptD}
                       onChange={(e) => setNewOptD(e.target.value)}
                       placeholder="Opsi D"
-                      className="bg-[#f2f7f4] border border-[#c4dcd0] p-2 rounded text-xs"
+                      className="bg-[#f7f5f0] border border-[#c4dcd0] p-2 rounded text-xs"
                       required
                     />
                   </div>
@@ -2718,7 +2718,7 @@ export default function Home() {
                     <select
                       value={newCorrectAns}
                       onChange={(e) => setNewCorrectAns(e.target.value)}
-                      className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2 text-xs"
+                      className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2 text-xs"
                     >
                       <option value="A">Opsi A</option>
                       <option value="B">Opsi B</option>
@@ -2735,7 +2735,7 @@ export default function Home() {
                     value={newCorrectAns}
                     onChange={(e) => setNewCorrectAns(e.target.value)}
                     placeholder="Contoh: 11 / x = 5"
-                    className="w-full bg-[#f2f7f4] border border-[#c4dcd0] rounded-lg p-2.5 text-xs"
+                    className="w-full bg-[#f7f5f0] border border-[#c4dcd0] rounded-lg p-2.5 text-xs"
                     required
                   />
                 </div>
