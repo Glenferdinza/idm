@@ -85,12 +85,44 @@ app.get('/', async (req, res) => {
 
 app.get('/api/health', async (req, res) => {
   const connected = await ensureConnected();
+  let dbPing = null;
+  if (connected) {
+    try {
+      const { rows } = await queryDB('SELECT NOW() AS db_time');
+      dbPing = rows[0]?.db_time;
+    } catch (e) {
+      dbPing = e.message;
+    }
+  }
   res.json({
     status: 'ok',
     service: 'Memori DNA Backend',
     dbConnected: connected,
+    dbPing,
     dbError: connected ? null : getDbError(),
     dbDriver: getDriver(),
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Dedicated Endpoint for n8n Ping (Prevents Supabase Free Tier Freeze)
+app.get('/api/keep-alive', async (req, res) => {
+  const connected = await ensureConnected();
+  let pingData = null;
+  if (connected) {
+    try {
+      const { rows } = await queryDB('SELECT NOW() AS server_time, COUNT(*) AS total_users FROM users');
+      pingData = rows[0];
+    } catch (e) {
+      pingData = { error: e.message };
+    }
+  }
+  res.json({
+    success: true,
+    message: 'Supabase Database Pinged Successfully via n8n Keep-Alive!',
+    dbConnected: connected,
+    dbDriver: getDriver(),
+    pingData,
     timestamp: new Date().toISOString()
   });
 });
