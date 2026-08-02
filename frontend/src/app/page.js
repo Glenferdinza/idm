@@ -2193,8 +2193,7 @@ export default function Home() {
                           onClick={() => setExpandedMaterials((prev) => ({ ...prev, [m.id]: !prev[m.id] }))}
                           className="bg-[#1b3323] text-white p-4 px-6 flex justify-between items-center cursor-pointer hover:bg-[#203d2b] transition select-none"
                         >
-                          <div className="flex items-center gap-3">
-                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                          <div>
                             <span className="font-bold text-xs heading-font tracking-wide">{m.title}</span>
                           </div>
                           <div className="flex items-center gap-4 text-xs">
