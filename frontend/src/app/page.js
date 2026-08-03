@@ -1124,7 +1124,7 @@ export default function Home() {
               </div>
 
               {/* Institution SVG Logos in Navbar (Clean Transparent Placement) */}
-              <div className="flex items-center gap-4 sm:gap-6 pl-6 sm:pl-8 border-l border-[#c4dcd0]">
+              <div className="hidden md:flex items-center gap-4 sm:gap-6 pl-6 sm:pl-8 border-l border-[#c4dcd0]">
                 <img src="/assets/logo_kemendikbud.svg" alt="Kemendikbud" className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300" />
                 <img src="/assets/logo_diktisaintek.svg" alt="Diktisaintek" className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300" />
                 <img src="/assets/logo_unm.svg" alt="UNM" className="h-8 sm:h-9 w-auto object-contain transition-transform duration-300" />
@@ -1583,11 +1583,11 @@ export default function Home() {
       {/* Main Dashboard View (Full Height Sidebar with Integrated Toggle Arrow & Top Header) */}
       {viewState === 'dashboard' && (
         <div className="flex h-screen overflow-hidden bg-[#f7f5f0] w-full">
-          {/* Full Height Sidebar Starting at top-0 left-0 */}
+          {/* Full Height Sidebar (Desktop Only) */}
           <aside
             onMouseEnter={() => setSidebarHovered(true)}
             onMouseLeave={() => setSidebarHovered(false)}
-            className={`sidebar-nav-container ${isSidebarExpanded ? 'w-60' : 'w-16'} h-full flex-shrink-0 bg-white border-r border-[#c4dcd0] z-50 flex flex-col transition-all duration-300 ease-in-out`}
+            className={`hidden md:flex sidebar-nav-container ${isSidebarExpanded ? 'w-60' : 'w-16'} h-full flex-shrink-0 bg-white border-r border-[#c4dcd0] z-50 flex-col transition-all duration-300 ease-in-out`}
           >
             {/* Integrated Toggle Header inside Sidebar Top */}
             <div className="h-22 px-3 border-b border-[#c4dcd0] flex items-center justify-between flex-shrink-0">
@@ -1714,35 +1714,35 @@ export default function Home() {
           {/* Right Area (Header Navbar + Scrollable Workspace) */}
           <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
             {/* Top Dashboard Navigation Header */}
-            <header className="sticky top-0 z-40 px-6 lg:px-10 h-22 bg-white border-b border-[#c4dcd0] flex items-center justify-between flex-shrink-0 shadow-xs transition-all duration-300 ease-in-out">
-              <div className="flex items-center gap-6 sm:gap-8">
+            <header className="sticky top-0 z-40 px-4 sm:px-6 lg:px-10 h-18 sm:h-22 bg-white border-b border-[#c4dcd0] flex items-center justify-between flex-shrink-0 shadow-xs transition-all duration-300 ease-in-out">
+              <div className="flex items-center gap-3 sm:gap-8">
                 {/* Institution SVG Logos (Kemendikbud First) */}
-                <div className="flex items-center gap-4 sm:gap-6 pr-4 sm:pr-6 border-r border-[#c4dcd0]">
-                  <img src="/assets/logo_kemendikbud.svg" alt="Kemendikbud" className="h-8 sm:h-9 w-auto object-contain" />
-                  <img src="/assets/logo_diktisaintek.svg" alt="Diktisaintek" className="h-8 sm:h-9 w-auto object-contain" />
-                  <img src="/assets/logo_unm.svg" alt="UNM" className="h-8 sm:h-9 w-auto object-contain" />
-                  <img src="/assets/logo_dies_natalis.svg" alt="Dies Natalis" className="h-8 sm:h-9 w-auto object-contain" />
+                <div className="hidden sm:flex items-center gap-3 sm:gap-6 pr-4 sm:pr-6 border-r border-[#c4dcd0]">
+                  <img src="/assets/logo_kemendikbud.svg" alt="Kemendikbud" className="h-7 sm:h-9 w-auto object-contain" />
+                  <img src="/assets/logo_diktisaintek.svg" alt="Diktisaintek" className="h-7 sm:h-9 w-auto object-contain" />
+                  <img src="/assets/logo_unm.svg" alt="UNM" className="h-7 sm:h-9 w-auto object-contain" />
+                  <img src="/assets/logo_dies_natalis.svg" alt="Dies Natalis" className="h-7 sm:h-9 w-auto object-contain" />
                 </div>
 
                 {/* MEMORA Brandmark (Last) */}
-                <div className="flex items-center gap-3 cursor-pointer" onClick={() => setShowLogoutModal(true)}>
-                  <div className="w-10 h-10 rounded-xl bg-[#3d5a45] text-white flex items-center justify-center font-bold shadow-xs">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                <div className="flex items-center gap-2.5 sm:gap-3 cursor-pointer" onClick={() => setShowLogoutModal(true)}>
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-xl bg-[#3d5a45] text-white flex items-center justify-center font-bold shadow-xs">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <path d="M18 4H6l7 8-7 8h12" />
                     </svg>
                   </div>
                   <div className="flex flex-col">
-                    <span className="font-extrabold text-lg heading-font tracking-tight text-[#3d5a45] leading-tight">
+                    <span className="font-extrabold text-base sm:text-lg heading-font tracking-tight text-[#3d5a45] leading-tight">
                       MEMORA
                     </span>
-                    <span className="text-[10px] font-semibold text-[#6b635b] tracking-wider uppercase">
+                    <span className="text-[9px] sm:text-[10px] font-semibold text-[#6b635b] tracking-wider uppercase">
                       AI Behavioral Telemetry
                     </span>
                   </div>
                 </div>
               </div>
 
-              <div className="flex items-center gap-5">
+              <div className="flex items-center gap-3 sm:gap-5">
                 <button
                   onClick={() => setShowLogoutModal(true)}
                   className="text-xs text-[#5c554e] hover:text-[#3d5a45] font-semibold hidden md:block"
@@ -1777,8 +1777,44 @@ export default function Home() {
               </div>
             </header>
 
+            {/* Mobile Horizontal Scroll Tab Navigation Bar for Pengajar (visible on screens < 768px) */}
+            {!isSiswaRole && (
+              <div className="flex md:hidden overflow-x-auto bg-white border-b border-[#c4dcd0] px-3 py-2 gap-2 flex-shrink-0">
+                <button
+                  onClick={() => setActiveTab('kelola_materi')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${activeTab === 'kelola_materi' ? 'bg-[#3d5a45] text-white' : 'bg-[#efece4] text-[#4e6355]'}`}
+                >
+                  Kelola Materi
+                </button>
+                <button
+                  onClick={() => setActiveTab('buat_materi_builder')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${activeTab === 'buat_materi_builder' ? 'bg-[#3d5a45] text-white' : 'bg-[#efece4] text-[#4e6355]'}`}
+                >
+                  Buat Paket
+                </button>
+                <button
+                  onClick={() => setActiveTab('dashboard_telemetry')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${activeTab === 'dashboard_telemetry' ? 'bg-[#3d5a45] text-white' : 'bg-[#efece4] text-[#4e6355]'}`}
+                >
+                  Hasil Pemantauan
+                </button>
+                <button
+                  onClick={() => setActiveTab('kelola_pengajar')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${activeTab === 'kelola_pengajar' ? 'bg-[#3d5a45] text-white' : 'bg-[#efece4] text-[#4e6355]'}`}
+                >
+                  Akses Pengajar
+                </button>
+                <button
+                  onClick={() => setActiveTab('analytics')}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition ${activeTab === 'analytics' ? 'bg-[#3d5a45] text-white' : 'bg-[#efece4] text-[#4e6355]'}`}
+                >
+                  Growth Analytics
+                </button>
+              </div>
+            )}
+
             {/* Workspace Content Scroll Area */}
-            <main className="flex-1 p-6 sm:p-8 lg:p-10 space-y-8 max-w-6xl w-full mx-auto overflow-y-auto">
+            <main className="flex-1 p-4 sm:p-8 lg:p-10 space-y-6 sm:space-y-8 max-w-6xl w-full mx-auto overflow-y-auto">
               {/* Tab 1: Kelola Paket Materi (Pengajar Only) */}
               {!isSiswaRole && activeTab === 'kelola_materi' && (
                 <div className="space-y-8 animate-fade-in-up">

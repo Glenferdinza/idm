@@ -18,6 +18,7 @@
 
 html, body {
   height: 100%;
+  overflow-x: hidden;
 }
 
 body {
@@ -222,4 +223,24 @@ h1, h2, h3, h4, h5, h6, .heading-font {
 
 .animate-pulse-glow {
   animation: pulseGlow 1.5s ease-in-out infinite;
+}
+
+/* Mobile Responsive Utility Rules */
+@media (max-width: 768px) {
+  .glass-panel {
+    padding: 1rem !important;
+  }
+  
+  .table-responsive-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Prevent text wrapping issues */
+  h1, h2, h3, p, span {
+    word-break: break-word;
+    overflow-wrap: anywhere;
+  }
 }
