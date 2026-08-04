@@ -1296,9 +1296,9 @@ export default function Home() {
         <div className="min-h-screen bg-gradient-to-br from-[#efece4] via-[#f7f5f0] to-[#f0f4f1] flex flex-col justify-center items-center p-6 relative">
           <button
             onClick={() => setViewState('landing')}
-            className="absolute top-6 left-6 text-xs font-semibold text-[#5c554e] hover:text-[#3d5a45] flex items-center gap-2 bg-white/80 backdrop-blur-md border border-[#c4dcd0] px-4 py-2 rounded-lg shadow-xs transition"
+            className="self-start text-xs font-bold text-[#3d5a45] hover:underline transition mb-2 cursor-pointer flex items-center gap-1"
           >
-            ← Kembali ke Halaman Utama
+            Kembali ke Halaman Utama
           </button>
 
           {/* Glassmorphism Auth Card Container */}
@@ -1571,7 +1571,7 @@ export default function Home() {
                     }}
                     className="text-xs font-bold text-[#3d5a45] hover:underline"
                   >
-                    ← Kembali ke Portal Masuk
+                    Kembali ke Portal Masuk
                   </button>
                 </div>
               </div>
@@ -2028,7 +2028,11 @@ export default function Home() {
                                 className="w-9 h-9 rounded-xl hover:bg-[#e4efe7] flex items-center justify-center text-[#3d5a45] font-bold text-base border border-[#c4dcd0] transition cursor-pointer"
                                 title="Opsi Paket Materi"
                               >
-                                ⋮
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                  <circle cx="12" cy="12" r="1"/>
+                                  <circle cx="12" cy="5" r="1"/>
+                                  <circle cx="12" cy="19" r="1"/>
+                                </svg>
                               </button>
 
                               {activeMaterialMenuIndex === m.id && (
@@ -2142,14 +2146,14 @@ export default function Home() {
                           onClick={() => setCurrentBuilderQIdx(p => Math.max(0, p - 1))}
                           className="btn-outline px-3 py-1.5 text-xs disabled:opacity-40"
                         >
-                          ← Prev
+                          Prev
                         </button>
                         <button
                           disabled={currentBuilderQIdx === builderQuestions.length - 1}
                           onClick={() => setCurrentBuilderQIdx(p => Math.min(builderQuestions.length - 1, p + 1))}
                           className="btn-outline px-3 py-1.5 text-xs disabled:opacity-40"
                         >
-                          Next →
+                          Next
                         </button>
                         <button
                           onClick={() => {
@@ -2452,7 +2456,11 @@ export default function Home() {
                                     className="w-8 h-8 rounded-lg hover:bg-[#e4efe7] flex items-center justify-center text-[#3d5a45] font-bold text-base transition"
                                     title="Opsi Akun Pengajar"
                                   >
-                                    ⋮
+                                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                                      <circle cx="12" cy="12" r="1"/>
+                                      <circle cx="12" cy="5" r="1"/>
+                                      <circle cx="12" cy="19" r="1"/>
+                                    </svg>
                                   </button>
 
                                   {isMenuOpen && (
@@ -2566,9 +2574,9 @@ export default function Home() {
                             </div>
                           </div>
 
-                          <div className="text-[11px] text-[#3d5a45] font-bold text-right pt-2 border-t border-[#c4dcd0]">
-                            Lihat Detail Telemetry →
-                          </div>
+                          <button className="w-full text-[11px] text-[#3d5a45] font-bold text-right pt-2 border-t border-[#c4dcd0]">
+                            Lihat Detail Telemetry
+                          </button>
                         </div>
                       ))}
                     </div>
@@ -2581,7 +2589,14 @@ export default function Home() {
                 <div className="space-y-6">
                   {studentStep === 'prep' && (
                     <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 max-w-xl mx-auto text-center space-y-6 shadow-xs">
-                      <span className="text-3xl block">📝</span>
+                      <div className="w-12 h-12 rounded-full bg-[#f0f4f1] text-[#3d5a45] flex items-center justify-center mx-auto border border-[#c7d8cb]">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                          <line x1="16" y1="13" x2="8" y2="13"/>
+                          <line x1="16" y1="17" x2="8" y2="17"/>
+                        </svg>
+                      </div>
                       <h2 className="text-xl font-bold heading-font text-[#2c2825]">Persiapan Ujian Evaluasi Siswa</h2>
                       <p className="text-xs text-[#6b635b]">
                         Isikan nama Anda di bawah ini dan klik mulai untuk memasuki portal ujian interactive canvas.
@@ -2604,9 +2619,9 @@ export default function Home() {
                           setStudentStep('exam');
                           setCurrentQIdx(0);
                         }}
-                        className="w-full py-3 btn-primary text-xs font-bold disabled:opacity-40"
+                        className="w-full py-4 btn-primary font-bold text-sm rounded-xl transition shadow-sm"
                       >
-                        Mulai Pengerjaan Ujian Sekarang →
+                        Mulai Pengerjaan Ujian Sekarang
                       </button>
                     </div>
                   )}
@@ -2833,7 +2848,12 @@ export default function Home() {
 
                   {studentStep === 'result' && (
                     <div className="bg-white border border-[#c4dcd0] rounded-xl p-8 max-w-2xl mx-auto text-center space-y-6 shadow-xs">
-                      <span className="text-4xl block">🎉</span>
+                      <div className="w-14 h-14 rounded-full bg-[#f0f4f1] text-[#3d5a45] flex items-center justify-center mx-auto border border-[#c7d8cb]">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                          <polyline points="22 4 12 14.01 9 11.01"/>
+                        </svg>
+                      </div>
                       <h2 className="text-2xl font-bold heading-font text-[#2c2825]">Ujian Evaluasi Berhasil Diselesaikan!</h2>
 
                       <div className="grid grid-cols-3 gap-4 pt-2">
@@ -2912,7 +2932,7 @@ export default function Home() {
                 <h3 className="font-bold text-[#3d5a45] heading-font text-base">Buat Paket Materi Pembelajaran Baru</h3>
                 <span className="text-xs text-[#6b635b]">Buat paket materi kustom baru untuk menambahkan kumpulan soal</span>
               </div>
-              <button onClick={() => setShowAddMaterialModal(false)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-lg">✕</button>
+              <button onClick={() => setShowAddMaterialModal(false)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-base">X</button>
             </div>
 
             <form onSubmit={handleCreateNewMaterialPackage} className="space-y-4 text-xs">
@@ -2971,7 +2991,7 @@ export default function Home() {
                   Target: {materials.find(m => m.id === (targetMaterialIdForQuestion || materials[0]?.id))?.title || 'Materi Pembelajaran'}
                 </span>
               </div>
-              <button onClick={() => setShowAddQuestionModal(false)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-lg">✕</button>
+              <button onClick={() => setShowAddQuestionModal(false)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-base">X</button>
             </div>
 
             <form onSubmit={handleSaveNewQuestion} className="space-y-4 text-xs">
@@ -3106,7 +3126,7 @@ export default function Home() {
                 <h3 className="font-bold text-[#3d5a45] heading-font text-base">Detail Kredensial Pengajar</h3>
                 <span className="text-xs text-[#6b635b]">Informasi login akun pengajar berizin</span>
               </div>
-              <button onClick={() => setShowCredentialModal(false)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-lg">✕</button>
+              <button onClick={() => setShowCredentialModal(false)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-base">X</button>
             </div>
 
             <div className="space-y-3 text-xs text-left">
@@ -3369,7 +3389,7 @@ export default function Home() {
                 <h3 className="font-bold text-[#3d5a45] heading-font text-base">{selectedStudentDetail.name}</h3>
                 <span className="text-xs text-[#6b635b]">Hasil Analisis Telemetry Kognitif Individu</span>
               </div>
-              <button onClick={() => setSelectedStudentDetail(null)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-lg">✕</button>
+              <button onClick={() => setSelectedStudentDetail(null)} className="text-[#6b635b] hover:text-[#2c2825] font-bold text-base">X</button>
             </div>
 
             <div className="grid grid-cols-3 gap-3 text-center text-xs">
