@@ -3151,7 +3151,7 @@ export default function Home() {
                                     }`}
                                   >
                                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L20 20Z"/><line x1="18" y1="13" x2="11" y2="20"/></svg>
-                                    <span>Penghapus (Gesek)</span>
+                                    <span>Penghapus</span>
                                   </button>
                                 </div>
 
