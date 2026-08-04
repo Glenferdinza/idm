@@ -278,6 +278,7 @@ export default function Home() {
   const [examTimerSeconds, setExamTimerSeconds] = useState(3600);
 
   const [isDrawing, setIsDrawing] = useState(false);
+  const [canvasTool, setCanvasTool] = useState('pen'); // 'pen' | 'eraser'
   const [penColor, setPenColor] = useState('#1f2b23');
   const [penWidth, setPenWidth] = useState(3);
   const [hesitationIndex, setHesitationIndex] = useState(14);
@@ -873,9 +874,21 @@ export default function Home() {
     }
     const { x, y } = getCanvasCoords(e);
 
+    if (canvasTool === 'eraser') {
+      ctxRef.current.globalCompositeOperation = 'destination-out';
+      ctxRef.current.lineWidth = 26;
+      setStrokeIntent('Penghapusan (Koreksi Stroke)');
+      setHesitationIndex((prev) => Math.min(95, parseFloat((prev + 0.15).toFixed(2))));
+    } else {
+      ctxRef.current.globalCompositeOperation = 'source-over';
+      ctxRef.current.strokeStyle = penColor || '#1f2b23';
+      ctxRef.current.lineWidth = penWidth || 3;
+      setStrokeIntent('Mengerjakan Rumus');
+      setStrokeSpeed(Math.floor(Math.random() * 40) + 130);
+    }
+
     ctxRef.current.lineTo(x, y);
     ctxRef.current.stroke();
-    setStrokeSpeed(Math.floor(Math.random() * 40) + 130);
   };
 
   const stopDraw = () => {
@@ -2718,16 +2731,44 @@ export default function Home() {
 
                           {/* Interactive Drawing Canvas (Only for Canvas type questions) */}
                           {questionsList[currentQIdx]?.type === 'canvas' && (
-                            <div className="space-y-2 pt-3 border-t border-[#efece4]">
-                              <div className="flex justify-between items-center">
-                                <span className="text-xs font-bold text-[#3d5a45]">
-                                  Canvas Coretan Pengerjaan (Telemetri Pen Motorik):
-                                </span>
+                            <div className="space-y-3 pt-3 border-t border-[#efece4]">
+                              <div className="flex flex-wrap justify-between items-center gap-2">
+                                <div className="flex items-center gap-2">
+                                  <span className="text-xs font-bold text-[#3d5a45]">Mode Canvas:</span>
+                                  <button
+                                    type="button"
+                                    onClick={() => setCanvasTool('pen')}
+                                    className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border cursor-pointer ${
+                                      canvasTool === 'pen'
+                                        ? 'bg-[#3d5a45] text-white border-[#3d5a45] shadow-2xs'
+                                        : 'bg-white text-[#4e6355] border-[#c4dcd0] hover:bg-[#efece4]'
+                                    }`}
+                                  >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/></svg>
+                                    <span>Pena</span>
+                                  </button>
+
+                                  <button
+                                    type="button"
+                                    onClick={() => setCanvasTool('eraser')}
+                                    className={`px-3 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1.5 border cursor-pointer ${
+                                      canvasTool === 'eraser'
+                                        ? 'bg-[#3d5a45] text-white border-[#3d5a45] shadow-2xs'
+                                        : 'bg-white text-[#4e6355] border-[#c4dcd0] hover:bg-[#efece4]'
+                                    }`}
+                                  >
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M20 20H7L3 16C2 15 2 13 3 12L13 2L22 11L20 20Z"/><line x1="18" y1="13" x2="11" y2="20"/></svg>
+                                    <span>Penghapus (Gesek)</span>
+                                  </button>
+                                </div>
+
                                 <button
+                                  type="button"
                                   onClick={clearCanvas}
-                                  className="text-[11px] text-rose-600 hover:text-rose-800 font-bold underline"
+                                  className="px-3 py-1 bg-white hover:bg-[#efece4] text-[#3d5a45] font-bold text-xs rounded-lg border border-[#c4dcd0] shadow-2xs transition flex items-center gap-1.5 cursor-pointer"
                                 >
-                                  Bersihkan Canvas
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M3 6h18"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/><path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                                  <span>Bersihkan Semua</span>
                                 </button>
                               </div>
 
@@ -2743,7 +2784,7 @@ export default function Home() {
                                   onTouchStart={startDraw}
                                   onTouchMove={draw}
                                   onTouchEnd={stopDraw}
-                                  className="w-full h-70 touch-none cursor-crosshair"
+                                  className={`w-full h-70 touch-none ${canvasTool === 'eraser' ? 'cursor-cell' : 'cursor-crosshair'}`}
                                 />
                               </div>
 

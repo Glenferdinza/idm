@@ -16,14 +16,14 @@ let questionBankInMemory = [
   {
     id: 'q-1',
     number: 1,
-    topic: 'Bilangan Bulat',
-    questionText: 'Hasil dari 41 + 28 adalah ...',
+    topic: 'Matematika Aljabar',
+    questionText: 'Hasil penyederhanaan dari 5x + 3y - 2x + 7y adalah ...',
     type: 'pg',
     options: [
-      { id: 'A', text: '69' },
-      { id: 'B', text: '59' },
-      { id: 'C', text: '13' },
-      { id: 'D', text: '79' }
+      { id: 'A', text: '3x + 10y' },
+      { id: 'B', text: '7x + 10y' },
+      { id: 'C', text: '3x + 4y' },
+      { id: 'D', text: '10x + 3y' }
     ],
     correctAnswer: 'A',
     difficulty: 'Mudah'
@@ -34,8 +34,374 @@ let questionBankInMemory = [
     topic: 'Persamaan Linear Satu Variabel',
     questionText: 'Tentukan nilai x jika 3x + 12 = 45. Gunakan area canvas untuk menguraikan langkah perhitungan.',
     type: 'canvas',
-    correctAnswer: 'x = 11',
+    options: [],
+    correctAnswer: '11',
     difficulty: 'Sedang'
+  },
+  {
+    id: 'q-3',
+    number: 3,
+    topic: 'Regulasi dan Hukum Kesehatan',
+    questionText: 'Berdasarkan regulasi medis dan UU No. 35 Tahun 2009, narkotika Golongan I difungsikan khusus untuk ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Kepentingan ilmu pengetahuan dan tidak digunakan dalam terapi medis' },
+      { id: 'B', text: 'Pengobatan umum yang dijual bebas tanpa resep dokter' },
+      { id: 'C', text: 'Suplemen peningkat daya ingat jangka pendek' },
+      { id: 'D', text: 'Obat resep tingkat pertama untuk demam' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-4',
+    number: 4,
+    topic: 'Operasi Bilangan Bulat',
+    questionText: 'Hasil dari 45 + (-18) * 3 adalah ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '-9' },
+      { id: 'B', text: '81' },
+      { id: 'C', text: '-81' },
+      { id: 'D', text: '27' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-5',
+    number: 5,
+    topic: 'Geometri dan Aljabar',
+    questionText: 'Sebuah persegi panjang memiliki panjang (2x + 4) cm dan lebar 5 cm. Jika luasnya adalah 50 cm2, berapakah nilai x?',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '3',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-6',
+    number: 6,
+    topic: 'Dampak Kognitif & Bahaya Zat',
+    questionText: 'Mengapa penggunaan zat adiktif psikotropika dapat menurunkan refleks motorik dan meningkatkan hesitation index seseorang saat menyelesaikan tugas kognitif?',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Mengganggu transmisi sinapsis saraf pusat di otak' },
+      { id: 'B', text: 'Meningkatkan jumlah sel darah merah secara drastis' },
+      { id: 'C', text: 'Merangsang pertumbuhan jaringan otot rangka' },
+      { id: 'D', text: 'Mempercepat denyut jantung tanpa efek ke sistem saraf' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Sangat Sulit'
+  },
+  {
+    id: 'q-7',
+    number: 7,
+    topic: 'Aritmatika Sosial & Persentase',
+    questionText: 'Sebuah toko memberikan diskon 20% untuk buku seharga Rp 150.000,00. Berapakah harga buku setelah diskon?',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Rp 120.000,00' },
+      { id: 'B', text: 'Rp 130.000,00' },
+      { id: 'C', text: 'Rp 110.000,00' },
+      { id: 'D', text: 'Rp 125.000,00' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-8',
+    number: 8,
+    topic: 'Sistem Persamaan Dua Variabel (SPLDV)',
+    questionText: 'Diketahui dua buah persamaan: x + y = 10 dan x - y = 4. Tentukan nilai y.',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '3',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-9',
+    number: 9,
+    topic: 'Perkalian Bentuk Aljabar',
+    questionText: 'Hasil perkalian aljabar (2x + 3)(x - 4) adalah ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '2x^2 - 5x - 12' },
+      { id: 'B', text: '2x^2 + 5x - 12' },
+      { id: 'C', text: '2x^2 - 11x - 12' },
+      { id: 'D', text: '2x^2 - 5x + 12' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-10',
+    number: 10,
+    topic: 'Aritmatika Keuntungan',
+    questionText: 'Budi membeli barang seharga Rp 800.000,00 dan menjualnya kembali seharga Rp 1.000.000,00. Berapakah persentase keuntungan Budi (tuliskan angka saja)?',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '25',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-11',
+    number: 11,
+    topic: 'Pemfaktoran Aljabar',
+    questionText: 'Hasil pemfaktoran dari bentuk x^2 - 9 adalah ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '(x - 3)(x + 3)' },
+      { id: 'B', text: '(x - 3)(x - 3)' },
+      { id: 'C', text: '(x + 9)(x - 1)' },
+      { id: 'D', text: '(x + 3)(x + 3)' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-12',
+    number: 12,
+    topic: 'Penggolongan Psikotropika',
+    questionText: 'Zat psikotropika yang berkhasiat pengobatan dan banyak digunakan dalam terapi dengan potensi kuat mengakibatkan sindrom ketergantungan adalah Golongan II, contohnya ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Amphetamine' },
+      { id: 'B', text: 'Ganja' },
+      { id: 'C', text: 'Heroin' },
+      { id: 'D', text: 'Alkohol murni' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-13',
+    number: 13,
+    topic: 'Persamaan Aljabar Satu Variabel',
+    questionText: 'Jika 4x - 7 = 2x + 9, tentukan nilai x.',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '8',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-14',
+    number: 14,
+    topic: 'Eksponen dan Bilangan Berpangkat',
+    questionText: 'Nilai dari (2^3) * (2^4) adalah ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '128' },
+      { id: 'B', text: '64' },
+      { id: 'C', text: '256' },
+      { id: 'D', text: '32' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-15',
+    number: 15,
+    topic: 'Geometri Bangun Datar',
+    questionText: 'Sebuah segitiga sama sisi memiliki panjang sisi 14 cm. Berapakah keliling segitiga tersebut (tuliskan angka dalam cm)?',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '42',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-16',
+    number: 16,
+    topic: 'Edukasi Neurobiologi Adiksi',
+    questionText: 'Kondisi penurunan respons zat di mana seseorang membutuhkan dosis zat adiktif semakin tinggi untuk memperoleh efek yang sama dinamakan ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Toleransi zat' },
+      { id: 'B', text: 'Sakaw / Adiksi total' },
+      { id: 'C', text: 'Detoksifikasi' },
+      { id: 'D', text: 'Rehabilitasi medis' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-17',
+    number: 17,
+    topic: 'Peluang Matematika',
+    questionText: 'Sebuah dadu bermata 6 dilempar satu kali. Peluang muncul mata dadu berangka genap adalah ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '1/2' },
+      { id: 'B', text: '1/3' },
+      { id: 'C', text: '2/3' },
+      { id: 'D', text: '1/6' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-18',
+    number: 18,
+    topic: 'Relasi & Fungsi',
+    questionText: 'Jika f(x) = 3x - 5, tentukan nilai dari f(7).',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '16',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-19',
+    number: 19,
+    topic: 'Statistik Rata-Rata',
+    questionText: 'Nilai rata-rata dari 5 siswa adalah 80. Jika ditambah 1 siswa dengan nilai 92, berapakah nilai rata-rata yang baru?',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '82' },
+      { id: 'B', text: '84' },
+      { id: 'C', text: '81' },
+      { id: 'D', text: '83' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-20',
+    number: 20,
+    topic: 'Bentuk Akar dan Pangkat',
+    questionText: 'Nilai penyederhanaan dari akar pangkat dua sqrt(144) + sqrt(81) adalah ...',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '21',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-21',
+    number: 21,
+    topic: 'Geometri Lingkaran',
+    questionText: 'Sebuah lingkaran memiliki jari-jari r = 7 cm. Berapakah luas lingkaran tersebut (gunakan pi = 22/7)?',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '154 cm^2' },
+      { id: 'B', text: '308 cm^2' },
+      { id: 'C', text: '44 cm^2' },
+      { id: 'D', text: '144 cm^2' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-22',
+    number: 22,
+    topic: 'Hukum & Adiksi Psikotropika',
+    questionText: 'Tahapan pemulihan terpadu bagi korban penyalahgunaan zat adiktif yang meliputi pemulihan fisik dan mental dinamakan ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Rehabilitasi medis dan sosial' },
+      { id: 'B', text: 'Karantina isolasi mandiri' },
+      { id: 'C', text: 'Vaksinasi neurobiologi' },
+      { id: 'D', text: 'Pengobatan antibiotik' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-23',
+    number: 23,
+    topic: 'Pertidaksamaan Linear',
+    questionText: 'Tentukan nilai x bulat terkecil yang memenuhi pertidaksamaan 2x + 5 > 15.',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '6',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-24',
+    number: 24,
+    topic: 'Teorema Pythagoras',
+    questionText: 'Sebuah segitiga siku-siku memiliki panjang alas 6 cm dan tinggi 8 cm. Berapakah panjang sisi miringnya (tuliskan angka saja)?',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '10',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-25',
+    number: 25,
+    topic: 'Trigonometri Dasar',
+    questionText: 'Nilai dari sin(30 derajat) adalah ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '1/2' },
+      { id: 'B', text: '1/2 sqrt(2)' },
+      { id: 'C', text: '1/2 sqrt(3)' },
+      { id: 'D', text: '1' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-26',
+    number: 26,
+    topic: 'Barisan dan Deret Aritmatika',
+    questionText: 'Diketahui suku pertama barisan aritmatika a = 5 dan beda b = 3. Suku ke-10 (U10) barisan tersebut adalah ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '32' },
+      { id: 'B', text: '35' },
+      { id: 'C', text: '30' },
+      { id: 'D', text: '29' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-27',
+    number: 27,
+    topic: 'Persamaan Kuadrat',
+    questionText: 'Akar-akar dari persamaan kuadrat x^2 - 5x + 6 = 0 adalah x = 2 dan x = ...',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '3',
+    difficulty: 'Sedang'
+  },
+  {
+    id: 'q-28',
+    number: 28,
+    topic: 'Logika & Implikasi Deduktif',
+    questionText: 'Jika premis 1: "Jika hujan turun, maka jalanan basah" dan premis 2: "Hujan turun", maka kesimpulannya adalah ...',
+    type: 'pg',
+    options: [
+      { id: 'A', text: 'Jalanan basah' },
+      { id: 'B', text: 'Jalanan kering' },
+      { id: 'C', text: 'Hujan tidak turun' },
+      { id: 'D', text: 'Tidak dapat disimpulkan' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-29',
+    number: 29,
+    topic: 'Matriks Dasar',
+    questionText: 'Jika matriks A = [2, 3] dan B = [4, 1], tentukan hasil dari A + B.',
+    type: 'pg',
+    options: [
+      { id: 'A', text: '[6, 4]' },
+      { id: 'B', text: '[5, 5]' },
+      { id: 'C', text: '[8, 3]' },
+      { id: 'D', text: '[6, 3]' }
+    ],
+    correctAnswer: 'A',
+    difficulty: 'Mudah'
+  },
+  {
+    id: 'q-30',
+    number: 30,
+    topic: 'Integrasi AI Behavioral Telemetry',
+    questionText: 'Hitunglah nilai x dari persamaan 5x - 25 = 0 untuk menyelesaikan seluruh evaluasi kognitif.',
+    type: 'canvas',
+    options: [],
+    correctAnswer: '5',
+    difficulty: 'Mudah'
   }
 ];
 
