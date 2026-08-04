@@ -374,6 +374,7 @@ export default function Home() {
   const isSiswaRole = currentUser?.role === 'Siswa';
   const pgAnswers = selectedAnswers;
   const setPgAnswers = setSelectedAnswers;
+  const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   // Live Timer Effect
   useEffect(() => {
@@ -1132,7 +1133,8 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3">
+            {/* Desktop Action Buttons */}
+            <div className="hidden md:flex items-center gap-3">
               <button
                 onClick={() => {
                   setAuthMode('login');
@@ -1148,6 +1150,47 @@ export default function Home() {
               >
                 Mode Demo
               </button>
+            </div>
+
+            {/* Mobile Hamburger Button */}
+            <div className="flex md:hidden items-center relative">
+              <button
+                onClick={() => setMobileNavOpen(!mobileNavOpen)}
+                className="p-2 rounded-xl bg-[#efece4] text-[#3d5a45] hover:bg-[#e4efe7] border border-[#c4dcd0] transition cursor-pointer"
+                aria-label="Menu"
+              >
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                  {mobileNavOpen ? (
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  ) : (
+                    <path d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+
+              {mobileNavOpen && (
+                <div className="absolute right-0 top-12 w-48 bg-white border border-[#c4dcd0] rounded-2xl shadow-xl p-3 z-50 space-y-2 animate-fade-in-up">
+                  <button
+                    onClick={() => {
+                      setMobileNavOpen(false);
+                      setAuthMode('login');
+                      setViewState('login');
+                    }}
+                    className="w-full py-2.5 btn-primary text-xs font-bold rounded-xl text-center block"
+                  >
+                    Masuk Portal
+                  </button>
+                  <button
+                    onClick={() => {
+                      setMobileNavOpen(false);
+                      demoStudentLogin();
+                    }}
+                    className="w-full py-2.5 btn-outline text-xs font-bold rounded-xl text-center block"
+                  >
+                    Mode Demo
+                  </button>
+                </div>
+              )}
             </div>
           </header>
 
@@ -2714,11 +2757,11 @@ export default function Home() {
                           )}
 
                           {/* Bottom Navigation Buttons */}
-                          <div className="flex justify-between items-center pt-4 border-t border-[#efece4]">
+                          <div className="flex flex-wrap sm:flex-nowrap justify-between items-center gap-2 pt-4 border-t border-[#efece4]">
                             <button
                               disabled={currentQIdx === 0}
                               onClick={() => setCurrentQIdx((p) => Math.max(0, p - 1))}
-                              className="px-4 py-2 btn-outline text-xs disabled:opacity-40"
+                              className="px-3 sm:px-4 py-2 btn-outline text-[11px] sm:text-xs disabled:opacity-40"
                             >
                               Sebelumnya
                             </button>
@@ -2726,20 +2769,20 @@ export default function Home() {
                             {/* Ragu-Ragu Button */}
                             <button
                               onClick={() => setDoubtfulQuestions({ ...doubtfulQuestions, [currentQIdx]: !doubtfulQuestions[currentQIdx] })}
-                              className={`px-4 py-2 rounded text-xs font-bold transition flex items-center gap-2 border ${
+                              className={`px-3 sm:px-4 py-2 rounded text-[11px] sm:text-xs font-bold transition flex items-center gap-1.5 border ${
                                 doubtfulQuestions[currentQIdx]
                                   ? 'bg-amber-100 text-amber-900 border-amber-300 shadow-xs'
                                   : 'bg-[#efece4] text-[#5c554e] border-[#c4dcd0] hover:bg-[#ded8cb]'
                               }`}
                             >
-                              <span className={`w-2.5 h-2.5 rounded-full ${doubtfulQuestions[currentQIdx] ? 'bg-amber-500' : 'bg-slate-400'}`}></span>
-                              Ragu-Ragu
+                              <span className={`w-2 h-2 rounded-full ${doubtfulQuestions[currentQIdx] ? 'bg-amber-500' : 'bg-slate-400'}`}></span>
+                              <span>Ragu-Ragu</span>
                             </button>
 
                             {currentQIdx === questionsList.length - 1 ? (
                               <button
                                 onClick={handleAttemptSubmit}
-                                className={`px-5 py-2 text-xs font-bold rounded-lg transition ${
+                                className={`px-3 sm:px-5 py-2 text-[11px] sm:text-xs font-bold rounded-lg transition ${
                                   answeredCount < questionsList.length
                                     ? 'bg-[#3d5a45]/50 opacity-60 text-white hover:opacity-80'
                                     : 'btn-primary bg-[#3d5a45] hover:bg-[#2e4736]'
@@ -2750,7 +2793,7 @@ export default function Home() {
                             ) : (
                               <button
                                 onClick={() => setCurrentQIdx((p) => Math.min(questionsList.length - 1, p + 1))}
-                                className="px-4 py-2 btn-primary text-xs"
+                                className="px-3 sm:px-4 py-2 btn-primary text-[11px] sm:text-xs font-bold"
                               >
                                 Selanjutnya
                               </button>
