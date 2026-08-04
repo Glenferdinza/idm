@@ -3053,10 +3053,45 @@ export default function Home() {
                       </div>
                       <h2 className="text-xl font-bold heading-font text-[#2c2825]">Persiapan Ujian Evaluasi Siswa</h2>
                       <p className="text-xs text-[#6b635b]">
-                        Isikan nama Anda di bawah ini dan klik mulai untuk memasuki portal ujian interactive canvas.
+                        Konfirmasikan identitas Anda dan pelajari rincian paket evaluasi sebelum memulai pengerjaan ujian.
                       </p>
 
-                      <div className="space-y-4 text-left">
+                      {/* Rich Exam Package Overview Box */}
+                      <div className="bg-[#f7f5f0] border border-[#c4dcd0] rounded-xl p-4 space-y-3 text-left">
+                        <div className="flex justify-between items-center border-b border-[#c4dcd0] pb-2">
+                          <span className="text-xs font-bold text-[#3d5a45]">
+                            {materials[0]?.title || 'Paket Evaluasi Ujian Utama (AI Telemetry)'}
+                          </span>
+                          <span className="text-[10px] bg-[#3d5a45] text-white font-bold px-2 py-0.5 rounded-full">
+                            Tersinkronasi DB
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div className="bg-white p-2.5 rounded-lg border border-[#c4dcd0] flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3d5a45" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                            <div>
+                              <span className="text-[10px] text-[#6b635b] block font-medium">Alokasi Waktu</span>
+                              <span className="font-bold text-[#2c2825]">60:00 Menit</span>
+                            </div>
+                          </div>
+
+                          <div className="bg-white p-2.5 rounded-lg border border-[#c4dcd0] flex items-center gap-2">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#3d5a45" strokeWidth="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                            <div>
+                              <span className="text-[10px] text-[#6b635b] block font-medium">Jumlah Soal</span>
+                              <span className="font-bold text-[#2c2825]">{questionsList.length} Soal (PG & Canvas)</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="text-[11px] text-[#5c554e] bg-white p-3 rounded-lg border border-[#c4dcd0] space-y-1">
+                          <span className="font-bold text-[#3d5a45] block">Petunjuk Pengerjaan:</span>
+                          <p>Gunakan Mode Pena untuk mencoret rumus pada kanvas dan Mode Penghapus untuk koreksi tulisan. Hasil telemetri motorik akan dianalisis otomatis oleh AI.</p>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2 text-left">
                         <label className="text-xs font-bold text-[#423c37] block">Nama Lengkap Siswa</label>
                         <input
                           type="text"
@@ -3073,7 +3108,7 @@ export default function Home() {
                           setStudentStep('exam');
                           setCurrentQIdx(0);
                         }}
-                        className="w-full py-4 btn-primary font-bold text-sm rounded-xl transition shadow-sm"
+                        className="w-full py-4 btn-primary font-bold text-sm rounded-xl transition shadow-sm cursor-pointer"
                       >
                         Mulai Pengerjaan Ujian Sekarang
                       </button>
