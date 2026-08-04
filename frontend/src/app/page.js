@@ -1336,16 +1336,20 @@ export default function Home() {
 
       {/* Login & Register & Reset Password Portal View */}
       {viewState === 'login' && (
-        <div className="min-h-screen bg-gradient-to-br from-[#efece4] via-[#f7f5f0] to-[#f0f4f1] flex flex-col justify-center items-center p-6 relative">
-          <button
-            onClick={() => setViewState('landing')}
-            className="self-start text-xs font-bold text-[#3d5a45] hover:underline transition mb-2 cursor-pointer flex items-center gap-1"
-          >
-            Kembali ke Halaman Utama
-          </button>
+        <div className="min-h-screen bg-gradient-to-br from-[#efece4] via-[#f7f5f0] to-[#f0f4f1] flex flex-col justify-center items-center p-4 sm:p-6 relative">
+          <div className="max-w-md w-full flex flex-col items-start">
+            <button
+              onClick={() => setViewState('landing')}
+              className="mb-3 px-4 py-2 rounded-full bg-white/90 backdrop-blur-md border border-[#c4dcd0] shadow-xs text-xs font-bold text-[#3d5a45] hover:bg-[#3d5a45] hover:text-white transition-all duration-300 flex items-center gap-2 cursor-pointer group"
+            >
+              <svg className="w-3.5 h-3.5 transform group-hover:-translate-x-0.5 transition-transform" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                <path d="M19 12H5M12 19l-7-7 7-7" />
+              </svg>
+              <span>Kembali ke Halaman Utama</span>
+            </button>
 
-          {/* Glassmorphism Auth Card Container */}
-          <div className="glass-panel rounded-2xl p-8 max-w-md w-full space-y-6">
+            {/* Glassmorphism Auth Card Container */}
+            <div className="glass-panel rounded-2xl p-6 sm:p-8 w-full space-y-6">
             <div className="text-center space-y-3">
               {/* Institution SVG Logos */}
               <div className="flex justify-center items-center gap-3 mb-1 p-2.5 bg-white/70 backdrop-blur-xs rounded-xl border border-[#c4dcd0]">
@@ -1621,6 +1625,7 @@ export default function Home() {
             )}
           </div>
         </div>
+      </div>
       )}
 
       {/* Main Dashboard View (Full Height Sidebar with Integrated Toggle Arrow & Top Header) */}
