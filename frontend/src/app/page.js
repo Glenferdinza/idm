@@ -2679,16 +2679,16 @@ export default function Home() {
                       {/* Left 2 Cols: Question Box & Canvas */}
                       <div className="lg:col-span-2 space-y-6">
                         <div className="bg-white border border-[#c4dcd0] rounded-xl p-6 space-y-4 shadow-xs">
-                          <div className="flex justify-between items-center border-b pb-3 border-[#efece4]">
-                            <span className="text-xs font-bold text-[#3d5a45]">
+                          <div className="flex justify-between items-center gap-2 border-b pb-3 border-[#efece4]">
+                            <span className="text-xs font-bold text-[#3d5a45] shrink-0">
                               Soal Nomor {currentQIdx + 1} dari {questionsList.length}
                             </span>
-                            <span className="text-xs bg-[#f0f4f1] text-[#3d5a45] px-3 py-1 rounded font-mono font-bold border border-[#c7d8cb]">
-                              {questionsList[currentQIdx]?.topic}
+                            <span className="text-[10px] sm:text-xs bg-[#f0f4f1] text-[#3d5a45] px-2.5 py-1 rounded-lg font-bold border border-[#c7d8cb] truncate max-w-[140px] sm:max-w-none" title={questionsList[currentQIdx]?.topic}>
+                              {questionsList[currentQIdx]?.topic ? questionsList[currentQIdx].topic.replace(/\s*\(Quick Demo \d+\/\d+\)/, '') : ''}
                             </span>
                           </div>
 
-                          <h3 className="font-bold text-[#2c2825] text-sm leading-relaxed">
+                          <h3 className="font-bold text-[#2c2825] text-xs sm:text-sm leading-relaxed">
                             {questionsList[currentQIdx]?.questionText}
                           </h3>
 
@@ -2699,18 +2699,18 @@ export default function Home() {
                                 <button
                                   key={opt.id}
                                   onClick={() => setPgAnswers({ ...pgAnswers, [currentQIdx]: opt.id })}
-                                  className={`w-full text-left p-3 rounded-lg border text-xs font-medium transition flex items-center gap-3 ${
+                                  className={`w-full text-left p-3 rounded-xl border text-xs font-medium transition flex items-start gap-2.5 ${
                                     pgAnswers[currentQIdx] === opt.id
                                       ? 'bg-[#3d5a45] text-white border-[#3d5a45] shadow-xs'
                                       : 'bg-[#f7f5f0] text-[#2c2825] border-[#c4dcd0] hover:bg-[#e4efe7]'
                                   }`}
                                 >
-                                  <span className={`w-5 h-5 rounded-full border text-[10px] font-bold flex items-center justify-center ${
-                                    pgAnswers[currentQIdx] === opt.id ? 'border-white bg-white/20' : 'border-[#6b635b]'
+                                  <span className={`font-extrabold text-xs shrink-0 ${
+                                    pgAnswers[currentQIdx] === opt.id ? 'text-white' : 'text-[#3d5a45]'
                                   }`}>
-                                    {opt.id}
+                                    {opt.id}.
                                   </span>
-                                  <span>{opt.text}</span>
+                                  <span className="leading-relaxed">{opt.text}</span>
                                 </button>
                               ))}
                             </div>
